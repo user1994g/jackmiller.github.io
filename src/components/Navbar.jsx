@@ -9,12 +9,14 @@ const NavContainer = styled(motion.nav)`
   left: 50%;
   transform: translateX(-50%);
   z-index: 20;
-  width: min(980px, calc(100% - 2rem));
+  width: fit-content;
+  max-width: calc(100% - 2rem);
   padding: 0.65rem 1rem;
 
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
+  gap: 0.75rem;
 
   border: 1px solid rgba(255, 255, 255, 0.22);
   border-radius: 999px;
@@ -40,6 +42,8 @@ const DesktopMenu = styled.ul`
   display: flex;
   align-items: center;
   gap: 0.4rem;
+  margin: 0;
+  padding: 0;
 
   @media (max-width: 48em) {
     display: none;

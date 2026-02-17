@@ -4,38 +4,40 @@ import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
 const Container = styled.div`
-  position: absolute;
-  top: 1rem;
-  left: 1rem;
-  z-index: 6;
-
-  width: 100%;
+  position: fixed;
+  top: 1.05rem;
+  left: clamp(0.9rem, 2vw, 2rem);
+  z-index: 21;
   width: fit-content;
 
   a {
-    width: 100%;
     display: flex;
-    align-items: flex-end;
+    align-items: center;
+    gap: 0.45rem;
   }
 
   svg {
-    width: 4rem;
-
+    width: 2.2rem;
     height: auto;
     overflow: visible;
     stroke-linejoin: round;
     stroke-linecap: round;
-    g {
-      path {
-        stroke: #fff;
-      }
+
+    g path {
+      stroke: #f6f3ef;
     }
   }
 `;
+
 const Text = styled(motion.span)`
-  font-size: ${(props) => props.theme.fontlg};
-  color: ${(props) => props.theme.text};
-  padding-bottom: 0.5rem;
+  font-size: clamp(0.72rem, 1.2vw, 0.95rem);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(246, 243, 239, 0.9);
+
+  @media (max-width: 48em) {
+    display: none;
+  }
 `;
 
 const pathVariants = {
@@ -46,26 +48,25 @@ const pathVariants = {
   visible: {
     opacity: 1,
     pathLength: 1,
-
     transition: {
-      duration: 2,
-      delay: 3, // 0
+      duration: 1.4,
+      delay: 0.45,
       ease: 'easeInOut',
     },
   },
 };
+
 const textVariants = {
   hidden: {
     opacity: 0,
-    x: -50,
+    x: -12,
   },
   visible: {
     opacity: 1,
-    x: -5,
-
+    x: 0,
     transition: {
-      duration: 2,
-      delay: 5, // 2
+      duration: 0.7,
+      delay: 0.9,
       ease: 'easeInOut',
     },
   },
@@ -75,7 +76,6 @@ const Logo = () => {
   return (
     <Container>
       <Link to="/">
-        {/* <img src={star} alt="Wibe Fashion" /> */}
         <svg
           xmlns="http://www.w3.org/2000/svg"
           enableBackground="new 0 0 24 24"

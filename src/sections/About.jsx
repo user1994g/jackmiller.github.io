@@ -1,190 +1,141 @@
-import React from "react";
-import styled from "styled-components";
+import React from 'react';
+import styled from 'styled-components';
 
-import img1 from "../assets/Images/1.webp";
-import img2 from "../assets/Images/2.webp";
-import img3 from "../assets/Images/3.webp";
+import img1 from '../assets/Images/1.webp';
+import img2 from '../assets/Images/2.webp';
+import img3 from '../assets/Images/3.webp';
 
 const Section = styled.section`
-  min-height: 100vh;
-  width: 80vw;
-  margin: 0 auto;
-
+  width: min(var(--content-max), 92vw);
+  margin: var(--section-gap) auto;
+  padding-top: clamp(2rem, 4vw, 4rem);
   position: relative;
 
-  display: flex;
-  @media (max-width: 48em) {
-    width: 90vw;
-  }
-
-  @media (max-width: 30em) {
-    width: 100vw;
-  }
-  /* justify-content: center;
-  align-items: center; */
-`;
-
-const Left = styled.div`
-  width: 50%;
-  font-size: ${(props) => props.theme.fontlg};
-  font-weight: 300;
-  position: relative;
-  z-index: 5;
-  margin-top: 20%;
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: clamp(1.5rem, 4vw, 3.25rem);
 
   @media (max-width: 64em) {
-    width: 80%;
-
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) !important;
-    margin: 0 auto;
-
-    padding: 2rem;
-    font-weight: 600;
-
-    backdrop-filter: blur(2px);
-    background-color: ${(props) => `rgba(${props.theme.textRgba},0.4)`};
-    border-radius: 20px;
-  }
-  @media (max-width: 48em) {
-    font-size: ${(props) => props.theme.fontmd};
-  }
-  @media (max-width: 30em) {
-    font-size: ${(props) => props.theme.fontsm};
-    padding: 2rem;
-    width: 70%;
-  }
-`;
-
-const Right = styled.div`
-  width: 50%;
-  position: relative;
-  /* min-height: 100vh; */
-
-  img {
-    width: 100%;
-    height: auto;
-  }
-
-  .small-img-1 {
-    width: 40%;
-    position: absolute;
-    right: 95%;
-    bottom: 10%;
-  }
-  .small-img-2 {
-    width: 40%;
-    position: absolute;
-    left: 80%;
-    top: 30%;
-  }
-  @media (max-width: 64em) {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    img {
-      width: 100%;
-      height: 100vh;
-      object-fit: cover;
-    }
-
-    .small-img-1 {
-      width: 30%;
-      height: auto;
-      left: 5%;
-      bottom: 10%;
-    }
-    .small-img-2 {
-      width: 30%;
-      height: auto;
-
-      position: absolute;
-      left: 60%;
-      bottom: 20%;
-    }
+    grid-template-columns: 1fr;
+    width: min(680px, 92vw);
   }
 `;
 
 const Title = styled.h1`
-  font-size: ${(props) => props.theme.fontBig};
-  font-family: "Kaushan Script";
-  font-weight: 300;
-  /* text-transform: capitalize; */
-
   position: absolute;
-  top: 1rem;
-  left: 5%;
-  z-index: 5;
+  top: -0.7rem;
+  left: 0;
+  z-index: 4;
 
-  span {
-    display: inline-block;
+  font-family: 'Kaushan Script';
+  font-size: clamp(2.6rem, 7vw, 5.5rem);
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.93);
+
+  @media (max-width: 64em) {
+    position: relative;
+    top: 0;
+    margin-bottom: 0.5rem;
+  }
+`;
+
+const Copy = styled.div`
+  margin-top: clamp(4rem, 8vw, 6rem);
+  padding: clamp(1.25rem, 2.6vw, 2rem);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 20px;
+  background: rgba(18, 20, 26, 0.72);
+  backdrop-filter: blur(8px);
+
+  p {
+    font-size: clamp(0.88rem, 1.25vw, 1.08rem);
+    line-height: 1.75;
+    color: rgba(240, 242, 245, 0.85);
+  }
+
+  p + p {
+    margin-top: 1rem;
   }
 
   @media (max-width: 64em) {
-    font-size: ${(props) => `calc(${props.theme.fontBig} - 5vw)`};
-    top: 0;
-    left: 0%;
+    margin-top: 0;
   }
-  @media (max-width: 48em) {
-    font-size: ${(props) => props.theme.fontxxxl};
+`;
+
+const Gallery = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-auto-rows: minmax(170px, auto);
+  gap: 0.9rem;
+  margin-top: clamp(2.5rem, 6vw, 4.25rem);
+
+  @media (max-width: 64em) {
+    margin-top: 0;
+  }
+`;
+
+const Card = styled.figure`
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.03);
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.35s ease;
+  }
+
+  &:hover img {
+    transform: scale(1.05);
+  }
+
+  &:first-child {
+    grid-column: 1 / -1;
+    min-height: 420px;
+  }
+
+  @media (max-width: 64em) {
+    &:first-child {
+      min-height: 320px;
+    }
   }
 `;
 
 const About = () => {
   return (
     <Section id="fixed-target" className="about">
-      <Title
-        data-scroll
-        data-scroll-speed="-2"
-        data-scroll-direction="horizontal"
-      >
-        about me
-      </Title>
-      <Left data-scroll data-scroll-sticky data-scroll-target="#fixed-target">
-        This project is part of my Final Major Project, where I showcase my
-        work in film and photography. My main aim was to create a collection
-        of videos and images that feel moody, dramatic, and cinematic, using
-        shadow, lighting, and atmosphere to tell a story.
-        <br />
-        <br />
-        All of the content has been created by me, from short films to
-        photoshoots, and each piece focuses on visual storytelling, camera
-        work, and editing. I experimented with dark tones, contrast, and
-        stylised scenes to give my work a strong and memorable look that
-        stands out.
-        <br />
-        <br />
-        Through this project, I wanted to show how creative media can be used
-        to build a distinct visual identity and communicate emotion without
-        needing lots of dialogue. This portfolio represents my growth as a
-        filmmaker and photographer, and shows how I can turn ideas into
-        powerful, visually striking media. 🎥🖤
-      </Left>
+      <Title data-scroll data-scroll-speed="-1">about me</Title>
 
-      <Right>
-        <img width="400" height="600" src={img1} alt="About me" />
-        <img
-          width="400"
-          height="600"
-          className="small-img-1"
-          src={img2}
-          alt="About me"
-          data-scroll
-          data-scroll-speed="5"
-        />
-        <img
-          width="400"
-          height="600"
-          className="small-img-2"
-          src={img3}
-          alt="About me"
-          data-scroll
-          data-scroll-speed="-2"
-        />
-      </Right>
+      <Copy>
+        <p>
+          I build visual stories through film and photography, focusing on mood, tension, and
+          cinematic composition. My process starts with atmosphere: controlled light, shadow, and
+          framing that guide emotion before dialogue begins.
+        </p>
+        <p>
+          Every project in this portfolio, from concept to final edit, has been produced by me. I
+          blend camera technique, colour grading, and sound-led pacing to create work that feels
+          immersive and intentional on both still and moving formats.
+        </p>
+        <p>
+          This collection reflects my development as a creative media student and my goal to produce
+          distinctive visuals that stay memorable across screens of every size.
+        </p>
+      </Copy>
+
+      <Gallery>
+        <Card data-scroll data-scroll-speed="1">
+          <img width="1000" height="750" src={img1} alt="Portrait with cinematic lighting" />
+        </Card>
+        <Card data-scroll data-scroll-speed="2">
+          <img width="700" height="1000" src={img2} alt="Styled photography composition" />
+        </Card>
+        <Card data-scroll data-scroll-speed="-1">
+          <img width="700" height="1000" src={img3} alt="Moody portrait close-up" />
+        </Card>
+      </Gallery>
     </Section>
   );
 };

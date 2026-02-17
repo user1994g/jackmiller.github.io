@@ -1,7 +1,5 @@
 import { motion } from 'framer-motion';
-import gsap from 'gsap';
-import ScrollTrigger from 'gsap/ScrollTrigger';
-import React, {  useLayoutEffect, useRef } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 
 import img1 from '../assets/Images/11.webp';
@@ -10,237 +8,121 @@ import img3 from '../assets/Images/13.webp';
 import img4 from '../assets/Images/14.webp';
 
 const Section = styled.section`
-  min-height: 100vh;
-  /* height: auto; */
-  width: 100%;
-  margin: 0 auto;
-  /* height: 300vh; */
+  width: min(var(--content-max), 92vw);
+  margin: var(--section-gap) auto;
+  padding: clamp(1.2rem, 3vw, 2.2rem);
 
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  position: relative;
-  /* background-color: ${(props) => props.theme.text}; */
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(16, 17, 21, 0.66);
 `;
 
-const Overlay = styled.div`
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 30vw;
-  height: 90vh;
-  box-shadow: 0 0 0 5vw ${(props) => props.theme.text};
-  border: 3px solid black;
+const Header = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  align-items: end;
+  margin-bottom: clamp(1rem, 2vw, 1.8rem);
 
-  z-index: 11;
-
-  @media (max-width: 70em) {
-  width: 40vw;
-
-    height: 80vh;
-  }
-
-  @media (max-width: 64em) {
-  width: 50vw;
-  box-shadow: 0 0 0 60vw ${(props) => props.theme.text};
-
-    height: 80vh;
-  }
-  @media (max-width: 48em) {
-  width: 60vw;
-
-    height: 80vh;
-  }
-  @media (max-width: 30em) {
-  width: 80vw;
-
-    height: 60vh;
-  }
-`;
-
-const Container = styled.div`
-  position: absolute;
-  top: 0%;
-  left: 50%;
-  transform: translate(-50%, 0%);
-  width: 25vw;
-  height: auto;
-  /* background-color: yellow; */
-
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-
-  @media (max-width: 64em) {
-  width: 30vw;
-
-
-  }
-  @media (max-width: 48em) {
-  width: 40vw;
-
-  }
-  @media (max-width: 30em) {
-  width: 60vw;
-
+  @media (max-width: 56em) {
+    grid-template-columns: 1fr;
   }
 `;
 
 const Title = styled(motion.h1)`
-  font-size: ${(props) => props.theme.fontxxxl};
+  font-size: clamp(2.5rem, 7vw, 5.2rem);
   font-family: 'Kaushan Script';
   font-weight: 300;
-  /* text-transform: capitalize; */
-  color: ${(props) => props.theme.body};
-  text-shadow: 1px 1px 1px ${(props) => props.theme.text};
+  color: ${(props) => props.theme.text};
+`;
 
-  position: absolute;
-  top: 2rem;
-  left: 1rem;
-  z-index: 15;
+const Text = styled.p`
+  justify-self: end;
+  width: min(52ch, 100%);
+  font-size: clamp(0.88rem, 1.2vw, 1.02rem);
+  line-height: 1.7;
+  color: rgba(240, 240, 240, 0.82);
+
+  @media (max-width: 56em) {
+    justify-self: start;
+  }
+`;
+
+const Grid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.9rem;
 
   @media (max-width: 64em) {
-    font-size: ${(props) => props.theme.fontxxl};
-
-
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-  @media (max-width: 48em) {
-    font-size: ${(props) => props.theme.fontxl};
-  
+
+  @media (max-width: 34em) {
+    grid-template-columns: 1fr;
   }
 `;
-const Text = styled.div`
-  width: 20%;
-  font-size: ${(props) => props.theme.fontlg};
-  font-weight: 300;
-  position: absolute;
-  padding: 2rem;
-  top: 0;
-  right: 0;
-  z-index: 11;
 
-  @media (max-width: 48em) {
-    display: none;
-  
-  }
- 
-`;
-
-const Item = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  margin: 5rem 0;
-
-  h2 {
-  }
+const Item = styled(motion.article)`
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 14px;
+  overflow: hidden;
 
   img {
     width: 100%;
-    height: auto;
-    z-index: 5;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+  }
+
+  h2 {
+    padding: 0.8rem;
+    font-size: 0.86rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgba(255, 255, 255, 0.92);
   }
 `;
-const Photos = ({ img, name }) => {
-  return (
-    <Item>
-      <img width="400" height="600" src={img} alt={name} />
-      <h2>{name}</h2>
-    </Item>
-  );
-};
+
+const projects = [
+  { img: img1, title: 'Quiet Tension' },
+  { img: img2, title: 'Street Atmosphere' },
+  { img: img3, title: 'Night Texture' },
+  { img: img4, title: 'Final Light Study' },
+];
 
 const NewArrival = () => {
-   gsap.registerPlugin(ScrollTrigger);
-  const ref = useRef(null);
-
-  const ScrollingRef = useRef(null);
-
-
-  useLayoutEffect(() => {
-    let element = ref.current;
-
-    let scrollingElement = ScrollingRef.current;
-let t1= gsap.timeline();
-    setTimeout(() => {
-      let mainHeight = scrollingElement.scrollHeight;
-      element.style.height = `calc(${mainHeight / 4}px)`;
-      t1.to(element, {
-        scrollTrigger: {
-          trigger: element,
-          start: 'top top',
-          end: 'bottom+=100% top-=100%',
-          scroller: '.App', //locomotive-scroll
-          scrub: 1,
-          pin: true,
-          // markers: true,
-        },
-        ease: 'none',
-      });
-
-      t1.fromTo(
-        scrollingElement,
-        {
-          y: '0',
-        },
-        {
-          y: '-100%',
-          scrollTrigger: {
-            // id: `section-${index + 1}`,
-            trigger: scrollingElement,
-            start: 'top top',
-            end: 'bottom top',
-            scroller: '.App',
-            scrub: 1,
-            // markers: true,
-          },
-        },
-      );
-
-      ScrollTrigger.refresh();
-    }, 1000);
-    ScrollTrigger.refresh();
-
-    return () => {
-      t1.kill();
-      ScrollTrigger.kill();
-    };
-  }, []);
-
   return (
-    <Section  ref={ref} id="fixed-target" className="new-arrival">
-      <Overlay />
+    <Section className="new-arrival">
+      <Header>
+        <Title
+          data-scroll
+          data-scroll-speed="-1"
+          initial={{ opacity: 0, x: -20 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          highlights
+        </Title>
+        <Text>
+          Recent visual experiments focused on atmosphere and cinematic consistency. This block is
+          intentionally structured to read clearly on large monitor widths while stacking elegantly
+          on mobile.
+        </Text>
+      </Header>
 
-      <Title
-        data-scroll data-scroll-speed="-2" data-scroll-direction="horizontal"
-      >
-        New Arrivals
-      </Title>
-
-      <Container ref={ScrollingRef}>
-        <Photos img={img1} name="Denim" />
-        <Photos img={img2} name="Cool Dresses" />
-        <Photos img={img3} name="Jackets" />
-        <Photos img={img4} name="T-shirts" />
-      </Container>
-
-      <Text data-scroll data-scroll-speed="-4">
-        There is new collection available for cool clothes in all sizes. This collection
-        is a great way to find a new look for you. It offers a variety of cool apparel
-        styles to fit your taste, while you can also find some cool clothes that you can
-        wear everyday.
-        <br />
-        <br />
-        The first line of clothing you will see on this collection is for men. The
-        collection also includes three new styles for women.
-        <br />
-        <br />
-        Give it a try and experience a new look.
-      </Text>
+      <Grid>
+        {projects.map((project, index) => (
+          <Item
+            key={project.title}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.45, delay: index * 0.08 }}
+          >
+            <img width="800" height="1000" src={project.img} alt={project.title} />
+            <h2>{project.title}</h2>
+          </Item>
+        ))}
+      </Grid>
     </Section>
   );
 };

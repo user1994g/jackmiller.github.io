@@ -1,185 +1,146 @@
-import { motion } from "framer-motion";
-import React from "react";
-import { useLocomotiveScroll } from "react-locomotive-scroll";
-import styled from "styled-components";
+import { motion } from 'framer-motion';
+import React from 'react';
+import { useLocomotiveScroll } from 'react-locomotive-scroll';
+import styled from 'styled-components';
 
-import Logo from "../assets/Svgs/star_white_48dp.svg";
+import StarIcon from '../assets/Svgs/star_white_48dp.svg';
 
 const Section = styled.section`
-  min-height: 100vh;
-  width: 100%;
-  /* margin: 5rem auto; */
-
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  overflow-x: hidden;
-
-
-  background-color: ${(props) => props.theme.body};
-  color: ${(props) => props.theme.text};
-
-  position: relative;
+  width: min(1200px, 92vw);
+  margin: var(--section-gap) auto 2.5rem;
+  padding: clamp(1.4rem, 3vw, 2rem);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(12, 13, 18, 0.75);
 `;
 
-const LogoContainer = styled.div`
+const Top = styled.div`
   display: flex;
-  flex-direction: column;
-  justify-content: center;
   align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+
+  @media (max-width: 48em) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+`;
+
+const Brand = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
 
   img {
-    width: 10vw;
-    height: auto;
+    width: clamp(1.6rem, 2vw, 2rem);
   }
 
   h3 {
-    font-family: "Kaushan Script";
-    font-size: ${(props) => props.theme.fontxxl};
-
-    @media (max-width: 48em) {
-      font-size: ${(props) => props.theme.fontxl};
-    }
+    font-family: 'Kaushan Script';
+    font-size: clamp(1.4rem, 2.6vw, 2rem);
+    font-weight: 300;
   }
 `;
 
-const FooterComponent = styled(motion.footer)`
-  width: 80vw;
+const Nav = styled.ul`
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.55rem;
 
   @media (max-width: 48em) {
-    width: 90vw;
-  }
-  ul {
-    list-style: none;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    margin: 2rem;
-    margin-top: 4rem;
-    padding: 0 1rem;
-    border-top: 1px solid ${(props) => props.theme.text};
-    border-bottom: 1px solid ${(props) => props.theme.text};
-
-    @media (max-width: 48em) {
-      justify-content: center;
-    }
-  }
-
-  li {
-    padding: 2rem;
-    font-size: ${(props) => props.theme.fontlg};
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    &:hover {
-      transform: scale(1.1);
-    }
-
-    @media (max-width: 48em) {
-      padding: 1rem;
-      font-size: ${(props) => props.theme.fontmd};
-    }
+    justify-content: flex-start;
   }
 `;
 
-const Bottom = styled.div`
-  padding: 0.5rem 0;
-  margin: 0 4rem;
-  font-size: ${(props) => props.theme.fontlg};
+const NavButton = styled.button`
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.92);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.74rem;
+  padding: 0.45rem 0.8rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.16);
+  }
+`;
+
+const Bottom = styled(motion.div)`
+  margin-top: 1.2rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
 
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  gap: 0.8rem;
+  flex-wrap: wrap;
 
+  span,
   a {
-    text-decoration: underline;
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 0.82rem;
+    letter-spacing: 0.04em;
   }
 
-  @media (max-width: 64em) {
-    flex-direction: column;
-    justify-content: center;
-    span {
-      transform: none !important;
-    }
-  }
-
-  @media (max-width: 48em) {
-    font-size: ${(props) => props.theme.fontmd};
+  a:hover {
+    color: #fff;
   }
 `;
+
+const links = [
+  { label: 'home', target: '#home' },
+  { label: 'about', target: '.about' },
+  { label: 'gallery', target: '#shop' },
+  { label: 'highlights', target: '.new-arrival' },
+];
 
 const Footer = () => {
   const { scroll } = useLocomotiveScroll();
 
   const handleScroll = (id) => {
-    let elem = document.querySelector(id);
-    // console.log(elem);
-    scroll.scrollTo(elem, {
-      offset: "-100",
-      duration: "2000",
-      easing: [0.25, 0.0, 0.35, 1.0],
-    });
+    const elem = document.querySelector(id);
+    if (!elem) return;
+
+    if (scroll) {
+      scroll.scrollTo(elem, {
+        offset: -100,
+        duration: 1200,
+        easing: [0.25, 0.0, 0.35, 1.0],
+      });
+    } else {
+      elem.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   };
 
   return (
-    <Section>
-      <LogoContainer>
-        <img
-          width="300"
-          height="300"
-          src={Logo}
-          alt="Jack Miller Portfolio"
-          data-scroll
-          data-scroll-speed="2"
-        />
-        <h3 data-scroll data-scroll-speed="-1">
-          Jack Miller Portfolio
-        </h3>
-      </LogoContainer>
-      <FooterComponent
-        initial={{ y: "-400px" }}
-        whileInView={{ y: 0 }}
-        viewport={{ once: false }}
-        transition={{
-          duration: 1.5,
-        }}
-      >
-        <ul>
-          <li aria-hidden="true" onClick={() => handleScroll("#home")}>
-            home
-          </li>
-          <li aria-hidden="true" onClick={() => handleScroll(".about")}>
-            about
-          </li>
-          <li aria-hidden="true" onClick={() => handleScroll("#shop")}>
-            shop
-          </li>
-          <li aria-hidden="true" onClick={() => handleScroll(".new-arrival")}>
-            new arrival
-          </li>
-          <li>
-            <a href="https://google.com" target={"_blank"} rel="noreferrer">
-              look book
-            </a>
-          </li>
-          <li>
-            <a href="https://google.com" target={"_blank"} rel="noreferrer">
-              reviews
-            </a>
-          </li>
-        </ul>
-        <Bottom>
-          <span
-            data-scroll
-            data-scroll-speed="2"
-            data-scroll-direction="horizontal"
-          >
-            &copy; 2022. All Rights Reserved.
-          </span>
-        </Bottom>
-      </FooterComponent>
+    <Section id="contact">
+      <Top>
+        <Brand>
+          <img width="96" height="96" src={StarIcon} alt="Star icon" />
+          <h3>Jack Miller Portfolio</h3>
+        </Brand>
+
+        <Nav>
+          {links.map((link) => (
+            <li key={link.target}>
+              <NavButton type="button" onClick={() => handleScroll(link.target)}>
+                {link.label}
+              </NavButton>
+            </li>
+          ))}
+        </Nav>
+      </Top>
+
+      <Bottom initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ duration: 0.6 }}>
+        <span>&copy; 2026 Jack Miller. All Rights Reserved.</span>
+        <a href="mailto:jazzg869@gmail.com">jazzg869@gmail.com</a>
+      </Bottom>
     </Section>
   );
 };

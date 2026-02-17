@@ -1,30 +1,31 @@
-import "locomotive-scroll/dist/locomotive-scroll.css";
+import 'locomotive-scroll/dist/locomotive-scroll.css';
 
-import { AnimatePresence } from "framer-motion";
-import { useRef, useState, useEffect } from "react";
-import { LocomotiveScrollProvider } from "react-locomotive-scroll";
-import { ThemeProvider } from "styled-components";
+import { AnimatePresence } from 'framer-motion';
+import { useEffect, useRef, useState } from 'react';
+import { LocomotiveScrollProvider } from 'react-locomotive-scroll';
+import { ThemeProvider } from 'styled-components';
 
-import Loader from "./components/Loader";
-import ScrollTriggerProxy from "./components/ScrollTriggerProxy";
-import About from "./sections/About";
-import Footer from "./sections/Footer";
-import Home from "./sections/Home";
-import Marquee from "./sections/Marquee";
-import NewArrival from "./sections/NewArrival";
-import Shop from "./sections/Shop";
-import GlobalStyles from "./styles/GlobalStyles";
-import { dark } from "./styles/Themes";
+import Loader from './components/Loader';
+import ScrollTriggerProxy from './components/ScrollTriggerProxy';
+import About from './sections/About';
+import Footer from './sections/Footer';
+import Home from './sections/Home';
+import Marquee from './sections/Marquee';
+import NewArrival from './sections/NewArrival';
+import Shop from './sections/Shop';
+import GlobalStyles from './styles/GlobalStyles';
+import { dark } from './styles/Themes';
 
 function App() {
-  // useLocoScroll();
   const containerRef = useRef(null);
-  const [Loaded, setLoaded] = useState(false);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       setLoaded(true);
-    }, 3000);
+    }, 1800);
+
+    return () => clearTimeout(timer);
   }, []);
 
   return (
@@ -34,36 +35,28 @@ function App() {
         <LocomotiveScrollProvider
           options={{
             smooth: true,
-            // ... all available Locomotive Scroll instance options
+            multiplier: 0.9,
+            getDirection: true,
             smartphone: {
-              smooth: true,
+              smooth: false,
             },
             tablet: {
-              smooth: true,
+              smooth: false,
             },
           }}
-          watch={
-            [
-              //..all the dependencies you want to watch to update the scroll.
-              //  Basicaly, you would want to watch page/location changes
-              //  For exemple, on Next.js you would want to watch properties like `router.asPath` (you may want to add more criterias if the instance should be update on locations with query parameters)
-            ]
-          }
+          watch={[]}
           containerRef={containerRef}
         >
-          <AnimatePresence>{Loaded ? null : <Loader />}</AnimatePresence>
+          <AnimatePresence mode="wait">{!loaded && <Loader key="loader" />}</AnimatePresence>
+
           <main className="App" data-scroll-container ref={containerRef}>
             <ScrollTriggerProxy />
-            <AnimatePresence>
-              {Loaded ? null : <Loader />}
-
-              <Home key="home" />
-              <About key="about" />
-              <Shop key="Shop" />
-              <Marquee key="marquee" />
-              <NewArrival key="new arrival" />
-              <Footer key="Footer" />
-            </AnimatePresence>
+            <Home />
+            <About />
+            <Shop />
+            <Marquee />
+            <NewArrival />
+            <Footer />
           </main>
         </LocomotiveScrollProvider>
       </ThemeProvider>

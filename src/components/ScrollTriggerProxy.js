@@ -3,36 +3,40 @@ import ScrollTrigger from 'gsap/ScrollTrigger';
 import { useEffect } from 'react';
 import { useLocomotiveScroll } from 'react-locomotive-scroll';
 
+gsap.registerPlugin(ScrollTrigger);
+
 const ScrollTriggerProxy = () => {
   const { scroll } = useLocomotiveScroll();
-  gsap.registerPlugin(ScrollTrigger);
 
   useEffect(() => {
-    if (scroll) {
-      const element = scroll?.el;
+    if (!scroll) return undefined;
 
-      scroll.on('scroll', ScrollTrigger.update);
-      ScrollTrigger.scrollerProxy(element, {
-        scrollTop(value) {
-          return arguments.length
-            ? scroll.scrollTo(value, 0, 0)
-            : scroll.scroll.instance.scroll.y;
-        },
-        getBoundingClientRect() {
-          return {
-            top: 0,
-            left: 0,
-            width: window.innerWidth,
-            height: window.innerHeight,
-          };
-        },
-        pinType: element.style.transform ? 'transform' : 'fixed',
-      });
-    }
+    const element = scroll.el;
+    const onRefresh = () => scroll.update();
+
+    scroll.on('scroll', ScrollTrigger.update);
+
+    ScrollTrigger.scrollerProxy(element, {
+      scrollTop(value) {
+        return arguments.length ? scroll.scrollTo(value, 0, 0) : scroll.scroll.instance.scroll.y;
+      },
+      getBoundingClientRect() {
+        return {
+          top: 0,
+          left: 0,
+          width: window.innerWidth,
+          height: window.innerHeight,
+        };
+      },
+      pinType: element.style.transform ? 'transform' : 'fixed',
+    });
+
+    ScrollTrigger.addEventListener('refresh', onRefresh);
+    ScrollTrigger.refresh();
 
     return () => {
-      ScrollTrigger.addEventListener('refresh', () => scroll?.update());
-      ScrollTrigger.refresh();
+      scroll.off?.('scroll', ScrollTrigger.update);
+      ScrollTrigger.removeEventListener('refresh', onRefresh);
     };
   }, [scroll]);
 

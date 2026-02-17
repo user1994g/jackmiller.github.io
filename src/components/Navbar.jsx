@@ -1,163 +1,196 @@
 import { motion } from 'framer-motion';
 import React, { useState } from 'react';
 import { useLocomotiveScroll } from 'react-locomotive-scroll';
-import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
-const NavContainer = styled(motion.div)`
-  position: absolute;
-  /* left: 50%; */
-  top: ${(props) => (props.click ? '0' : `-${props.theme.navHeight}`)};
-  transition: all 0.3s ease;
-  /* transform: translateX(-50%); */
-  z-index: 6;
-  width: 100vw;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  
-  @media (max-width: 40em) {
-    top: ${(props) => (props.click ? '0' : `calc(-50vh - 4rem)`)};
-
-  }
-`;
-
-const MenuBtn = styled.li`
-  background-color: ${(props) => `rgba(${props.theme.textRgba},0.7)`};
-  color: ${(props) => props.theme.body};
-  width: 15rem;
-  height: 2.5rem;
-
-  border: none;
-  outline: none;
-
-  clip-path: polygon(0 0, 100% 0, 80% 100%, 20% 100%);
-
-  position: absolute;
-  top: 100%;
+const NavContainer = styled(motion.nav)`
+  position: fixed;
+  top: 1rem;
   left: 50%;
   transform: translateX(-50%);
+  z-index: 20;
+  width: min(980px, calc(100% - 2rem));
+  padding: 0.65rem 1rem;
 
-  font-size: ${(props) => props.theme.fontmd};
-  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 
-  /* border-end-start-radius: 50%; */
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+  background: rgba(10, 10, 14, 0.62);
+  backdrop-filter: blur(10px);
+`;
 
-  /* border-end-end-radius: 50%; */
+const Tag = styled.span`
+  font-size: 0.8rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.76);
+  padding-left: 0.6rem;
 
+  @media (max-width: 48em) {
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+  }
+`;
+
+const DesktopMenu = styled.ul`
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+
+  @media (max-width: 48em) {
+    display: none;
+  }
+`;
+
+const MenuButton = styled.button`
+  border: none;
+  border-radius: 999px;
+  padding: 0.45rem 0.9rem;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.84);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+  }
+`;
+
+const MobileToggle = styled.button`
+  display: none;
+
+  @media (max-width: 48em) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+    padding: 0.38rem 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.7rem;
+    cursor: pointer;
+  }
+`;
+
+const MobilePanel = styled(motion.ul)`
+  position: fixed;
+  top: calc(1rem + 3.2rem);
+  right: 1rem;
+  z-index: 20;
+  list-style: none;
+  min-width: 13rem;
+
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 16px;
+  background: rgba(10, 10, 14, 0.9);
+  backdrop-filter: blur(10px);
+  padding: 0.65rem;
+
+  display: none;
+
+  @media (max-width: 48em) {
+    display: block;
+  }
+`;
+
+const MobileItem = styled.button`
+  width: 100%;
+  border: none;
+  border-radius: 10px;
+  text-align: left;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.9);
+  padding: 0.7rem;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
   cursor: pointer;
 
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  transition: all 0.3s ease;
-
-  @media (max-width: 40em) {
-    width: 10rem;
-    height: 2rem;
-
+  &:hover {
+    background: rgba(255, 255, 255, 0.12);
   }
 `;
 
-const MenuItems = styled(motion.ul)`
-  position: relative;
-  height: ${(props) => props.theme.navHeight};
-  background-color: ${(props) => props.theme.body};
-  color: ${(props) => props.theme.text};
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  list-style: none;
-
-  width: 100%;
-  padding: 0 10rem;
-
-  @media (max-width: 40em) {
-    flex-direction:column;
-    padding:2rem 0;
-    height: 50vh;
-  }
-`;
-
-const Item = styled(motion.li)`
-  text-transform: uppercase;
-  color: ${(props) => props.theme.text};
-
-  @media (max-width: 40em) {
-    flex-direction:column;
-    padding:0.5rem 0;
-
-  }
-`;
+const menuItems = [
+  { label: 'home', target: '#home' },
+  { label: 'about', target: '.about' },
+  { label: 'gallery', target: '#shop' },
+  { label: 'highlights', target: '.new-arrival' },
+  { label: 'contact', target: '#contact' },
+];
 
 const Navbar = () => {
-  const [click, setClick] = useState(false);
-
+  const [open, setOpen] = useState(false);
   const { scroll } = useLocomotiveScroll();
 
   const handleScroll = (id) => {
-    let elem = document.querySelector(id);
-    // console.log(elem);
-    setClick(!click);
-    scroll.scrollTo(elem, {
-      offset: '-100',
-      duration: '2000',
-      easing: [0.25, 0.0, 0.35, 1.0],
-    });
+    const elem = document.querySelector(id);
+    if (!elem) return;
+
+    if (scroll) {
+      scroll.scrollTo(elem, {
+        offset: -100,
+        duration: 1200,
+        easing: [0.25, 0.0, 0.35, 1.0],
+      });
+    } else {
+      elem.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    setOpen(false);
   };
 
   return (
-    <NavContainer
-      click={+click}
-      initial={{ y: `-100%` }}
-      animate={{ y: 0 }}
-      transition={{ duration: 2, delay: 5 /* 2 */ }}
-    >
-      <MenuItems
-        drag="y"
-        dragConstraints={{ top: 0, bottom: 70 }}
-        dragElastic={0.05}
-        dragSnapToOrigin
+    <>
+      <NavContainer
+        initial={{ y: -100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.8, delay: 0.4 }}
       >
-        <MenuBtn onClick={() => setClick(!click)}>
-          <span>MENU</span>
-        </MenuBtn>
-        <Item
-          whileHover={{ scale: 1.1, y: -5 }}
-          whileTap={{ scale: 0.9, y: 0 }}
-          onClick={() => handleScroll('#home')}
-        >
-          {' '}
-          <Link to="/">Home</Link>
-        </Item>
-        <Item
-          whileHover={{ scale: 1.1, y: -5 }}
-          whileTap={{ scale: 0.9, y: 0 }}
-          onClick={() => handleScroll('.about')}
-        >
-          <Link to="/">about</Link>
-        </Item>
-        <Item
-          whileHover={{ scale: 1.1, y: -5 }}
-          whileTap={{ scale: 0.9, y: 0 }}
-          onClick={() => handleScroll('#shop')}
-        >
-          <Link to="/">shop</Link>
-        </Item>
+        <Tag>Navigate</Tag>
 
-        <Item
-          whileHover={{ scale: 1.1, y: -5 }}
-          whileTap={{ scale: 0.9, y: 0 }}
-          onClick={() => handleScroll('.new-arrival')}
+        <DesktopMenu>
+          {menuItems.map((item) => (
+            <li key={item.target}>
+              <MenuButton type="button" onClick={() => handleScroll(item.target)}>
+                {item.label}
+              </MenuButton>
+            </li>
+          ))}
+        </DesktopMenu>
+
+        <MobileToggle type="button" onClick={() => setOpen((prev) => !prev)}>
+          {open ? 'close' : 'menu'}
+        </MobileToggle>
+      </NavContainer>
+
+      {open && (
+        <MobilePanel
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
         >
-          {' '}
-          <Link to="/">new arrival</Link>
-        </Item>
-      </MenuItems>
-    </NavContainer>
+          {menuItems.map((item) => (
+            <li key={item.target}>
+              <MobileItem type="button" onClick={() => handleScroll(item.target)}>
+                {item.label}
+              </MobileItem>
+            </li>
+          ))}
+        </MobilePanel>
+      )}
+    </>
   );
 };
 

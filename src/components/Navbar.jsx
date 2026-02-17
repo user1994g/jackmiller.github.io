@@ -6,9 +6,10 @@ import styled from 'styled-components';
 const NavContainer = styled(motion.nav)`
   position: fixed;
   top: 1rem;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 0;
+  right: 0;
   z-index: 20;
+  margin-inline: auto;
   width: fit-content;
   max-width: calc(100% - 2rem);
   padding: 0.65rem 1rem;
@@ -90,10 +91,13 @@ const MobileToggle = styled.button`
 const MobilePanel = styled(motion.ul)`
   position: fixed;
   top: calc(1rem + 3.2rem);
-  right: 1rem;
+  left: 0;
+  right: 0;
   z-index: 20;
   list-style: none;
-  min-width: 13rem;
+  width: min(18rem, calc(100% - 2rem));
+  min-width: 0;
+  margin-inline: auto;
 
   border: 1px solid rgba(255, 255, 255, 0.22);
   border-radius: 16px;

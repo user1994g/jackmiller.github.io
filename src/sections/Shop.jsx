@@ -1,7 +1,8 @@
-import { motion } from 'framer-motion';
-import React from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 
+import ImageLightbox from '../components/ImageLightbox';
 import img1 from '../assets/Images/1.webp';
 import img2 from '../assets/Images/2.webp';
 import img3 from '../assets/Images/3.webp';
@@ -79,6 +80,15 @@ const Card = styled(motion.article)`
   overflow: hidden;
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.12);
+`;
+
+const ImageButton = styled.button`
+  width: 100%;
+  border: none;
+  background: transparent;
+  padding: 0;
+  text-align: left;
+  cursor: zoom-in;
 
   figure {
     aspect-ratio: 4 / 5;
@@ -94,6 +104,11 @@ const Card = styled(motion.article)`
 
   &:hover img {
     transform: scale(1.05);
+  }
+
+  &:focus-visible {
+    outline: 2px solid rgba(255, 255, 255, 0.8);
+    outline-offset: -2px;
   }
 `;
 
@@ -128,6 +143,8 @@ const photos = [
 ];
 
 const Shop = () => {
+  const [activeImage, setActiveImage] = useState(null);
+
   return (
     <Section id="shop" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ duration: 0.7 }}>
       <Header>
@@ -141,16 +158,26 @@ const Shop = () => {
       <Grid>
         {photos.map((photo) => (
           <Card key={photo.title} whileHover={{ y: -4 }} transition={{ duration: 0.2 }}>
-            <figure>
-              <img width="800" height="1000" src={photo.img} alt={photo.title} />
-            </figure>
-            <Meta>
-              <h2>{photo.title}</h2>
-              <p>{photo.note}</p>
-            </Meta>
+            <ImageButton
+              type="button"
+              aria-label={`Open ${photo.title}`}
+              onClick={() => setActiveImage({ src: photo.img, alt: photo.title })}
+            >
+              <figure>
+                <img width="800" height="1000" src={photo.img} alt={photo.title} />
+              </figure>
+              <Meta>
+                <h2>{photo.title}</h2>
+                <p>{photo.note}</p>
+              </Meta>
+            </ImageButton>
           </Card>
         ))}
       </Grid>
+
+      <AnimatePresence>
+        {activeImage && <ImageLightbox image={activeImage} onClose={() => setActiveImage(null)} />}
+      </AnimatePresence>
     </Section>
   );
 };

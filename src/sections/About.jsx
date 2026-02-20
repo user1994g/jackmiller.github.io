@@ -1,9 +1,11 @@
-import React from 'react';
+import { AnimatePresence } from 'framer-motion';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 
 import img1 from '../assets/Images/1.webp';
 import img2 from '../assets/Images/2.webp';
 import img3 from '../assets/Images/3.webp';
+import ImageLightbox from '../components/ImageLightbox';
 
 const Section = styled.section`
   width: min(var(--content-max), 92vw);
@@ -74,11 +76,14 @@ const Gallery = styled.div`
   }
 `;
 
-const Card = styled.figure`
+const Card = styled.button`
   border-radius: 16px;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.18);
   background: rgba(255, 255, 255, 0.03);
+  width: 100%;
+  padding: 0;
+  cursor: zoom-in;
 
   img {
     width: 100%;
@@ -89,6 +94,11 @@ const Card = styled.figure`
 
   &:hover img {
     transform: scale(1.05);
+  }
+
+  &:focus-visible {
+    outline: 2px solid rgba(255, 255, 255, 0.8);
+    outline-offset: 2px;
   }
 
   &:first-child {
@@ -103,7 +113,15 @@ const Card = styled.figure`
   }
 `;
 
+const aboutPhotos = [
+  { src: img1, alt: 'Portrait with cinematic lighting', width: 1000, height: 750, speed: '1' },
+  { src: img2, alt: 'Styled photography composition', width: 700, height: 1000, speed: '2' },
+  { src: img3, alt: 'Moody portrait close-up', width: 700, height: 1000, speed: '-1' },
+];
+
 const About = () => {
+  const [activeImage, setActiveImage] = useState(null);
+
   return (
     <Section id="about" className="about">
       <Title data-scroll data-scroll-speed="-1">about me</Title>
@@ -126,16 +144,23 @@ const About = () => {
       </Copy>
 
       <Gallery>
-        <Card data-scroll data-scroll-speed="1">
-          <img width="1000" height="750" src={img1} alt="Portrait with cinematic lighting" />
-        </Card>
-        <Card data-scroll data-scroll-speed="2">
-          <img width="700" height="1000" src={img2} alt="Styled photography composition" />
-        </Card>
-        <Card data-scroll data-scroll-speed="-1">
-          <img width="700" height="1000" src={img3} alt="Moody portrait close-up" />
-        </Card>
+        {aboutPhotos.map((photo) => (
+          <Card
+            key={photo.alt}
+            type="button"
+            aria-label={`Open ${photo.alt}`}
+            onClick={() => setActiveImage({ src: photo.src, alt: photo.alt })}
+            data-scroll
+            data-scroll-speed={photo.speed}
+          >
+            <img width={photo.width} height={photo.height} src={photo.src} alt={photo.alt} />
+          </Card>
+        ))}
       </Gallery>
+
+      <AnimatePresence>
+        {activeImage && <ImageLightbox image={activeImage} onClose={() => setActiveImage(null)} />}
+      </AnimatePresence>
     </Section>
   );
 };

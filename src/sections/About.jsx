@@ -105,7 +105,7 @@ const Card = styled.figure`
 
 const About = () => {
   return (
-    <Section id="fixed-target" className="about">
+    <Section id="about" className="about">
       <Title data-scroll data-scroll-speed="-1">about me</Title>
 
       <Copy>

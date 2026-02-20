@@ -92,7 +92,7 @@ const projects = [
 
 const NewArrival = () => {
   return (
-    <Section className="new-arrival">
+    <Section id="highlights" className="new-arrival">
       <Header>
         <Title
           data-scroll

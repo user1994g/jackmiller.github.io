@@ -183,7 +183,6 @@ const menuItems = [
   { label: 'Home', target: '#home' },
   { label: 'About', target: '#about' },
   { label: 'Gallery', target: '#shop' },
-  { label: 'Highlights', target: '#highlights' },
   { label: 'Contact', target: '#contact' },
 ];
 

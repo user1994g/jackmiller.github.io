@@ -12,7 +12,6 @@ import About from './sections/About';
 import Footer from './sections/Footer';
 import Home from './sections/Home';
 import Marquee from './sections/Marquee';
-import NewArrival from './sections/NewArrival';
 import Shop from './sections/Shop';
 import GlobalStyles from './styles/GlobalStyles';
 import { dark } from './styles/Themes';
@@ -58,7 +57,6 @@ function App() {
             <About />
             <Shop />
             <Marquee />
-            <NewArrival />
             <Footer />
           </main>
         </LocomotiveScrollProvider>

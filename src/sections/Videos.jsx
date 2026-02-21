@@ -2,17 +2,17 @@ import { motion } from 'framer-motion';
 import React, { useMemo, useState } from 'react';
 import styled from 'styled-components';
 
-import img4 from '../assets/Images/4.webp';
-import img5 from '../assets/Images/5.webp';
-import img6 from '../assets/Images/6.webp';
-import img7 from '../assets/Images/7.webp';
-import img8 from '../assets/Images/8.webp';
-import img9 from '../assets/Images/9.webp';
-import img10 from '../assets/Images/10.webp';
-import img11 from '../assets/Images/11.webp';
-import img12 from '../assets/Images/12.webp';
-import img13 from '../assets/Images/13.webp';
-import img14 from '../assets/Images/14.webp';
+import img4 from '../assets/VideoHeroes/4-hero.jpg';
+import img5 from '../assets/VideoHeroes/5-hero.jpg';
+import img6 from '../assets/VideoHeroes/6-hero.jpg';
+import img7 from '../assets/VideoHeroes/7-hero.jpg';
+import img8 from '../assets/VideoHeroes/8-hero.jpg';
+import img9 from '../assets/VideoHeroes/9-hero.jpg';
+import img10 from '../assets/VideoHeroes/10-hero.jpg';
+import img11 from '../assets/VideoHeroes/11-hero.jpg';
+import img12 from '../assets/VideoHeroes/12-hero.jpg';
+import img13 from '../assets/VideoHeroes/13-hero.jpg';
+import img14 from '../assets/VideoHeroes/14-hero.jpg';
 
 import thumb4 from '../assets/VideoThumbs/4-thumb.jpg';
 import thumb5 from '../assets/VideoThumbs/5-thumb.jpg';

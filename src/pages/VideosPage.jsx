@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { useEffect } from 'react';
 import styled from 'styled-components';
 
 import Navbar from '../components/Navbar';
@@ -10,6 +11,24 @@ const PageMain = styled.main`
 `;
 
 const VideosPage = () => {
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    const prefetchHomePage = () => {
+      import('./HomePage');
+    };
+
+    if ('requestIdleCallback' in window) {
+      const idleId = window.requestIdleCallback(prefetchHomePage, { timeout: 1800 });
+      return () => window.cancelIdleCallback(idleId);
+    }
+
+    const fallbackTimer = setTimeout(prefetchHomePage, 900);
+    return () => clearTimeout(fallbackTimer);
+  }, []);
+
   return (
     <>
       <Navbar />

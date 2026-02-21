@@ -36,6 +36,24 @@ const HomePage = () => {
     return () => clearTimeout(timer);
   }, [loaded]);
 
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return undefined;
+    }
+
+    const prefetchVideosPage = () => {
+      import('./VideosPage');
+    };
+
+    if ('requestIdleCallback' in window) {
+      const idleId = window.requestIdleCallback(prefetchVideosPage, { timeout: 1800 });
+      return () => window.cancelIdleCallback(idleId);
+    }
+
+    const fallbackTimer = setTimeout(prefetchVideosPage, 900);
+    return () => clearTimeout(fallbackTimer);
+  }, []);
+
   return (
     <LocomotiveScrollProvider
       options={{

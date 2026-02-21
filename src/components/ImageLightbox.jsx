@@ -63,6 +63,15 @@ const CloseButton = styled.button`
 
 const lockKeys = new Set(['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End', ' ']);
 
+const isHomeHashRoute = () => {
+  if (typeof window === 'undefined') {
+    return false;
+  }
+
+  const hashPath = (window.location.hash || '#/').replace(/^#/, '');
+  return hashPath === '/' || hashPath === '' || hashPath.startsWith('/?');
+};
+
 const ImageLightbox = ({ image, onClose }) => {
   const { scroll } = useLocomotiveScroll();
 
@@ -121,13 +130,15 @@ const ImageLightbox = ({ image, onClose }) => {
       document.body.style.width = previousBodyWidth;
       document.body.style.touchAction = previousBodyTouchAction;
 
-      window.scrollTo(0, savedScrollY);
+      if (isHomeHashRoute()) {
+        window.scrollTo(0, savedScrollY);
 
-      if (scroll && typeof scroll.start === 'function') {
-        scroll.start();
-      }
-      if (scroll && typeof scroll.update === 'function') {
-        scroll.update();
+        if (scroll && typeof scroll.start === 'function') {
+          scroll.start();
+        }
+        if (scroll && typeof scroll.update === 'function') {
+          scroll.update();
+        }
       }
     };
   }, [onClose, scroll]);

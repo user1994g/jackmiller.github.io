@@ -271,13 +271,29 @@ const Navbar = () => {
     }
 
     const target = location.state.scrollTarget;
+    let frameId = null;
+    let tries = 0;
 
-    const timer = setTimeout(() => {
+    const runScrollWhenReady = () => {
+      const element = document.querySelector(target);
+
+      if (!element && tries < 10) {
+        tries += 1;
+        frameId = window.requestAnimationFrame(runScrollWhenReady);
+        return;
+      }
+
       scrollToTarget(target);
       navigate('/', { replace: true, state: null });
-    }, 260);
+    };
 
-    return () => clearTimeout(timer);
+    frameId = window.requestAnimationFrame(runScrollWhenReady);
+
+    return () => {
+      if (frameId !== null) {
+        window.cancelAnimationFrame(frameId);
+      }
+    };
   }, [location.pathname, location.state, navigate, scrollToTarget]);
 
   useEffect(() => {

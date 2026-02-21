@@ -182,6 +182,7 @@ const Backdrop = styled(motion.button)`
 const menuItems = [
   { label: 'Home', target: '#home' },
   { label: 'About', target: '#about' },
+  { label: 'Videos', target: '#videos' },
   { label: 'Gallery', target: '#shop' },
   { label: 'Contact', target: '#contact' },
 ];

@@ -13,6 +13,7 @@ import Footer from './sections/Footer';
 import Home from './sections/Home';
 import Marquee from './sections/Marquee';
 import Shop from './sections/Shop';
+import Videos from './sections/Videos';
 import GlobalStyles from './styles/GlobalStyles';
 import { dark } from './styles/Themes';
 
@@ -55,6 +56,7 @@ function App() {
             <ScrollTriggerProxy />
             <Home />
             <About />
+            <Videos />
             <Shop />
             <Marquee />
             <Footer />

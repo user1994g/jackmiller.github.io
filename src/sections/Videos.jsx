@@ -221,7 +221,7 @@ const Row = styled.section`
 `;
 
 const RowTitle = styled.h3`
-  font-size: clamp(1.08rem, 1.65vw, 1.56rem);
+  font-size: clamp(0.98rem, 1.3vw, 1.2rem);
   color: rgba(250, 250, 250, 0.95);
   font-weight: 700;
 `;
@@ -229,8 +229,8 @@ const RowTitle = styled.h3`
 const Rail = styled.div`
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns: clamp(160px, 17vw, 265px);
-  gap: clamp(0.45rem, 1vw, 0.75rem);
+  grid-auto-columns: clamp(112px, 11vw, 170px);
+  gap: clamp(0.32rem, 0.7vw, 0.52rem);
   overflow-x: auto;
   padding-bottom: 0.25rem;
 
@@ -270,23 +270,7 @@ const Tile = styled(motion.button)`
 `;
 
 const TileInfo = styled.div`
-  padding: 0.52rem 0.58rem 0.63rem;
-  display: grid;
-  gap: 0.15rem;
-
-  h4 {
-    font-size: 0.82rem;
-    color: rgba(248, 248, 248, 0.96);
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-  }
-
-  p {
-    font-size: 0.68rem;
-    color: rgba(229, 229, 229, 0.68);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
+  display: none;
 `;
 
 const railButtons = ['sr', 'hm', 'mx', 'up', 'rl', 'ls', 'ad'];
@@ -525,7 +509,7 @@ const Videos = () => {
                       type="button"
                       onClick={() => setFeatured(item)}
                       $active={isActive}
-                      whileHover={{ y: -6, scale: 1.03 }}
+                      whileHover={{ y: -3, scale: 1.015 }}
                       transition={{ duration: 0.2 }}
                       aria-label={`Feature ${item.title}`}
                     >

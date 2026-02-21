@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useLocomotiveScroll } from 'react-locomotive-scroll';
+import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 const NavRoot = styled.nav`
@@ -85,8 +86,8 @@ const MenuButton = styled.button`
   border: none;
   border-radius: 999px;
   padding: 0.45rem 0.9rem;
-  background: transparent;
-  color: rgba(255, 255, 255, 0.86);
+  background: ${({ $active }) => ($active ? 'rgba(240, 216, 173, 0.18)' : 'transparent')};
+  color: ${({ $active }) => ($active ? 'rgba(255, 249, 235, 0.98)' : 'rgba(255, 255, 255, 0.86)')};
   text-transform: uppercase;
   letter-spacing: 0.08em;
   font-size: 0.73rem;
@@ -152,8 +153,8 @@ const MobileItem = styled.button`
   border: none;
   border-radius: 10px;
   text-align: left;
-  background: transparent;
-  color: rgba(255, 255, 255, 0.92);
+  background: ${({ $active }) => ($active ? 'rgba(240, 216, 173, 0.18)' : 'transparent')};
+  color: ${({ $active }) => ($active ? 'rgba(255, 249, 235, 0.98)' : 'rgba(255, 255, 255, 0.92)')};
   padding: 0.72rem;
   font-size: 0.8rem;
   text-transform: uppercase;
@@ -179,19 +180,28 @@ const Backdrop = styled(motion.button)`
   }
 `;
 
-const menuItems = [
-  { label: 'Home', target: '#home' },
-  { label: 'About', target: '#about' },
-  { label: 'Videos', target: '#videos' },
-  { label: 'Gallery', target: '#shop' },
-  { label: 'Contact', target: '#contact' },
+const homeMenuItems = [
+  { label: 'Home', type: 'scroll', target: '#home' },
+  { label: 'About', type: 'scroll', target: '#about' },
+  { label: 'Videos', type: 'route', path: '/videos' },
+  { label: 'Gallery', type: 'scroll', target: '#shop' },
+  { label: 'Contact', type: 'scroll', target: '#contact' },
+];
+
+const videosMenuItems = [
+  { label: 'Home', type: 'route', path: '/' },
+  { label: 'Videos', type: 'route', path: '/videos' },
 ];
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
   const { scroll } = useLocomotiveScroll();
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const panelId = useMemo(() => 'mobile-navigation-panel', []);
+  const isVideosPage = location.pathname === '/videos';
+  const menuItems = isVideosPage ? videosMenuItems : homeMenuItems;
 
   const handleScroll = (target) => {
     const element = document.querySelector(target);
@@ -203,10 +213,33 @@ const Navbar = () => {
         duration: 1100,
         easing: [0.25, 0.0, 0.35, 1.0],
       });
-    } else {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
     }
 
+    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  const handleMenuSelect = (item) => {
+    if (item.type === 'route') {
+      if (location.pathname !== item.path) {
+        navigate(item.path);
+      }
+      setOpen(false);
+      return;
+    }
+
+    handleScroll(item.target);
+    setOpen(false);
+  };
+
+  const handleBrandClick = () => {
+    if (isVideosPage) {
+      navigate('/');
+      setOpen(false);
+      return;
+    }
+
+    handleScroll('#home');
     setOpen(false);
   };
 
@@ -220,6 +253,10 @@ const Navbar = () => {
     window.addEventListener('keydown', handleEscape);
     return () => window.removeEventListener('keydown', handleEscape);
   }, []);
+
+  useEffect(() => {
+    setOpen(false);
+  }, [location.pathname]);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia('(min-width: 56em)');
@@ -259,14 +296,18 @@ const Navbar = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.45, ease: 'easeOut' }}
           >
-            <BrandButton type="button" onClick={() => handleScroll('#home')}>
+            <BrandButton type="button" onClick={handleBrandClick}>
               Jack Miller
             </BrandButton>
 
             <DesktopMenu>
               {menuItems.map((item) => (
-                <li key={item.target}>
-                  <MenuButton type="button" onClick={() => handleScroll(item.target)}>
+                <li key={item.label}>
+                  <MenuButton
+                    type="button"
+                    onClick={() => handleMenuSelect(item)}
+                    $active={item.type === 'route' && item.path === location.pathname}
+                  >
                     {item.label}
                   </MenuButton>
                 </li>
@@ -294,8 +335,12 @@ const Navbar = () => {
                 transition={{ duration: 0.18 }}
               >
                 {menuItems.map((item) => (
-                  <li key={item.target}>
-                    <MobileItem type="button" onClick={() => handleScroll(item.target)}>
+                  <li key={item.label}>
+                    <MobileItem
+                      type="button"
+                      onClick={() => handleMenuSelect(item)}
+                      $active={item.type === 'route' && item.path === location.pathname}
+                    >
                       {item.label}
                     </MobileItem>
                   </li>

@@ -1,67 +1,21 @@
-import 'locomotive-scroll/dist/locomotive-scroll.css';
-
-import { AnimatePresence } from 'framer-motion';
-import { useEffect, useRef, useState } from 'react';
-import { LocomotiveScrollProvider } from 'react-locomotive-scroll';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 
-import Loader from './components/Loader';
-import Navbar from './components/Navbar';
-import ScrollTriggerProxy from './components/ScrollTriggerProxy';
-import About from './sections/About';
-import Footer from './sections/Footer';
-import Home from './sections/Home';
-import Marquee from './sections/Marquee';
-import Shop from './sections/Shop';
-import Videos from './sections/Videos';
+import HomePage from './pages/HomePage';
+import VideosPage from './pages/VideosPage';
 import GlobalStyles from './styles/GlobalStyles';
 import { dark } from './styles/Themes';
 
 function App() {
-  const containerRef = useRef(null);
-  const [loaded, setLoaded] = useState(false);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoaded(true);
-    }, 1800);
-
-    return () => clearTimeout(timer);
-  }, []);
-
   return (
     <>
       <GlobalStyles />
       <ThemeProvider theme={dark}>
-        <LocomotiveScrollProvider
-          options={{
-            smooth: true,
-            multiplier: 0.9,
-            getDirection: true,
-            smartphone: {
-              smooth: false,
-            },
-            tablet: {
-              smooth: false,
-            },
-          }}
-          watch={[]}
-          containerRef={containerRef}
-        >
-          <AnimatePresence mode="wait">{!loaded && <Loader key="loader" />}</AnimatePresence>
-
-          {loaded && <Navbar />}
-
-          <main className="App" data-scroll-container ref={containerRef}>
-            <ScrollTriggerProxy />
-            <Home />
-            <About />
-            <Videos />
-            <Shop />
-            <Marquee />
-            <Footer />
-          </main>
-        </LocomotiveScrollProvider>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/videos" element={<VideosPage />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
       </ThemeProvider>
     </>
   );

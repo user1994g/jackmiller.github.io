@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocomotiveScroll } from 'react-locomotive-scroll';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
@@ -180,17 +180,12 @@ const Backdrop = styled(motion.button)`
   }
 `;
 
-const homeMenuItems = [
+const menuItems = [
   { label: 'Home', type: 'scroll', target: '#home' },
   { label: 'About', type: 'scroll', target: '#about' },
   { label: 'Videos', type: 'route', path: '/videos' },
   { label: 'Gallery', type: 'scroll', target: '#shop' },
   { label: 'Contact', type: 'scroll', target: '#contact' },
-];
-
-const videosMenuItems = [
-  { label: 'Home', type: 'route', path: '/' },
-  { label: 'Videos', type: 'route', path: '/videos' },
 ];
 
 const Navbar = () => {
@@ -200,10 +195,8 @@ const Navbar = () => {
   const navigate = useNavigate();
 
   const panelId = useMemo(() => 'mobile-navigation-panel', []);
-  const isVideosPage = location.pathname === '/videos';
-  const menuItems = isVideosPage ? videosMenuItems : homeMenuItems;
 
-  const handleScroll = (target) => {
+  const scrollToTarget = useCallback((target) => {
     const element = document.querySelector(target);
     if (!element) return;
 
@@ -217,7 +210,7 @@ const Navbar = () => {
     }
 
     element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  };
+  }, [scroll]);
 
   const handleMenuSelect = (item) => {
     if (item.type === 'route') {
@@ -228,19 +221,33 @@ const Navbar = () => {
       return;
     }
 
-    handleScroll(item.target);
+    if (location.pathname !== '/') {
+      navigate('/', { state: { scrollTarget: item.target } });
+      setOpen(false);
+      return;
+    }
+
+    scrollToTarget(item.target);
     setOpen(false);
   };
 
   const handleBrandClick = () => {
-    if (isVideosPage) {
+    if (location.pathname !== '/') {
       navigate('/');
       setOpen(false);
       return;
     }
 
-    handleScroll('#home');
+    scrollToTarget('#home');
     setOpen(false);
+  };
+
+  const isActiveItem = (item) => {
+    if (item.type === 'route') {
+      return item.path === location.pathname;
+    }
+
+    return item.label === 'Home' && location.pathname === '/';
   };
 
   useEffect(() => {
@@ -257,6 +264,21 @@ const Navbar = () => {
   useEffect(() => {
     setOpen(false);
   }, [location.pathname]);
+
+  useEffect(() => {
+    if (location.pathname !== '/' || !location.state?.scrollTarget) {
+      return;
+    }
+
+    const target = location.state.scrollTarget;
+
+    const timer = setTimeout(() => {
+      scrollToTarget(target);
+      navigate('/', { replace: true, state: null });
+    }, 260);
+
+    return () => clearTimeout(timer);
+  }, [location.pathname, location.state, navigate, scrollToTarget]);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia('(min-width: 56em)');
@@ -306,7 +328,7 @@ const Navbar = () => {
                   <MenuButton
                     type="button"
                     onClick={() => handleMenuSelect(item)}
-                    $active={item.type === 'route' && item.path === location.pathname}
+                    $active={isActiveItem(item)}
                   >
                     {item.label}
                   </MenuButton>
@@ -339,7 +361,7 @@ const Navbar = () => {
                     <MobileItem
                       type="button"
                       onClick={() => handleMenuSelect(item)}
-                      $active={item.type === 'route' && item.path === location.pathname}
+                      $active={isActiveItem(item)}
                     >
                       {item.label}
                     </MobileItem>

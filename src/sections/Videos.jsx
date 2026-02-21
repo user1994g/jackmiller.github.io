@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import img4 from '../assets/Images/4.webp';
@@ -15,318 +15,533 @@ import img13 from '../assets/Images/13.webp';
 import img14 from '../assets/Images/14.webp';
 
 const Section = styled.section`
-  width: min(1320px, 94vw);
-  margin: var(--section-gap) auto;
+  width: 100%;
 `;
 
-const Surface = styled.div`
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 26px;
-  background:
-    radial-gradient(circle at 88% 12%, rgba(240, 216, 173, 0.1), transparent 34%),
-    linear-gradient(175deg, rgba(10, 12, 16, 0.96), rgba(8, 10, 14, 0.96));
-  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.46);
-  overflow: hidden;
-`;
-
-const Header = styled.div`
+const Shell = styled.div`
+  width: min(1500px, 100%);
+  margin: 0 auto;
   display: grid;
-  gap: 0.85rem;
-  padding: clamp(1.2rem, 2.8vw, 2.2rem);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-
-  h1 {
-    font-family: 'Kaushan Script';
-    font-size: clamp(2.6rem, 6.6vw, 5rem);
-    font-weight: 300;
-    color: #ffffff;
-  }
-
-  p {
-    width: min(64ch, 100%);
-    font-size: clamp(0.84rem, 1.12vw, 1rem);
-    line-height: 1.7;
-    color: rgba(243, 243, 243, 0.8);
-  }
+  gap: clamp(1.1rem, 1.8vw, 1.8rem);
 `;
 
-const MenuRow = styled.nav`
-  display: flex;
-  align-items: center;
-  gap: 0.55rem;
-  flex-wrap: wrap;
-  padding: 0 clamp(1.2rem, 2.8vw, 2.2rem) clamp(1.2rem, 2.2vw, 1.8rem);
-`;
-
-const MenuChip = styled.button`
-  border: 1px solid ${({ $active }) => ($active ? 'rgba(240, 216, 173, 0.72)' : 'rgba(255, 255, 255, 0.22)')};
-  background: ${({ $active }) => ($active ? 'rgba(240, 216, 173, 0.18)' : 'rgba(255, 255, 255, 0.04)')};
-  color: ${({ $active }) => ($active ? 'rgba(255, 248, 232, 0.98)' : 'rgba(243, 243, 243, 0.86)')};
-  border-radius: 999px;
-  padding: 0.5rem 0.88rem;
-  font-size: 0.74rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  cursor: pointer;
-  transition: all 0.2s ease;
-
-  &:hover,
-  &:focus-visible {
-    border-color: rgba(240, 216, 173, 0.78);
-    background: rgba(240, 216, 173, 0.16);
-    color: rgba(255, 248, 232, 0.98);
-    outline: none;
-  }
-`;
-
-const Featured = styled.article`
+const Hero = styled.article`
   position: relative;
-  min-height: clamp(280px, 48vw, 470px);
-  margin: 0 clamp(1.2rem, 2.8vw, 2.2rem);
-  border-radius: 18px;
+  min-height: clamp(520px, 80vh, 840px);
+  border-radius: 0;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.16);
 `;
 
-const FeaturedPoster = styled.img`
+const HeroBackground = styled.img`
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: saturate(0.92) contrast(1.02);
+  object-position: center;
+  transform: scale(1.03);
 `;
 
-const FeaturedOverlay = styled.div`
+const HeroShade = styled.div`
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(95deg, rgba(5, 6, 8, 0.9) 20%, rgba(5, 6, 8, 0.44) 58%, rgba(5, 6, 8, 0.78) 100%),
-    linear-gradient(180deg, rgba(5, 6, 8, 0.2) 0%, rgba(5, 6, 8, 0.86) 100%);
+    linear-gradient(90deg, rgba(4, 5, 8, 0.86) 12%, rgba(4, 5, 8, 0.46) 46%, rgba(4, 5, 8, 0.88) 100%),
+    linear-gradient(180deg, rgba(4, 5, 8, 0.1) 0%, rgba(4, 5, 8, 0.75) 100%);
 `;
 
-const FeaturedContent = styled.div`
+const SideRail = styled.nav`
+  position: absolute;
+  top: 50%;
+  left: clamp(0.7rem, 2vw, 1.35rem);
+  transform: translateY(-50%);
+  z-index: 4;
+  display: grid;
+  gap: 0.62rem;
+
+  @media (max-width: 66em) {
+    display: none;
+  }
+`;
+
+const RailButton = styled.button`
+  width: 2.4rem;
+  height: 2.4rem;
+  border: 1px solid ${({ $active }) => ($active ? 'rgba(240, 216, 173, 0.68)' : 'rgba(255, 255, 255, 0.23)')};
+  border-radius: 0.75rem;
+  background: ${({ $active }) => ($active ? 'rgba(240, 216, 173, 0.24)' : 'rgba(4, 5, 8, 0.52)')};
+  color: ${({ $active }) => ($active ? 'rgba(255, 247, 228, 0.98)' : 'rgba(255, 255, 255, 0.82)')};
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+
+  &:hover,
+  &:focus-visible {
+    border-color: rgba(240, 216, 173, 0.75);
+    background: rgba(240, 216, 173, 0.2);
+    color: rgba(255, 247, 228, 0.98);
+    outline: none;
+  }
+`;
+
+const HeroContent = styled(motion.div)`
   position: relative;
-  z-index: 1;
-  height: 100%;
+  z-index: 3;
+  min-height: inherit;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  gap: 0.72rem;
-  padding: clamp(1.15rem, 3vw, 2.1rem);
+  gap: clamp(0.85rem, 1.8vw, 1.15rem);
+  padding: clamp(5.8rem, 9vw, 8rem) clamp(1.2rem, 4.6vw, 5rem) clamp(1.8rem, 3vw, 2.6rem)
+    clamp(1.3rem, 9vw, 8.6rem);
 
-  span {
-    width: fit-content;
-    border-radius: 999px;
-    background: rgba(240, 216, 173, 0.18);
-    border: 1px solid rgba(240, 216, 173, 0.42);
-    padding: 0.26rem 0.68rem;
-    font-size: 0.68rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: rgba(255, 244, 216, 0.96);
-  }
-
-  h2 {
-    width: min(20ch, 100%);
-    font-size: clamp(1.5rem, 3.6vw, 3.05rem);
-    line-height: 1.05;
-    color: rgba(255, 255, 255, 0.98);
-  }
-
-  p {
-    width: min(58ch, 100%);
-    font-size: clamp(0.8rem, 1.06vw, 0.96rem);
-    line-height: 1.65;
-    color: rgba(242, 242, 242, 0.86);
-  }
-`;
-
-const PosterGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: clamp(0.62rem, 1.2vw, 0.9rem);
-  padding: clamp(1.2rem, 2.8vw, 2.2rem);
-
-  @media (max-width: 80em) {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-
-  @media (max-width: 64em) {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+  @media (max-width: 66em) {
+    padding-left: clamp(1.2rem, 4vw, 3rem);
   }
 
   @media (max-width: 48em) {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  @media (max-width: 32em) {
-    grid-template-columns: 1fr;
+    padding-top: clamp(6rem, 14vw, 7rem);
   }
 `;
 
-const PosterCard = styled(motion.button)`
-  width: 100%;
-  border: 1px solid ${({ $active }) => ($active ? 'rgba(240, 216, 173, 0.62)' : 'rgba(255, 255, 255, 0.14)')};
-  border-radius: 12px;
-  background: ${({ $active }) => ($active ? 'rgba(240, 216, 173, 0.1)' : 'rgba(255, 255, 255, 0.02)')};
-  text-align: left;
+const Eyebrow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.72rem;
+
+  b {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.55rem;
+    height: 1.55rem;
+    border-radius: 0.35rem;
+    background: rgba(240, 216, 173, 0.2);
+    border: 1px solid rgba(240, 216, 173, 0.55);
+    color: rgba(255, 246, 223, 0.98);
+    font-size: 0.9rem;
+  }
+
+  span {
+    font-size: clamp(0.75rem, 1vw, 0.92rem);
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: rgba(243, 243, 243, 0.86);
+  }
+`;
+
+const HeroTitle = styled.h1`
+  width: min(12ch, 100%);
+  font-size: clamp(2.35rem, 9vw, 6.8rem);
+  line-height: 0.9;
+  letter-spacing: 0.015em;
+  color: rgba(255, 255, 255, 0.98);
+  text-transform: uppercase;
+`;
+
+const HeroMeta = styled.h2`
+  font-size: clamp(1.02rem, 2vw, 1.65rem);
+  color: rgba(255, 255, 255, 0.94);
+  font-weight: 700;
+`;
+
+const HeroDescription = styled.p`
+  width: min(60ch, 100%);
+  font-size: clamp(0.92rem, 1.55vw, 1.12rem);
+  line-height: 1.6;
+  color: rgba(240, 240, 240, 0.9);
+`;
+
+const ActionRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  flex-wrap: wrap;
+`;
+
+const PrimaryButton = styled.button`
+  border: none;
+  border-radius: 0.6rem;
+  background: #ffffff;
+  color: #0c0d12;
+  padding: 0.72rem 1.3rem;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+
+  &:hover,
+  &:focus-visible {
+    background: rgba(255, 255, 255, 0.82);
+    outline: none;
+  }
+`;
+
+const SecondaryButton = styled.button`
+  border: 1px solid rgba(255, 255, 255, 0.26);
+  border-radius: 0.6rem;
+  background: rgba(55, 56, 62, 0.72);
+  color: #f7f7f7;
+  padding: 0.72rem 1.2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:hover,
+  &:focus-visible {
+    background: rgba(80, 82, 89, 0.88);
+    outline: none;
+  }
+`;
+
+const Rating = styled.div`
+  position: absolute;
+  right: clamp(0.9rem, 2.2vw, 1.8rem);
+  bottom: clamp(1.1rem, 2.4vw, 1.9rem);
+  z-index: 3;
+  border-left: 3px solid rgba(255, 255, 255, 0.86);
+  background: rgba(3, 4, 6, 0.68);
+  color: rgba(255, 255, 255, 0.94);
+  font-size: clamp(1rem, 1.7vw, 1.4rem);
+  letter-spacing: 0.06em;
+  padding: 0.58rem 1.1rem;
+`;
+
+const Rows = styled.div`
+  width: min(1480px, 96vw);
+  margin: 0 auto;
+  padding-bottom: clamp(1.4rem, 3vw, 2.5rem);
+  display: grid;
+  gap: 1.15rem;
+`;
+
+const Row = styled.section`
+  display: grid;
+  gap: 0.62rem;
+`;
+
+const RowTitle = styled.h3`
+  font-size: clamp(1.08rem, 1.65vw, 1.56rem);
+  color: rgba(250, 250, 250, 0.95);
+  font-weight: 700;
+`;
+
+const Rail = styled.div`
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: clamp(160px, 17vw, 265px);
+  gap: clamp(0.45rem, 1vw, 0.75rem);
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
+
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.28) transparent;
+
+  &::-webkit-scrollbar {
+    height: 7px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.28);
+  }
+`;
+
+const Tile = styled(motion.button)`
+  border: 1px solid ${({ $active }) => ($active ? 'rgba(240, 216, 173, 0.8)' : 'rgba(255, 255, 255, 0.16)')};
+  border-radius: 0.55rem;
+  background: rgba(8, 9, 12, 0.86);
   overflow: hidden;
+  padding: 0;
+  text-align: left;
   cursor: pointer;
 
   img {
     width: 100%;
-    aspect-ratio: 3 / 4;
+    aspect-ratio: 16 / 9;
     object-fit: cover;
+    display: block;
   }
 
   &:focus-visible {
-    outline: 2px solid rgba(240, 216, 173, 0.9);
+    outline: 2px solid rgba(240, 216, 173, 0.95);
     outline-offset: -2px;
   }
 `;
 
-const PosterMeta = styled.div`
-  padding: 0.7rem 0.72rem 0.8rem;
+const TileInfo = styled.div`
+  padding: 0.52rem 0.58rem 0.63rem;
+  display: grid;
+  gap: 0.15rem;
 
-  h3 {
-    font-size: clamp(0.77rem, 1vw, 0.9rem);
+  h4 {
+    font-size: 0.82rem;
+    color: rgba(248, 248, 248, 0.96);
+    letter-spacing: 0.04em;
     text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: rgba(252, 252, 252, 0.92);
   }
 
   p {
-    margin-top: 0.26rem;
-    color: rgba(233, 233, 233, 0.68);
-    font-size: 0.73rem;
-    letter-spacing: 0.03em;
+    font-size: 0.68rem;
+    color: rgba(229, 229, 229, 0.68);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
   }
 `;
 
-const videoMenus = [
+const railButtons = ['sr', 'hm', 'mx', 'up', 'rl', 'ls', 'ad'];
+
+const rows = [
   {
-    id: 'cinematic',
-    label: 'Cinematic Cuts',
-    tagline: 'Original visual pieces graded for atmosphere, contrast, and dramatic pacing.',
+    title: 'Trending Now',
     items: [
-      { poster: img11, title: 'After Midnight', info: 'Short Film • 03:24' },
-      { poster: img4, title: 'Last Train North', info: 'Visual Edit • 02:41' },
-      { poster: img5, title: 'Signal Fade', info: 'Mood Sequence • 04:02' },
-      { poster: img12, title: 'Blue Corridor', info: 'Cinematic Piece • 03:38' },
-      { poster: img6, title: 'Light Shift', info: 'Studio Film • 02:17' },
-      { poster: img7, title: 'Ashen City', info: 'Urban Story • 03:12' },
-      { poster: img13, title: 'Low Exposure', info: 'Test Reel • 01:59' },
-      { poster: img8, title: 'Golden Exit', info: 'Sequence • 02:09' },
-      { poster: img9, title: 'Tunnel Echo', info: 'Film Study • 03:01' },
-      { poster: img10, title: 'Night Voice', info: 'Director Cut • 04:15' },
+      {
+        image: img11,
+        title: 'Shadowline',
+        meta: 'Series',
+        rank: '#1 in visuals today',
+        description:
+          'When a city falls dark, one signal keeps returning from inside the abandoned quarter.',
+      },
+      {
+        image: img4,
+        title: 'Signal Field',
+        meta: 'Episode',
+        rank: 'Most watched this week',
+        description:
+          'A late-night transmission opens a route through blocked streets and unresolved cases.',
+      },
+      {
+        image: img5,
+        title: 'Liminal Room',
+        meta: 'Limited',
+        rank: 'Editor pick',
+        description:
+          'A closed set becomes a maze of reflections as each take reveals a different timeline.',
+      },
+      {
+        image: img6,
+        title: 'Cold Frame',
+        meta: 'Original',
+        rank: 'Top 10 in drama',
+        description:
+          'A forensic photographer uncovers a pattern hidden between overexposed negatives.',
+      },
+      {
+        image: img7,
+        title: 'No Sleep City',
+        meta: 'Series',
+        rank: 'Rising title',
+        description:
+          'Streetlight interviews and long-lens surveillance merge into one unresolved timeline.',
+      },
+      {
+        image: img12,
+        title: 'Red Corridor',
+        meta: 'Episode',
+        rank: 'Recently added',
+        description:
+          'A corridor lit by emergency glow becomes the entry point to an unseen floor of the archive.',
+      },
     ],
   },
   {
-    id: 'portfolio',
-    label: 'Portfolio Stories',
-    tagline: 'Project highlights built from concept framing to final grade and delivery.',
+    title: 'Continue Watching',
     items: [
-      { poster: img10, title: 'Portfolio Highlight', info: 'Feature Reel • 04:15' },
-      { poster: img14, title: 'Wide Format', info: 'Screen Test • 02:46' },
-      { poster: img4, title: 'Aerial Motion', info: 'Visual Story • 03:08' },
-      { poster: img12, title: 'Monochrome Arc', info: 'Style Study • 02:52' },
-      { poster: img7, title: 'Studio Return', info: 'Narrative Clip • 03:37' },
-      { poster: img9, title: 'Pulse', info: 'Cutdown • 01:44' },
-      { poster: img11, title: 'Second Exposure', info: 'Director Pass • 03:03' },
-      { poster: img8, title: 'Late Horizon', info: 'Shot Series • 02:34' },
-      { poster: img5, title: 'Nightline', info: 'Film Block • 02:58' },
-      { poster: img6, title: 'Field Entry', info: 'Sequence • 03:19' },
+      {
+        image: img8,
+        title: 'Echo Transfer',
+        meta: '41 min left',
+        rank: 'Continue from 00:19:24',
+        description:
+          'A failed radio relay is replayed from six angles until one missing face appears in frame.',
+      },
+      {
+        image: img9,
+        title: 'Night Junction',
+        meta: '24 min left',
+        rank: 'Continue from 00:36:02',
+        description:
+          'A rail hub camera network links three disappearances that happened eight years apart.',
+      },
+      {
+        image: img10,
+        title: 'Final Composition',
+        meta: '12 min left',
+        rank: 'Continue from 00:48:01',
+        description:
+          'A last cut must be locked before sunrise while the timeline continues to rewrite itself.',
+      },
+      {
+        image: img13,
+        title: 'Glass Division',
+        meta: '37 min left',
+        rank: 'Continue from 00:14:10',
+        description:
+          'A mirrored set hides an off-camera witness visible only in grade tests.',
+      },
+      {
+        image: img14,
+        title: 'Zero Ground',
+        meta: '18 min left',
+        rank: 'Continue from 00:31:56',
+        description:
+          'A sealed excavation site reopens when drone footage reveals movement below concrete.',
+      },
+      {
+        image: img4,
+        title: 'Mirror Exit',
+        meta: '33 min left',
+        rank: 'Continue from 00:21:08',
+        description:
+          'Two synchronized edits from different cameras refuse to align at the same timestamp.',
+      },
     ],
   },
   {
-    id: 'behind-scenes',
-    label: 'Behind The Frames',
-    tagline: 'Process edits, lighting tests, and on-set clips from recent projects.',
+    title: 'New Releases',
     items: [
-      { poster: img12, title: 'Setup Tape 01', info: 'BTS • 01:40' },
-      { poster: img13, title: 'Grade Session', info: 'BTS • 02:11' },
-      { poster: img11, title: 'Lens Check', info: 'BTS • 01:57' },
-      { poster: img6, title: 'Location Walkthrough', info: 'BTS • 02:35' },
-      { poster: img14, title: 'Blocking Pass', info: 'BTS • 02:06' },
-      { poster: img9, title: 'Audio Layering', info: 'BTS • 01:48' },
-      { poster: img5, title: 'Lighting Notes', info: 'BTS • 02:04' },
-      { poster: img4, title: 'Frame Match', info: 'BTS • 01:53' },
-      { poster: img7, title: 'Set Reset', info: 'BTS • 01:44' },
-      { poster: img8, title: 'Texture Pass', info: 'BTS • 01:58' },
+      {
+        image: img6,
+        title: 'Blue Sector',
+        meta: 'New',
+        rank: 'Just released',
+        description:
+          'A cold-toned security tape leads a team deeper into a disconnected district control room.',
+      },
+      {
+        image: img7,
+        title: 'Rain Archive',
+        meta: 'New',
+        rank: 'Just released',
+        description:
+          'Recovered tapes from storm season expose an investigation closed without explanation.',
+      },
+      {
+        image: img11,
+        title: 'Static Breach',
+        meta: 'New',
+        rank: 'Just released',
+        description:
+          'A repeating white-noise pattern maps directly to hidden camera positions across the city.',
+      },
+      {
+        image: img12,
+        title: 'Terminal North',
+        meta: 'New',
+        rank: 'Just released',
+        description:
+          'A border checkpoint camera captures the same traveler entering on three separate dates.',
+      },
+      {
+        image: img10,
+        title: 'After Voltage',
+        meta: 'New',
+        rank: 'Just released',
+        description:
+          'Power restoration reveals untouched recordings from a period when the studio was closed.',
+      },
+      {
+        image: img8,
+        title: 'Concrete Sky',
+        meta: 'New',
+        rank: 'Just released',
+        description:
+          'A rooftop surveillance arc tracks a silhouette that appears before each structural failure.',
+      },
     ],
   },
 ];
 
 const Videos = () => {
-  const [activeMenu, setActiveMenu] = useState(videoMenus[0].id);
-  const [activeClipIndex, setActiveClipIndex] = useState(0);
+  const initial = rows[0].items[0];
+  const [featured, setFeatured] = useState(initial);
+  const [activeRail, setActiveRail] = useState(1);
 
-  const currentMenu = useMemo(
-    () => videoMenus.find((menu) => menu.id === activeMenu) || videoMenus[0],
-    [activeMenu],
-  );
+  const activeTitle = useMemo(() => {
+    const words = featured.title.split(' ');
+    if (words.length <= 1) {
+      return featured.title;
+    }
 
-  useEffect(() => {
-    setActiveClipIndex(0);
-  }, [activeMenu]);
-
-  const featuredClip = currentMenu.items[activeClipIndex] || currentMenu.items[0];
+    const split = Math.ceil(words.length / 2);
+    return `${words.slice(0, split).join(' ')}\n${words.slice(split).join(' ')}`;
+  }, [featured.title]);
 
   return (
     <Section id="videos">
-      <Surface>
-        <Header>
-          <h1>videos</h1>
-          <p>
-            Streaming-style video hub with quick category switching, featured spotlight, and a
-            browsable grid built to match the same dark Jack Miller visual theme.
-          </p>
-        </Header>
+      <Shell>
+        <Hero>
+          <HeroBackground src={featured.image} alt="" aria-hidden="true" />
+          <HeroShade />
 
-        <MenuRow aria-label="Video categories">
-          {videoMenus.map((menu) => (
-            <MenuChip
-              key={menu.id}
-              type="button"
-              $active={menu.id === activeMenu}
-              onClick={() => setActiveMenu(menu.id)}
-            >
-              {menu.label}
-            </MenuChip>
+          <SideRail aria-label="Videos quick actions">
+            {railButtons.map((button, index) => (
+              <RailButton
+                key={button}
+                type="button"
+                $active={activeRail === index}
+                onClick={() => setActiveRail(index)}
+                aria-label={`Quick action ${button}`}
+              >
+                {button}
+              </RailButton>
+            ))}
+          </SideRail>
+
+          <HeroContent
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.45, ease: 'easeOut' }}
+          >
+            <Eyebrow>
+              <b>J</b>
+              <span>Series</span>
+            </Eyebrow>
+
+            <HeroTitle>{activeTitle}</HeroTitle>
+            <HeroMeta>{featured.rank}</HeroMeta>
+            <HeroDescription>{featured.description}</HeroDescription>
+
+            <ActionRow>
+              <PrimaryButton type="button">Play</PrimaryButton>
+              <SecondaryButton type="button">More info</SecondaryButton>
+            </ActionRow>
+          </HeroContent>
+
+          <Rating>TV-14</Rating>
+        </Hero>
+
+        <Rows>
+          {rows.map((row) => (
+            <Row key={row.title}>
+              <RowTitle>{row.title}</RowTitle>
+              <Rail>
+                {row.items.map((item) => {
+                  const isActive = item.title === featured.title;
+                  return (
+                    <Tile
+                      key={`${row.title}-${item.title}`}
+                      type="button"
+                      onClick={() => setFeatured(item)}
+                      $active={isActive}
+                      whileHover={{ y: -6, scale: 1.03 }}
+                      transition={{ duration: 0.2 }}
+                      aria-label={`Feature ${item.title}`}
+                    >
+                      <img src={item.image} alt={item.title} width="1280" height="720" />
+                      <TileInfo>
+                        <h4>{item.title}</h4>
+                        <p>{item.meta}</p>
+                      </TileInfo>
+                    </Tile>
+                  );
+                })}
+              </Rail>
+            </Row>
           ))}
-        </MenuRow>
-
-        <Featured>
-          <FeaturedPoster src={featuredClip.poster} alt="" aria-hidden="true" />
-          <FeaturedOverlay />
-          <FeaturedContent>
-            <span>{currentMenu.label}</span>
-            <h2>{featuredClip.title}</h2>
-            <p>{currentMenu.tagline}</p>
-          </FeaturedContent>
-        </Featured>
-
-        <PosterGrid>
-          {currentMenu.items.map((clip, index) => (
-            <PosterCard
-              key={`${clip.title}-${clip.info}`}
-              type="button"
-              $active={index === activeClipIndex}
-              onClick={() => setActiveClipIndex(index)}
-              whileHover={{ y: -6 }}
-              transition={{ duration: 0.2 }}
-              aria-label={`Feature ${clip.title}`}
-            >
-              <img src={clip.poster} alt={clip.title} width="640" height="853" />
-              <PosterMeta>
-                <h3>{clip.title}</h3>
-                <p>{clip.info}</p>
-              </PosterMeta>
-            </PosterCard>
-          ))}
-        </PosterGrid>
-      </Surface>
+        </Rows>
+      </Shell>
     </Section>
   );
 };

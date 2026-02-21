@@ -7,7 +7,6 @@ import Videos from '../sections/Videos';
 
 const PageMain = styled.main`
   min-height: 100vh;
-  padding-top: clamp(4.8rem, 8vw, 6.2rem);
 `;
 
 const VideosPage = () => {

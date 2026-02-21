@@ -2,6 +2,7 @@ import { Suspense, lazy } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 
+import ClarityTracker from './components/ClarityTracker';
 import GlobalStyles from './styles/GlobalStyles';
 import { dark } from './styles/Themes';
 
@@ -13,6 +14,7 @@ function App() {
     <>
       <GlobalStyles />
       <ThemeProvider theme={dark}>
+        <ClarityTracker />
         <Suspense fallback={null}>
           <Routes>
             <Route path="/" element={<HomePage />} />

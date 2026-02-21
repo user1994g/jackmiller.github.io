@@ -16,223 +16,254 @@ import img14 from '../assets/Images/14.webp';
 
 const Section = styled.section`
   width: 100%;
+  background: #07080b;
 `;
 
-const Shell = styled.div`
-  width: min(1500px, 100%);
+const Canvas = styled.div`
+  position: relative;
+  width: min(1600px, 100%);
   margin: 0 auto;
-  display: grid;
-  gap: clamp(1.1rem, 1.8vw, 1.8rem);
 `;
 
 const Hero = styled.article`
   position: relative;
-  min-height: clamp(520px, 80vh, 840px);
-  border-radius: 0;
+  min-height: clamp(520px, 92vh, 940px);
   overflow: hidden;
 `;
 
-const HeroBackground = styled.img`
+const HeroImage = styled.img`
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
   object-position: center;
-  transform: scale(1.03);
 `;
 
-const HeroShade = styled.div`
+const HeroGlow = styled.div`
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(90deg, rgba(4, 5, 8, 0.86) 12%, rgba(4, 5, 8, 0.46) 46%, rgba(4, 5, 8, 0.88) 100%),
-    linear-gradient(180deg, rgba(4, 5, 8, 0.1) 0%, rgba(4, 5, 8, 0.75) 100%);
+    radial-gradient(140% 90% at 76% 45%, rgba(255, 121, 54, 0.28), transparent 56%),
+    linear-gradient(90deg, rgba(6, 7, 10, 0.9) 14%, rgba(6, 7, 10, 0.52) 48%, rgba(6, 7, 10, 0.92) 100%),
+    linear-gradient(180deg, rgba(6, 7, 10, 0.1) 0%, rgba(6, 7, 10, 0.84) 100%);
 `;
 
-const SideRail = styled.nav`
+const LeftDock = styled.nav`
   position: absolute;
+  left: clamp(0.55rem, 1.8vw, 1.1rem);
   top: 50%;
-  left: clamp(0.7rem, 2vw, 1.35rem);
   transform: translateY(-50%);
-  z-index: 4;
+  z-index: 6;
   display: grid;
-  gap: 0.62rem;
+  gap: 0.56rem;
 
-  @media (max-width: 66em) {
+  @media (max-width: 70em) {
     display: none;
   }
 `;
 
-const RailButton = styled.button`
-  width: 2.4rem;
-  height: 2.4rem;
-  border: 1px solid ${({ $active }) => ($active ? 'rgba(240, 216, 173, 0.68)' : 'rgba(255, 255, 255, 0.23)')};
-  border-radius: 0.75rem;
-  background: ${({ $active }) => ($active ? 'rgba(240, 216, 173, 0.24)' : 'rgba(4, 5, 8, 0.52)')};
-  color: ${({ $active }) => ($active ? 'rgba(255, 247, 228, 0.98)' : 'rgba(255, 255, 255, 0.82)')};
-  font-size: 0.7rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+const DockButton = styled.button`
+  width: 2.3rem;
+  height: 2.3rem;
+  border-radius: 0.64rem;
+  border: 1px solid ${({ $active }) => ($active ? 'rgba(240, 216, 173, 0.82)' : 'rgba(255, 255, 255, 0.24)')};
+  background: ${({ $active }) => ($active ? 'rgba(240, 216, 173, 0.2)' : 'rgba(10, 11, 15, 0.58)')};
+  color: ${({ $active }) => ($active ? 'rgba(255, 244, 216, 0.98)' : 'rgba(255, 255, 255, 0.84)')};
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
   cursor: pointer;
 
   &:hover,
   &:focus-visible {
-    border-color: rgba(240, 216, 173, 0.75);
+    border-color: rgba(240, 216, 173, 0.88);
     background: rgba(240, 216, 173, 0.2);
-    color: rgba(255, 247, 228, 0.98);
+    color: rgba(255, 244, 216, 0.98);
     outline: none;
+  }
+
+  svg {
+    width: 1rem;
+    height: 1rem;
   }
 `;
 
 const HeroContent = styled(motion.div)`
   position: relative;
-  z-index: 3;
+  z-index: 5;
   min-height: inherit;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  gap: clamp(0.85rem, 1.8vw, 1.15rem);
-  padding: clamp(5.8rem, 9vw, 8rem) clamp(1.2rem, 4.6vw, 5rem) clamp(1.8rem, 3vw, 2.6rem)
-    clamp(1.3rem, 9vw, 8.6rem);
+  gap: clamp(0.78rem, 1.7vw, 1.15rem);
+  padding: clamp(6rem, 10vw, 8.4rem) clamp(1.2rem, 5vw, 4.8rem) clamp(6.1rem, 9vw, 8rem)
+    clamp(1.2rem, 9vw, 8.4rem);
 
-  @media (max-width: 66em) {
+  @media (max-width: 70em) {
     padding-left: clamp(1.2rem, 4vw, 3rem);
   }
 
   @media (max-width: 48em) {
-    padding-top: clamp(6rem, 14vw, 7rem);
+    padding-bottom: clamp(5rem, 12vw, 6.2rem);
   }
 `;
 
-const Eyebrow = styled.div`
-  display: flex;
+const SeriesMark = styled.div`
+  display: inline-flex;
   align-items: center;
-  gap: 0.72rem;
+  gap: 0.62rem;
 
   b {
+    width: 1.55rem;
+    height: 1.55rem;
+    border-radius: 0.32rem;
+    border: 1px solid rgba(240, 216, 173, 0.64);
+    background: rgba(240, 216, 173, 0.2);
+    color: rgba(255, 245, 220, 0.98);
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 1.55rem;
-    height: 1.55rem;
-    border-radius: 0.35rem;
-    background: rgba(240, 216, 173, 0.2);
-    border: 1px solid rgba(240, 216, 173, 0.55);
-    color: rgba(255, 246, 223, 0.98);
-    font-size: 0.9rem;
+    font-size: 0.96rem;
+    font-weight: 700;
   }
 
   span {
-    font-size: clamp(0.75rem, 1vw, 0.92rem);
     text-transform: uppercase;
-    letter-spacing: 0.16em;
-    color: rgba(243, 243, 243, 0.86);
+    letter-spacing: 0.18em;
+    font-size: clamp(0.72rem, 1vw, 0.9rem);
+    color: rgba(242, 242, 242, 0.88);
   }
 `;
 
-const HeroTitle = styled.h1`
+const BigTitle = styled.h1`
   width: min(12ch, 100%);
-  font-size: clamp(2.35rem, 9vw, 6.8rem);
-  line-height: 0.9;
-  letter-spacing: 0.015em;
+  font-family: 'Georgia', 'Times New Roman', serif;
+  font-size: clamp(2.3rem, 8.8vw, 6.4rem);
+  line-height: 0.86;
+  letter-spacing: 0.01em;
   color: rgba(255, 255, 255, 0.98);
   text-transform: uppercase;
+  text-shadow: 0 8px 32px rgba(0, 0, 0, 0.55);
 `;
 
-const HeroMeta = styled.h2`
-  font-size: clamp(1.02rem, 2vw, 1.65rem);
-  color: rgba(255, 255, 255, 0.94);
-  font-weight: 700;
+const RankRow = styled.div`
+  display: inline-flex;
+  align-items: center;
+  gap: 0.52rem;
+
+  b {
+    border-radius: 0.28rem;
+    background: rgba(210, 36, 36, 0.9);
+    color: rgba(255, 255, 255, 0.98);
+    padding: 0.2rem 0.36rem;
+    font-size: 0.7rem;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+  }
+
+  span {
+    font-size: clamp(0.98rem, 1.8vw, 1.45rem);
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.96);
+  }
 `;
 
-const HeroDescription = styled.p`
-  width: min(60ch, 100%);
-  font-size: clamp(0.92rem, 1.55vw, 1.12rem);
-  line-height: 1.6;
-  color: rgba(240, 240, 240, 0.9);
+const Description = styled.p`
+  width: min(62ch, 100%);
+  color: rgba(243, 243, 243, 0.92);
+  font-size: clamp(0.92rem, 1.5vw, 1.16rem);
+  line-height: 1.58;
 `;
 
-const ActionRow = styled.div`
+const ButtonRow = styled.div`
   display: flex;
   align-items: center;
   gap: 0.7rem;
   flex-wrap: wrap;
 `;
 
-const PrimaryButton = styled.button`
+const PlayButton = styled.button`
   border: none;
-  border-radius: 0.6rem;
+  border-radius: 0.56rem;
+  padding: 0.74rem 1.3rem;
   background: #ffffff;
-  color: #0c0d12;
-  padding: 0.72rem 1.3rem;
-  font-size: 1rem;
+  color: #06070b;
+  font-size: 1.02rem;
   font-weight: 700;
   cursor: pointer;
 
   &:hover,
   &:focus-visible {
-    background: rgba(255, 255, 255, 0.82);
+    background: rgba(255, 255, 255, 0.86);
     outline: none;
   }
 `;
 
-const SecondaryButton = styled.button`
-  border: 1px solid rgba(255, 255, 255, 0.26);
-  border-radius: 0.6rem;
-  background: rgba(55, 56, 62, 0.72);
-  color: #f7f7f7;
-  padding: 0.72rem 1.2rem;
-  font-size: 1rem;
+const InfoButton = styled.button`
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  border-radius: 0.56rem;
+  padding: 0.74rem 1.24rem;
+  background: rgba(58, 60, 66, 0.72);
+  color: rgba(255, 255, 255, 0.96);
+  font-size: 1.02rem;
   font-weight: 600;
   cursor: pointer;
 
   &:hover,
   &:focus-visible {
-    background: rgba(80, 82, 89, 0.88);
+    background: rgba(77, 79, 87, 0.86);
     outline: none;
   }
 `;
 
-const Rating = styled.div`
+const Maturity = styled.div`
   position: absolute;
-  right: clamp(0.9rem, 2.2vw, 1.8rem);
-  bottom: clamp(1.1rem, 2.4vw, 1.9rem);
-  z-index: 3;
+  right: clamp(0.72rem, 2vw, 1.4rem);
+  bottom: clamp(1.3rem, 2.6vw, 2.1rem);
+  z-index: 5;
   border-left: 3px solid rgba(255, 255, 255, 0.86);
-  background: rgba(3, 4, 6, 0.68);
-  color: rgba(255, 255, 255, 0.94);
-  font-size: clamp(1rem, 1.7vw, 1.4rem);
+  background: rgba(6, 7, 9, 0.62);
+  color: rgba(255, 255, 255, 0.96);
   letter-spacing: 0.06em;
-  padding: 0.58rem 1.1rem;
+  font-size: clamp(0.94rem, 1.6vw, 1.38rem);
+  padding: 0.56rem 1.04rem;
 `;
 
 const Rows = styled.div`
-  width: min(1480px, 96vw);
-  margin: 0 auto;
-  padding-bottom: clamp(1.4rem, 3vw, 2.5rem);
+  width: min(1540px, 98vw);
+  margin: clamp(-5.6rem, -6vw, -4rem) auto 0;
+  position: relative;
+  z-index: 7;
+  padding-bottom: clamp(1.2rem, 2.8vw, 2.4rem);
   display: grid;
-  gap: 1.15rem;
+  gap: 1.05rem;
+
+  @media (max-width: 56em) {
+    margin-top: -2.2rem;
+  }
 `;
 
 const Row = styled.section`
   display: grid;
-  gap: 0.62rem;
+  gap: 0.58rem;
 `;
 
 const RowTitle = styled.h3`
-  font-size: clamp(0.98rem, 1.3vw, 1.2rem);
-  color: rgba(250, 250, 250, 0.95);
+  padding-left: clamp(0.65rem, 1.4vw, 1rem);
+  font-size: clamp(0.98rem, 1.24vw, 1.16rem);
+  color: rgba(250, 250, 250, 0.96);
   font-weight: 700;
 `;
 
-const Rail = styled.div`
+const Shelf = styled.div`
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns: clamp(112px, 11vw, 170px);
-  gap: clamp(0.32rem, 0.7vw, 0.52rem);
+  grid-auto-columns: clamp(116px, 10.5vw, 168px);
+  gap: clamp(0.32rem, 0.7vw, 0.54rem);
   overflow-x: auto;
-  padding-bottom: 0.25rem;
+  padding: 0 0.6rem 0.2rem;
 
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.28) transparent;
@@ -247,13 +278,13 @@ const Rail = styled.div`
   }
 `;
 
-const Tile = styled(motion.button)`
-  border: 1px solid ${({ $active }) => ($active ? 'rgba(240, 216, 173, 0.8)' : 'rgba(255, 255, 255, 0.16)')};
-  border-radius: 0.55rem;
-  background: rgba(8, 9, 12, 0.86);
+const Card = styled(motion.button)`
+  position: relative;
+  border: 1px solid ${({ $active }) => ($active ? 'rgba(240, 216, 173, 0.8)' : 'rgba(255, 255, 255, 0.15)')};
+  border-radius: 0.5rem;
+  background: rgba(8, 9, 13, 0.9);
   overflow: hidden;
   padding: 0;
-  text-align: left;
   cursor: pointer;
 
   img {
@@ -269,11 +300,67 @@ const Tile = styled(motion.button)`
   }
 `;
 
-const TileInfo = styled.div`
-  display: none;
+const CardMark = styled.span`
+  position: absolute;
+  top: 0.32rem;
+  left: 0.32rem;
+  border-radius: 0.2rem;
+  background: rgba(215, 39, 39, 0.92);
+  color: rgba(255, 255, 255, 0.98);
+  font-size: 0.54rem;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.16rem 0.22rem;
 `;
 
-const railButtons = ['sr', 'hm', 'mx', 'up', 'rl', 'ls', 'ad'];
+const dockIcons = [
+  (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <circle cx="11" cy="11" r="6" />
+      <line x1="20" y1="20" x2="16.6" y2="16.6" />
+    </svg>
+  ),
+  (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M3 11.8L12 4l9 7.8" />
+      <path d="M6.5 10.7v8.8h11v-8.8" />
+    </svg>
+  ),
+  (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M17.8 6.2H6.2v11.6h11.6z" />
+      <path d="M9 3.8h6" />
+      <path d="M9 20.2h6" />
+    </svg>
+  ),
+  (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M5 19l14-14" />
+      <path d="M12 5h7v7" />
+      <path d="M5 12v7h7" />
+    </svg>
+  ),
+  (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <rect x="3.8" y="5.5" width="16.4" height="12.2" rx="2" />
+      <line x1="8" y1="20" x2="16" y2="20" />
+    </svg>
+  ),
+  (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M4.5 18.2h15" />
+      <path d="M6.8 8.2h10.4v7.8H6.8z" />
+      <path d="M10.2 5.8h3.6" />
+    </svg>
+  ),
+  (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <line x1="12" y1="5" x2="12" y2="19" />
+      <line x1="5" y1="12" x2="19" y2="12" />
+    </svg>
+  ),
+];
 
 const rows = [
   {
@@ -282,50 +369,39 @@ const rows = [
       {
         image: img11,
         title: 'Shadowline',
-        meta: 'Series',
-        rank: '#1 in visuals today',
+        rank: '#1 in TV Shows Today',
         description:
-          'When a city falls dark, one signal keeps returning from inside the abandoned quarter.',
+          'When a young editor vanishes, a small city unravels into covert experiments and volatile signals.',
       },
       {
         image: img4,
         title: 'Signal Field',
-        meta: 'Episode',
-        rank: 'Most watched this week',
-        description:
-          'A late-night transmission opens a route through blocked streets and unresolved cases.',
+        rank: 'Top 10 in Drama',
+        description: 'A frequency map buried in old tapes points to a hidden district underneath the station.',
       },
       {
         image: img5,
         title: 'Liminal Room',
-        meta: 'Limited',
-        rank: 'Editor pick',
-        description:
-          'A closed set becomes a maze of reflections as each take reveals a different timeline.',
+        rank: 'Trending #3',
+        description: 'A controlled studio set begins changing each night before cameras roll.',
       },
       {
         image: img6,
         title: 'Cold Frame',
-        meta: 'Original',
-        rank: 'Top 10 in drama',
-        description:
-          'A forensic photographer uncovers a pattern hidden between overexposed negatives.',
+        rank: 'Trending #4',
+        description: 'Each overexposed negative contains coordinates to a place that should not exist.',
       },
       {
         image: img7,
         title: 'No Sleep City',
-        meta: 'Series',
-        rank: 'Rising title',
-        description:
-          'Streetlight interviews and long-lens surveillance merge into one unresolved timeline.',
+        rank: 'Trending #5',
+        description: 'Night interviews reveal one witness appearing in every unsolved file.',
       },
       {
         image: img12,
         title: 'Red Corridor',
-        meta: 'Episode',
-        rank: 'Recently added',
-        description:
-          'A corridor lit by emergency glow becomes the entry point to an unseen floor of the archive.',
+        rank: 'Trending #6',
+        description: 'A corridor lit in emergency red opens to a locked archive floor.',
       },
     ],
   },
@@ -335,50 +411,38 @@ const rows = [
       {
         image: img8,
         title: 'Echo Transfer',
-        meta: '41 min left',
-        rank: 'Continue from 00:19:24',
-        description:
-          'A failed radio relay is replayed from six angles until one missing face appears in frame.',
+        rank: 'Continue at 19:24',
+        description: 'A missing voice returns in reversed audio from a decommissioned relay.',
       },
       {
         image: img9,
         title: 'Night Junction',
-        meta: '24 min left',
-        rank: 'Continue from 00:36:02',
-        description:
-          'A rail hub camera network links three disappearances that happened eight years apart.',
+        rank: 'Continue at 36:02',
+        description: 'Three disappearances converge through one old rail control feed.',
       },
       {
         image: img10,
         title: 'Final Composition',
-        meta: '12 min left',
-        rank: 'Continue from 00:48:01',
-        description:
-          'A last cut must be locked before sunrise while the timeline continues to rewrite itself.',
+        rank: 'Continue at 48:01',
+        description: 'A final cut keeps revealing frames no editor added.',
       },
       {
         image: img13,
         title: 'Glass Division',
-        meta: '37 min left',
-        rank: 'Continue from 00:14:10',
-        description:
-          'A mirrored set hides an off-camera witness visible only in grade tests.',
+        rank: 'Continue at 14:10',
+        description: 'Mirror reflections show an extra person never present on set.',
       },
       {
         image: img14,
         title: 'Zero Ground',
-        meta: '18 min left',
-        rank: 'Continue from 00:31:56',
-        description:
-          'A sealed excavation site reopens when drone footage reveals movement below concrete.',
+        rank: 'Continue at 31:56',
+        description: 'Drone footage captures movement below sealed concrete.',
       },
       {
         image: img4,
         title: 'Mirror Exit',
-        meta: '33 min left',
-        rank: 'Continue from 00:21:08',
-        description:
-          'Two synchronized edits from different cameras refuse to align at the same timestamp.',
+        rank: 'Continue at 21:08',
+        description: 'Parallel edits sync perfectly until the final 7 seconds.',
       },
     ],
   },
@@ -388,144 +452,132 @@ const rows = [
       {
         image: img6,
         title: 'Blue Sector',
-        meta: 'New',
-        rank: 'Just released',
-        description:
-          'A cold-toned security tape leads a team deeper into a disconnected district control room.',
+        rank: 'New this week',
+        description: 'A frozen control room reactivates after years of silence.',
       },
       {
         image: img7,
         title: 'Rain Archive',
-        meta: 'New',
-        rank: 'Just released',
-        description:
-          'Recovered tapes from storm season expose an investigation closed without explanation.',
+        rank: 'New this week',
+        description: 'Recovered storm tapes reopen a closed investigation.',
       },
       {
         image: img11,
         title: 'Static Breach',
-        meta: 'New',
-        rank: 'Just released',
-        description:
-          'A repeating white-noise pattern maps directly to hidden camera positions across the city.',
+        rank: 'New this week',
+        description: 'White-noise patterns align with unseen surveillance routes.',
       },
       {
         image: img12,
         title: 'Terminal North',
-        meta: 'New',
-        rank: 'Just released',
-        description:
-          'A border checkpoint camera captures the same traveler entering on three separate dates.',
+        rank: 'New this week',
+        description: 'One traveler appears at three checkpoints in one minute.',
       },
       {
         image: img10,
         title: 'After Voltage',
-        meta: 'New',
-        rank: 'Just released',
-        description:
-          'Power restoration reveals untouched recordings from a period when the studio was closed.',
+        rank: 'New this week',
+        description: 'Restored power reveals untouched recordings from closed sets.',
       },
       {
         image: img8,
         title: 'Concrete Sky',
-        meta: 'New',
-        rank: 'Just released',
-        description:
-          'A rooftop surveillance arc tracks a silhouette that appears before each structural failure.',
+        rank: 'New this week',
+        description: 'A rooftop feed tracks a silhouette before each blackout.',
       },
     ],
   },
 ];
 
 const Videos = () => {
-  const initial = rows[0].items[0];
-  const [featured, setFeatured] = useState(initial);
-  const [activeRail, setActiveRail] = useState(1);
+  const [activeDock, setActiveDock] = useState(1);
+  const [featured, setFeatured] = useState(rows[0].items[0]);
 
-  const activeTitle = useMemo(() => {
+  const titleLines = useMemo(() => {
     const words = featured.title.split(' ');
     if (words.length <= 1) {
       return featured.title;
     }
-
     const split = Math.ceil(words.length / 2);
     return `${words.slice(0, split).join(' ')}\n${words.slice(split).join(' ')}`;
   }, [featured.title]);
 
   return (
     <Section id="videos">
-      <Shell>
+      <Canvas>
         <Hero>
-          <HeroBackground src={featured.image} alt="" aria-hidden="true" />
-          <HeroShade />
+          <HeroImage src={featured.image} alt="" aria-hidden="true" />
+          <HeroGlow />
 
-          <SideRail aria-label="Videos quick actions">
-            {railButtons.map((button, index) => (
-              <RailButton
-                key={button}
+          <LeftDock aria-label="Videos quick navigation">
+            {dockIcons.map((icon, index) => (
+              <DockButton
+                key={`dock-${index + 1}`}
                 type="button"
-                $active={activeRail === index}
-                onClick={() => setActiveRail(index)}
-                aria-label={`Quick action ${button}`}
+                $active={activeDock === index}
+                onClick={() => setActiveDock(index)}
+                aria-label={`Quick icon ${index + 1}`}
               >
-                {button}
-              </RailButton>
+                {icon}
+              </DockButton>
             ))}
-          </SideRail>
+          </LeftDock>
 
           <HeroContent
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 22 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.45, ease: 'easeOut' }}
           >
-            <Eyebrow>
+            <SeriesMark>
               <b>J</b>
               <span>Series</span>
-            </Eyebrow>
+            </SeriesMark>
 
-            <HeroTitle>{activeTitle}</HeroTitle>
-            <HeroMeta>{featured.rank}</HeroMeta>
-            <HeroDescription>{featured.description}</HeroDescription>
+            <BigTitle>{titleLines}</BigTitle>
 
-            <ActionRow>
-              <PrimaryButton type="button">Play</PrimaryButton>
-              <SecondaryButton type="button">More info</SecondaryButton>
-            </ActionRow>
+            <RankRow>
+              <b>Top</b>
+              <span>{featured.rank}</span>
+            </RankRow>
+
+            <Description>{featured.description}</Description>
+
+            <ButtonRow>
+              <PlayButton type="button">Play</PlayButton>
+              <InfoButton type="button">More info</InfoButton>
+            </ButtonRow>
           </HeroContent>
 
-          <Rating>TV-14</Rating>
+          <Maturity>TV-14</Maturity>
         </Hero>
 
         <Rows>
           {rows.map((row) => (
             <Row key={row.title}>
               <RowTitle>{row.title}</RowTitle>
-              <Rail>
+              <Shelf>
                 {row.items.map((item) => {
                   const isActive = item.title === featured.title;
                   return (
-                    <Tile
+                    <Card
                       key={`${row.title}-${item.title}`}
                       type="button"
-                      onClick={() => setFeatured(item)}
                       $active={isActive}
+                      onClick={() => setFeatured(item)}
                       whileHover={{ y: -3, scale: 1.015 }}
                       transition={{ duration: 0.2 }}
                       aria-label={`Feature ${item.title}`}
                     >
+                      <CardMark>J</CardMark>
                       <img src={item.image} alt={item.title} width="1280" height="720" />
-                      <TileInfo>
-                        <h4>{item.title}</h4>
-                        <p>{item.meta}</p>
-                      </TileInfo>
-                    </Tile>
+                    </Card>
                   );
                 })}
-              </Rail>
+              </Shelf>
             </Row>
           ))}
         </Rows>
-      </Shell>
+      </Canvas>
     </Section>
   );
 };

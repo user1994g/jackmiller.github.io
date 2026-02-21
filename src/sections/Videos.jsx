@@ -260,8 +260,8 @@ const RowTitle = styled.h3`
 const Shelf = styled.div`
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns: clamp(116px, 10.5vw, 168px);
-  gap: clamp(0.32rem, 0.7vw, 0.54rem);
+  grid-auto-columns: clamp(92px, 8.2vw, 128px);
+  gap: clamp(0.22rem, 0.48vw, 0.36rem);
   overflow-x: auto;
   padding: 0 0.6rem 0.2rem;
 
@@ -281,7 +281,7 @@ const Shelf = styled.div`
 const Card = styled(motion.button)`
   position: relative;
   border: 1px solid ${({ $active }) => ($active ? 'rgba(240, 216, 173, 0.8)' : 'rgba(255, 255, 255, 0.15)')};
-  border-radius: 0.5rem;
+  border-radius: 0.42rem;
   background: rgba(8, 9, 13, 0.9);
   overflow: hidden;
   padding: 0;
@@ -289,7 +289,7 @@ const Card = styled(motion.button)`
 
   img {
     width: 100%;
-    aspect-ratio: 16 / 9;
+    height: clamp(58px, 5.4vw, 84px);
     object-fit: cover;
     display: block;
   }

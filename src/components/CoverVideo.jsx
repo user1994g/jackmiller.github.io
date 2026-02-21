@@ -93,7 +93,7 @@ const CoverVideo = () => {
         </p>
       </Title>
 
-      <video src={MainVideo} type="video/mp4" autoPlay muted loop playsInline />
+      <video src={MainVideo} type="video/mp4" autoPlay muted loop playsInline preload="metadata" />
     </VideoContainer>
   );
 };

@@ -14,6 +14,18 @@ import img12 from '../assets/Images/12.webp';
 import img13 from '../assets/Images/13.webp';
 import img14 from '../assets/Images/14.webp';
 
+import thumb4 from '../assets/VideoThumbs/4-thumb.jpg';
+import thumb5 from '../assets/VideoThumbs/5-thumb.jpg';
+import thumb6 from '../assets/VideoThumbs/6-thumb.jpg';
+import thumb7 from '../assets/VideoThumbs/7-thumb.jpg';
+import thumb8 from '../assets/VideoThumbs/8-thumb.jpg';
+import thumb9 from '../assets/VideoThumbs/9-thumb.jpg';
+import thumb10 from '../assets/VideoThumbs/10-thumb.jpg';
+import thumb11 from '../assets/VideoThumbs/11-thumb.jpg';
+import thumb12 from '../assets/VideoThumbs/12-thumb.jpg';
+import thumb13 from '../assets/VideoThumbs/13-thumb.jpg';
+import thumb14 from '../assets/VideoThumbs/14-thumb.jpg';
+
 const Section = styled.section`
   width: 100%;
   background: #07080b;
@@ -489,6 +501,22 @@ const rows = [
   },
 ];
 
+const thumbnailByImage = new Map([
+  [img4, thumb4],
+  [img5, thumb5],
+  [img6, thumb6],
+  [img7, thumb7],
+  [img8, thumb8],
+  [img9, thumb9],
+  [img10, thumb10],
+  [img11, thumb11],
+  [img12, thumb12],
+  [img13, thumb13],
+  [img14, thumb14],
+]);
+
+const getThumbnail = (source) => thumbnailByImage.get(source) || source;
+
 const Videos = () => {
   const [activeDock, setActiveDock] = useState(1);
   const [featured, setFeatured] = useState(rows[0].items[0]);
@@ -569,7 +597,14 @@ const Videos = () => {
                       aria-label={`Feature ${item.title}`}
                     >
                       <CardMark>J</CardMark>
-                      <img src={item.image} alt={item.title} width="1280" height="720" />
+                      <img
+                        src={getThumbnail(item.image)}
+                        alt={item.title}
+                        width="1280"
+                        height="720"
+                        loading="lazy"
+                        decoding="async"
+                      />
                     </Card>
                   );
                 })}

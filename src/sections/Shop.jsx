@@ -164,7 +164,14 @@ const Shop = () => {
               onClick={() => setActiveImage({ src: photo.img, alt: photo.title })}
             >
               <figure>
-                <img width="800" height="1000" src={photo.img} alt={photo.title} />
+                <img
+                  width="800"
+                  height="1000"
+                  src={photo.img}
+                  alt={photo.title}
+                  loading="lazy"
+                  decoding="async"
+                />
               </figure>
               <Meta>
                 <h2>{photo.title}</h2>

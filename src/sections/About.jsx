@@ -144,7 +144,7 @@ const About = () => {
       </Copy>
 
       <Gallery>
-        {aboutPhotos.map((photo) => (
+        {aboutPhotos.map((photo, index) => (
           <Card
             key={photo.alt}
             type="button"
@@ -153,7 +153,14 @@ const About = () => {
             data-scroll
             data-scroll-speed={photo.speed}
           >
-            <img width={photo.width} height={photo.height} src={photo.src} alt={photo.alt} />
+            <img
+              width={photo.width}
+              height={photo.height}
+              src={photo.src}
+              alt={photo.alt}
+              loading={index === 0 ? 'eager' : 'lazy'}
+              decoding="async"
+            />
           </Card>
         ))}
       </Gallery>

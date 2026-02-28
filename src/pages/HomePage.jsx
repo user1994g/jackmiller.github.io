@@ -13,6 +13,17 @@ import Home from '../sections/Home';
 import Marquee from '../sections/Marquee';
 import Shop from '../sections/Shop';
 
+const isTouchOrSmallViewport = () => {
+  if (typeof window === 'undefined') {
+    return false;
+  }
+
+  const coarsePointer = window.matchMedia('(pointer: coarse)').matches;
+  const narrowViewport = window.matchMedia('(max-width: 64em)').matches;
+
+  return coarsePointer || narrowViewport;
+};
+
 const HomePage = () => {
   const containerRef = useRef(null);
   const [loaded, setLoaded] = useState(() => {
@@ -22,6 +33,43 @@ const HomePage = () => {
 
     return window.sessionStorage.getItem('home-loader-seen') === '1';
   });
+
+  const [useNativeMobileScroll, setUseNativeMobileScroll] = useState(() =>
+    isTouchOrSmallViewport()
+  );
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return undefined;
+    }
+
+    const coarsePointerQuery = window.matchMedia('(pointer: coarse)');
+    const narrowViewportQuery = window.matchMedia('(max-width: 64em)');
+
+    const updateScrollMode = () => {
+      setUseNativeMobileScroll(coarsePointerQuery.matches || narrowViewportQuery.matches);
+    };
+
+    updateScrollMode();
+
+    if (coarsePointerQuery.addEventListener) {
+      coarsePointerQuery.addEventListener('change', updateScrollMode);
+      narrowViewportQuery.addEventListener('change', updateScrollMode);
+
+      return () => {
+        coarsePointerQuery.removeEventListener('change', updateScrollMode);
+        narrowViewportQuery.removeEventListener('change', updateScrollMode);
+      };
+    }
+
+    coarsePointerQuery.addListener(updateScrollMode);
+    narrowViewportQuery.addListener(updateScrollMode);
+
+    return () => {
+      coarsePointerQuery.removeListener(updateScrollMode);
+      narrowViewportQuery.removeListener(updateScrollMode);
+    };
+  }, []);
 
   useEffect(() => {
     if (loaded) {
@@ -54,6 +102,27 @@ const HomePage = () => {
     return () => clearTimeout(fallbackTimer);
   }, []);
 
+  const pageContent = (
+    <>
+      <AnimatePresence mode="wait">{!loaded && <Loader key="loader" />}</AnimatePresence>
+
+      {loaded && <Navbar />}
+
+      <main className="App" data-scroll-container={!useNativeMobileScroll ? true : undefined} ref={containerRef}>
+        {!useNativeMobileScroll && <ScrollTriggerProxy />}
+        <Home />
+        <About />
+        <Shop />
+        <Marquee />
+        <Footer />
+      </main>
+    </>
+  );
+
+  if (useNativeMobileScroll) {
+    return pageContent;
+  }
+
   return (
     <LocomotiveScrollProvider
       options={{
@@ -70,18 +139,7 @@ const HomePage = () => {
       watch={[]}
       containerRef={containerRef}
     >
-      <AnimatePresence mode="wait">{!loaded && <Loader key="loader" />}</AnimatePresence>
-
-      {loaded && <Navbar />}
-
-      <main className="App" data-scroll-container ref={containerRef}>
-        <ScrollTriggerProxy />
-        <Home />
-        <About />
-        <Shop />
-        <Marquee />
-        <Footer />
-      </main>
+      {pageContent}
     </LocomotiveScrollProvider>
   );
 };

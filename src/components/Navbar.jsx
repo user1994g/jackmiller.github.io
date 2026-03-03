@@ -20,10 +20,10 @@ const NavRoot = styled.nav`
   top: 0;
   left: 0;
   right: 0;
-  z-index: 60;
+  z-index: 90;
   display: flex;
   justify-content: center;
-  padding: clamp(0.7rem, 1.8vw, 1rem) var(--gutter);
+  padding: calc(clamp(0.7rem, 1.8vw, 1rem) + max(0px, env(safe-area-inset-top, 0px))) var(--gutter);
 `;
 
 const NavFrame = styled.div`

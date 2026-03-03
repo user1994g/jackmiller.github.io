@@ -13,6 +13,30 @@ import Home from '../sections/Home';
 import Marquee from '../sections/Marquee';
 import Shop from '../sections/Shop';
 
+const readLoaderSeen = () => {
+  if (typeof window === 'undefined') {
+    return false;
+  }
+
+  try {
+    return window.sessionStorage.getItem('home-loader-seen') === '1';
+  } catch {
+    return false;
+  }
+};
+
+const persistLoaderSeen = () => {
+  if (typeof window === 'undefined') {
+    return;
+  }
+
+  try {
+    window.sessionStorage.setItem('home-loader-seen', '1');
+  } catch {
+    // Ignore storage failures on strict mobile privacy settings.
+  }
+};
+
 const isTouchOrSmallViewport = () => {
   if (typeof window === 'undefined') {
     return false;
@@ -26,13 +50,7 @@ const isTouchOrSmallViewport = () => {
 
 const HomePage = () => {
   const containerRef = useRef(null);
-  const [loaded, setLoaded] = useState(() => {
-    if (typeof window === 'undefined') {
-      return false;
-    }
-
-    return window.sessionStorage.getItem('home-loader-seen') === '1';
-  });
+  const [loaded, setLoaded] = useState(() => readLoaderSeen());
 
   const [useNativeMobileScroll, setUseNativeMobileScroll] = useState(() =>
     isTouchOrSmallViewport()
@@ -78,7 +96,7 @@ const HomePage = () => {
 
     const timer = setTimeout(() => {
       setLoaded(true);
-      window.sessionStorage.setItem('home-loader-seen', '1');
+      persistLoaderSeen();
     }, 1800);
 
     return () => clearTimeout(timer);
@@ -106,7 +124,7 @@ const HomePage = () => {
     <>
       <AnimatePresence mode="wait">{!loaded && <Loader key="loader" />}</AnimatePresence>
 
-      {loaded && <Navbar />}
+      <Navbar />
 
       <main className="App" data-scroll-container={!useNativeMobileScroll ? true : undefined} ref={containerRef}>
         {!useNativeMobileScroll && <ScrollTriggerProxy />}

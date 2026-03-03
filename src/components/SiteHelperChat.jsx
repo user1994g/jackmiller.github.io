@@ -17,15 +17,17 @@ const pulse = keyframes`
 const Root = styled.div`
   position: fixed;
   inset: auto 0 0 0;
-  z-index: 75;
+  z-index: 120;
   pointer-events: none;
 `;
 
 const ToggleButton = styled.button`
   pointer-events: auto;
   position: fixed;
-  right: max(1rem, env(safe-area-inset-right));
-  bottom: max(1rem, env(safe-area-inset-bottom));
+  right: 1rem;
+  right: max(1rem, env(safe-area-inset-right, 0px));
+  bottom: 1rem;
+  bottom: max(1rem, env(safe-area-inset-bottom, 0px));
   width: 3rem;
   height: 3rem;
   border: 1px solid rgba(255, 255, 255, 0.25);
@@ -65,8 +67,9 @@ const ChatIcon = styled.span`
 const ChatPanel = styled(motion.section)`
   pointer-events: auto;
   position: fixed;
-  right: max(1rem, env(safe-area-inset-right));
-  bottom: calc(max(1rem, env(safe-area-inset-bottom)) + 3.55rem);
+  right: 1rem;
+  right: max(1rem, env(safe-area-inset-right, 0px));
+  bottom: calc(max(1rem, env(safe-area-inset-bottom, 0px)) + 3.55rem);
   width: min(23rem, calc(100vw - 2rem));
   max-height: min(70vh, 34rem);
   display: grid;
@@ -86,8 +89,9 @@ const ChatPanel = styled(motion.section)`
   backdrop-filter: blur(9px);
 
   @media (max-width: 42em) {
-    right: max(0.75rem, env(safe-area-inset-right));
-    bottom: calc(max(0.75rem, env(safe-area-inset-bottom)) + 3.55rem);
+    right: 0.75rem;
+    right: max(0.75rem, env(safe-area-inset-right, 0px));
+    bottom: calc(max(0.75rem, env(safe-area-inset-bottom, 0px)) + 3.55rem);
     width: min(22rem, calc(100vw - 1.5rem));
     max-height: 74vh;
   }

@@ -413,14 +413,14 @@ const Backdrop = styled(motion.button)`
 `;
 
 const menuItems = [
-  { label: 'Home', type: 'route', path: '/' },
+  { label: 'Home', type: 'scroll', target: '#home' },
   { label: 'About', type: 'scroll', target: '#about' },
   { label: 'Videos', type: 'route', path: '/videos' },
   { label: 'Gallery', type: 'scroll', target: '#shop' },
 ];
 
 const lookupTargets = [
-  { keywords: ['home', 'start', 'top'], action: { type: 'route', path: '/' } },
+  { keywords: ['home', 'start', 'top'], action: { type: 'scroll', target: '#home' } },
   { keywords: ['about', 'bio', 'me'], action: { type: 'scroll', target: '#about' } },
   { keywords: ['video', 'videos', 'film', 'netflix'], action: { type: 'route', path: '/videos' } },
   { keywords: ['gallery', 'photo', 'photos', 'image', 'images', 'shop'], action: { type: 'scroll', target: '#shop' } },
@@ -498,12 +498,6 @@ const Navbar = () => {
 
   const handleMenuSelect = (item) => {
     if (item.type === 'route') {
-      if (item.path === '/' && location.pathname === '/') {
-        scrollToTarget('#home');
-        setOpen(false);
-        return;
-      }
-
       if (location.pathname !== item.path) {
         navigate(item.path);
       }
@@ -541,7 +535,7 @@ const Navbar = () => {
 
   const handleBrandClick = () => {
     if (location.pathname !== '/') {
-      navigate('/');
+      navigate('/', { state: { scrollTarget: '#home' } });
       setOpen(false);
       return;
     }
@@ -597,6 +591,10 @@ const Navbar = () => {
       if (performance.now() - startedAt < maxWaitMs) {
         frameId = window.requestAnimationFrame(runScrollWhenReady);
         return;
+      }
+
+      if (target === '#home') {
+        window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
       }
 
       clearNavState();

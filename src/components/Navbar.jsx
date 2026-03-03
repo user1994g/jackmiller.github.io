@@ -189,9 +189,7 @@ const DesktopSearchForm = styled.form`
   }
 
   @media (max-width: 56em) {
-    display: inline-flex;
-    gap: 0.28rem;
-    padding: 0.24rem 0.24rem 0.24rem 0.55rem;
+    display: none;
   }
 `;
 

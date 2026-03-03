@@ -6,7 +6,7 @@ const CoverVideo = React.lazy(() => import('../components/CoverVideo'));
 const Section = styled.section`
   position: relative;
   min-height: 100vh;
-  overflow: hidden;
+  overflow: visible;
 `;
 
 const Home = () => {

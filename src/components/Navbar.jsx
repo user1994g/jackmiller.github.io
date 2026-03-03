@@ -462,7 +462,8 @@ const mobileItemVariants = {
 const Navbar = () => {
   const [open, setOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const { scroll } = useLocomotiveScroll();
+  const locoContext = useLocomotiveScroll();
+  const scroll = locoContext?.scroll;
   const location = useLocation();
   const navigate = useNavigate();
 

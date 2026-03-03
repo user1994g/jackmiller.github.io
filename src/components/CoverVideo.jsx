@@ -1,21 +1,43 @@
 import { motion } from 'framer-motion';
-import React from 'react';
+import gsap from 'gsap';
+import ScrollTrigger from 'gsap/ScrollTrigger';
+import React, { useEffect, useRef } from 'react';
+import { useLocomotiveScroll } from 'react-locomotive-scroll';
 import styled from 'styled-components';
 
 import MainVideo from '../assets/Walking Girl.mp4';
 
-const VideoContainer = styled.section`
+gsap.registerPlugin(ScrollTrigger);
+
+const VideoContainer = styled.section.attrs({ className: 'container' })`
   width: 100%;
+  height: 100vh;
   min-height: 100vh;
   position: relative;
+  overflow: hidden;
+`;
+
+const ScaleDownLayer = styled.div.attrs({ className: 'scaleDown' })`
+  width: 120vw;
+  height: 120vh;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform-origin: 50% 50%;
+  will-change: transform;
 
   video {
     width: 100%;
-    height: 100vh;
+    height: 100%;
     object-fit: cover;
     object-position: center 30%;
+  }
 
-    @media (max-width: 48em) {
+  @media (max-width: 48em) {
+    width: 128vw;
+    height: 116vh;
+
+    video {
       object-position: center 42%;
     }
   }
@@ -75,8 +97,49 @@ const Title = styled(motion.div)`
 `;
 
 const CoverVideo = () => {
+  const containerRef = useRef(null);
+  const locoContext = useLocomotiveScroll();
+  const scroll = locoContext?.scroll;
+
+  useEffect(() => {
+    if (!containerRef.current) {
+      return undefined;
+    }
+
+    const scrollerElement = scroll?.el;
+
+    const context = gsap.context(() => {
+      gsap.set('.scaleDown', {
+        xPercent: -50,
+        yPercent: -50,
+        scale: 1,
+        force3D: true,
+      });
+
+      gsap.to('.scaleDown', {
+        scale: 0.6667,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '.container',
+          pin: '.container',
+          scrub: true,
+          start: 'top top',
+          end: '+=200%',
+          invalidateOnRefresh: true,
+          ...(scrollerElement ? { scroller: scrollerElement } : {}),
+        },
+      });
+
+      ScrollTrigger.refresh();
+    }, containerRef);
+
+    return () => {
+      context.revert();
+    };
+  }, [scroll]);
+
   return (
-    <VideoContainer data-scroll>
+    <VideoContainer ref={containerRef}>
       <DarkOverlay />
 
       <Title
@@ -93,7 +156,9 @@ const CoverVideo = () => {
         </p>
       </Title>
 
-      <video src={MainVideo} type="video/mp4" autoPlay muted loop playsInline preload="metadata" />
+      <ScaleDownLayer>
+        <video src={MainVideo} type="video/mp4" autoPlay muted loop playsInline preload="metadata" />
+      </ScaleDownLayer>
     </VideoContainer>
   );
 };

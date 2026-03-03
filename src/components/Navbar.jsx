@@ -121,7 +121,8 @@ const DesktopMenu = styled.ul`
   gap: 0.28rem;
 
   @media (max-width: 56em) {
-    display: none;
+    gap: 0.28rem;
+    padding: 0.24rem 0.24rem 0.24rem 0.55rem;
   }
 `;
 
@@ -201,6 +202,11 @@ const SearchInput = styled.input`
   font-size: 0.76rem;
   letter-spacing: 0.03em;
 
+  @media (max-width: 56em) {
+    width: min(36vw, 7rem);
+    font-size: 0.78rem;
+  }
+
   &::placeholder {
     color: rgba(204, 210, 218, 0.58);
   }
@@ -234,6 +240,10 @@ const SearchSubmit = styled.button`
     background: linear-gradient(100deg, transparent 0%, rgba(240, 216, 173, 0.45) 50%, transparent 100%);
     transform: skewX(-20deg);
     transition: left 0.55s ease;
+  }
+
+  @media (max-width: 56em) {
+    padding: 0.32rem 0.56rem;
   }
 
   &:hover,

@@ -17,7 +17,7 @@ const pulse = keyframes`
 const Root = styled.div`
   position: fixed;
   inset: auto 0 0 0;
-  z-index: 120;
+  z-index: 9999;
   pointer-events: none;
 `;
 
@@ -28,12 +28,12 @@ const ToggleButton = styled.button`
   right: max(1rem, env(safe-area-inset-right, 0px));
   bottom: 1rem;
   bottom: max(1rem, env(safe-area-inset-bottom, 0px));
-  width: 3rem;
-  height: 3rem;
+  width: 3.15rem;
+  height: 3.15rem;
   border: 1px solid rgba(255, 255, 255, 0.25);
   border-radius: 999px;
   background: linear-gradient(180deg, rgba(17, 18, 22, 0.95), rgba(8, 9, 12, 0.96));
-  color: rgba(248, 250, 255, 0.95);
+  color: rgba(250, 252, 255, 0.98);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -41,6 +41,7 @@ const ToggleButton = styled.button`
   font-weight: 700;
   cursor: pointer;
   animation: ${pulse} 2.4s ease-in-out infinite;
+  box-shadow: 0 0 0 1px rgba(240, 216, 173, 0.24);
   transition: transform 0.18s ease, border-color 0.18s ease;
 
   &:hover,
@@ -690,21 +691,24 @@ const SiteHelperChat = () => {
         aria-expanded={open}
         aria-label={open ? 'Close site helper' : 'Open site helper'}
       >
-        <ChatIcon aria-hidden="true">
-          <svg viewBox="0 0 24 24" focusable="false">
-            <path
-              d="M4 5.5C4 4.12 5.12 3 6.5 3h11C18.88 3 20 4.12 20 5.5v7C20 11.88 18.88 13 17.5 13H10l-4.6 4.2c-.64.58-1.67.13-1.67-.74V5.5Z"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.8"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            <circle cx="8.5" cy="8.6" r="1" fill="currentColor" />
-            <circle cx="12" cy="8.6" r="1" fill="currentColor" />
-            <circle cx="15.5" cy="8.6" r="1" fill="currentColor" />
-          </svg>
-        </ChatIcon>
+        <span style={{ display: 'grid', placeItems: 'center', gap: '0.08rem', lineHeight: 1 }}>
+          <ChatIcon aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false">
+              <path
+                d="M4 5.5C4 4.12 5.12 3 6.5 3h11C18.88 3 20 4.12 20 5.5v7C20 11.88 18.88 13 17.5 13H10l-4.6 4.2c-.64.58-1.67.13-1.67-.74V5.5Z"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <circle cx="8.5" cy="8.6" r="1" fill="currentColor" />
+              <circle cx="12" cy="8.6" r="1" fill="currentColor" />
+              <circle cx="15.5" cy="8.6" r="1" fill="currentColor" />
+            </svg>
+          </ChatIcon>
+          <span style={{ fontSize: '0.52rem', letterSpacing: '0.08em', textTransform: 'uppercase' }}>AI</span>
+        </span>
       </ToggleButton>
     </Root>
   );

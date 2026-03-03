@@ -98,42 +98,51 @@ const Title = styled(motion.div)`
 
 const CoverVideo = () => {
   const containerRef = useRef(null);
+  const scaleLayerRef = useRef(null);
+  const videoRef = useRef(null);
   const locoContext = useLocomotiveScroll();
   const scroll = locoContext?.scroll;
 
   useEffect(() => {
-    if (!containerRef.current) {
+    if (!containerRef.current || !scaleLayerRef.current) {
       return undefined;
     }
 
     const scrollerElement = scroll?.el;
 
     const context = gsap.context(() => {
-      gsap.set('.scaleDown', {
+      gsap.set(scaleLayerRef.current, {
         xPercent: -50,
         yPercent: -50,
         scale: 1,
         force3D: true,
       });
 
-      gsap.to('.scaleDown', {
+      gsap.to(scaleLayerRef.current, {
         scale: 0.6667,
         ease: 'none',
         scrollTrigger: {
-          trigger: '.container',
-          pin: '.container',
+          trigger: containerRef.current,
+          pin: containerRef.current,
           scrub: true,
           start: 'top top',
           end: '+=200%',
+          anticipatePin: 1,
           invalidateOnRefresh: true,
           ...(scrollerElement ? { scroller: scrollerElement } : {}),
         },
       });
-
-      ScrollTrigger.refresh();
     }, containerRef);
 
+    const refreshTrigger = () => ScrollTrigger.refresh();
+    const rafId = window.requestAnimationFrame(refreshTrigger);
+    const videoElement = videoRef.current;
+
+    videoElement?.addEventListener('loadedmetadata', refreshTrigger);
+
     return () => {
+      window.cancelAnimationFrame(rafId);
+      videoElement?.removeEventListener('loadedmetadata', refreshTrigger);
       context.revert();
     };
   }, [scroll]);
@@ -156,8 +165,8 @@ const CoverVideo = () => {
         </p>
       </Title>
 
-      <ScaleDownLayer>
-        <video src={MainVideo} type="video/mp4" autoPlay muted loop playsInline preload="metadata" />
+      <ScaleDownLayer ref={scaleLayerRef}>
+        <video ref={videoRef} src={MainVideo} type="video/mp4" autoPlay muted loop playsInline preload="metadata" />
       </ScaleDownLayer>
     </VideoContainer>
   );

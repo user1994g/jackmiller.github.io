@@ -535,7 +535,7 @@ const Navbar = () => {
 
   const handleBrandClick = () => {
     if (location.pathname !== '/') {
-      navigate('/');
+      navigate('/', { state: { scrollTarget: '#home' } });
       setOpen(false);
       return;
     }
@@ -574,19 +574,30 @@ const Navbar = () => {
 
     const target = location.state.scrollTarget;
     let frameId = null;
-    let tries = 0;
+    const startedAt = performance.now();
+    const maxWaitMs = 2200;
+
+    const clearNavState = () => navigate('/', { replace: true, state: null });
 
     const runScrollWhenReady = () => {
       const element = document.querySelector(target);
 
-      if (!element && tries < 10) {
-        tries += 1;
+      if (element) {
+        scrollToTarget(target);
+        clearNavState();
+        return;
+      }
+
+      if (performance.now() - startedAt < maxWaitMs) {
         frameId = window.requestAnimationFrame(runScrollWhenReady);
         return;
       }
 
-      scrollToTarget(target);
-      navigate('/', { replace: true, state: null });
+      if (target === '#home') {
+        window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+      }
+
+      clearNavState();
     };
 
     frameId = window.requestAnimationFrame(runScrollWhenReady);

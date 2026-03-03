@@ -121,8 +121,7 @@ const DesktopMenu = styled.ul`
   gap: 0.28rem;
 
   @media (max-width: 56em) {
-    gap: 0.28rem;
-    padding: 0.24rem 0.24rem 0.24rem 0.55rem;
+    display: none;
   }
 `;
 
@@ -190,7 +189,9 @@ const DesktopSearchForm = styled.form`
   }
 
   @media (max-width: 56em) {
-    display: none;
+    display: inline-flex;
+    gap: 0.28rem;
+    padding: 0.24rem 0.24rem 0.24rem 0.55rem;
   }
 `;
 

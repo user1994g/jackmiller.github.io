@@ -3,6 +3,7 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 
 import ClarityTracker from './components/ClarityTracker';
+import DesktopMouseAura from './components/DesktopMouseAura';
 import GeoBlockGate from './components/GeoBlockGate';
 import SiteHelperChat from './components/SiteHelperChat';
 import GlobalStyles from './styles/GlobalStyles';
@@ -26,6 +27,7 @@ function App() {
             </Routes>
           </Suspense>
           <SiteHelperChat />
+          <DesktopMouseAura />
         </GeoBlockGate>
       </ThemeProvider>
     </>

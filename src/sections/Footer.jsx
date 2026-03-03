@@ -19,15 +19,10 @@ const Bottom = styled(motion.div)`
   flex-wrap: wrap;
   text-align: center;
 
-  span,
-  a {
+  span {
     color: rgba(255, 255, 255, 0.72);
     font-size: 0.82rem;
     letter-spacing: 0.04em;
-  }
-
-  a:hover {
-    color: #fff;
   }
 `;
 
@@ -36,7 +31,6 @@ const Footer = () => {
     <Section id="contact">
       <Bottom initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ duration: 0.6 }}>
         <span>&copy; 2026 Jack Miller. All Rights Reserved.</span>
-        <a href="mailto:jazzg869@gmail.com">jazzg869@gmail.com</a>
       </Bottom>
     </Section>
   );

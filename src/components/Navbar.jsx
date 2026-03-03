@@ -334,7 +334,8 @@ const MobileSearchInput = styled.input`
   border: none;
   background: transparent;
   color: rgba(242, 244, 247, 0.95);
-  font-size: 0.84rem;
+  font-size: 16px;
+  line-height: 1.2;
 
   &::placeholder {
     color: rgba(204, 210, 218, 0.58);

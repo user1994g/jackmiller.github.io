@@ -1,0 +1,709 @@
+import { AnimatePresence, motion } from 'framer-motion';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import styled, { keyframes } from 'styled-components';
+
+const pulse = keyframes`
+  0%,
+  100% {
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35), 0 0 0 0 rgba(240, 216, 173, 0.34);
+  }
+
+  50% {
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.45), 0 0 0 8px rgba(240, 216, 173, 0);
+  }
+`;
+
+const Root = styled.div`
+  position: fixed;
+  inset: auto 0 0 0;
+  z-index: 75;
+  pointer-events: none;
+`;
+
+const ToggleButton = styled.button`
+  pointer-events: auto;
+  position: fixed;
+  right: max(1rem, env(safe-area-inset-right));
+  bottom: max(1rem, env(safe-area-inset-bottom));
+  width: 3rem;
+  height: 3rem;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(17, 18, 22, 0.95), rgba(8, 9, 12, 0.96));
+  color: rgba(248, 250, 255, 0.95);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  animation: ${pulse} 2.4s ease-in-out infinite;
+  transition: transform 0.18s ease, border-color 0.18s ease;
+
+  &:hover,
+  &:focus-visible {
+    transform: translateY(-2px);
+    border-color: rgba(240, 216, 173, 0.58);
+    outline: none;
+  }
+`;
+
+const ChatIcon = styled.span`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.15rem;
+  height: 1.15rem;
+
+  svg {
+    width: 100%;
+    height: 100%;
+  }
+`;
+
+const ChatPanel = styled(motion.section)`
+  pointer-events: auto;
+  position: fixed;
+  right: max(1rem, env(safe-area-inset-right));
+  bottom: calc(max(1rem, env(safe-area-inset-bottom)) + 3.55rem);
+  width: min(23rem, calc(100vw - 2rem));
+  max-height: min(70vh, 34rem);
+  display: grid;
+  grid-template-rows: auto 1fr auto auto;
+  gap: 0.6rem;
+  padding: 0.72rem;
+  transform-origin: bottom right;
+
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  background:
+    linear-gradient(180deg, rgba(8, 9, 12, 0.97), rgba(5, 6, 9, 0.98)),
+    radial-gradient(circle at 50% -40%, rgba(255, 255, 255, 0.08), transparent 54%);
+  box-shadow:
+    0 22px 56px rgba(0, 0, 0, 0.56),
+    inset 0 1px 0 rgba(255, 255, 255, 0.09);
+  backdrop-filter: blur(9px);
+
+  @media (max-width: 42em) {
+    right: max(0.75rem, env(safe-area-inset-right));
+    bottom: calc(max(0.75rem, env(safe-area-inset-bottom)) + 3.55rem);
+    width: min(22rem, calc(100vw - 1.5rem));
+    max-height: 74vh;
+  }
+`;
+
+const Header = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+
+  h3 {
+    margin: 0;
+    font-size: 0.82rem;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: rgba(248, 251, 255, 0.96);
+  }
+
+  p {
+    margin: 0.22rem 0 0;
+    font-size: 0.72rem;
+    color: rgba(207, 213, 224, 0.72);
+  }
+`;
+
+const CloseButton = styled.button`
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(247, 249, 252, 0.92);
+  font-size: 0.74rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.32rem 0.5rem;
+  cursor: pointer;
+
+  &:hover,
+  &:focus-visible {
+    border-color: rgba(240, 216, 173, 0.58);
+    outline: none;
+  }
+`;
+
+const Messages = styled.div`
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.42rem;
+  padding-right: 0.16rem;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.22);
+    border-radius: 999px;
+  }
+`;
+
+const Bubble = styled.div`
+  width: fit-content;
+  max-width: 90%;
+  border-radius: 10px;
+  padding: 0.52rem 0.62rem;
+  line-height: 1.45;
+  font-size: 0.78rem;
+
+  ${({ $role }) => ($role === 'user'
+    ? `
+      align-self: flex-end;
+      background: rgba(240, 216, 173, 0.2);
+      color: rgba(255, 248, 236, 0.98);
+      border: 1px solid rgba(240, 216, 173, 0.38);
+    `
+    : `
+      align-self: flex-start;
+      background: rgba(255, 255, 255, 0.08);
+      color: rgba(239, 242, 247, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+    `)}
+`;
+
+const QuickActions = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.38rem;
+`;
+
+const Chip = styled.button`
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+  padding: 0.3rem 0.55rem;
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(236, 239, 244, 0.9);
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+
+  &:hover,
+  &:focus-visible {
+    border-color: rgba(240, 216, 173, 0.58);
+    color: #fff;
+    outline: none;
+  }
+`;
+
+const InputForm = styled.form`
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.4rem;
+`;
+
+const Input = styled.input`
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(245, 247, 250, 0.95);
+  padding: 0.54rem 0.62rem;
+  font-size: 16px;
+  line-height: 1.2;
+
+  &::placeholder {
+    color: rgba(204, 210, 219, 0.58);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: rgba(240, 216, 173, 0.6);
+  }
+`;
+
+const Send = styled.button`
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.11);
+  color: rgba(250, 252, 255, 0.97);
+  padding: 0.54rem 0.7rem;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+
+  &:hover,
+  &:focus-visible {
+    border-color: rgba(240, 216, 173, 0.58);
+    outline: none;
+  }
+`;
+
+const quickPrompts = ['Home', 'About me', 'Photos', 'Videos', 'Contact'];
+
+const actionCues = new Set([
+  'go',
+  'open',
+  'show',
+  'find',
+  'take',
+  'bring',
+  'see',
+  'watch',
+  'where',
+  'locate',
+  'need',
+  'want',
+  'looking',
+  'lookingfor',
+]);
+
+const greetingWords = new Set(['hi', 'hello', 'hey', 'yo', 'sup']);
+const thanksWords = new Set(['thanks', 'thank', 'thx', 'cheers']);
+const helpWords = new Set(['help', 'options', 'menu', 'commands']);
+const confirmWords = new Set(['yes', 'yeah', 'yep', 'sure', 'ok', 'okay', 'please', 'doit']);
+const cancelWords = new Set(['no', 'nope', 'nah', 'stop', 'cancel', 'nevermind']);
+
+const siteIntents = [
+  {
+    id: 'home',
+    label: 'Home',
+    action: { type: 'scroll', target: '#home' },
+    keywords: ['home', 'top', 'start', 'landing', 'main'],
+    phrases: ['go home', 'take me home', 'back to top', 'home page'],
+    responses: [
+      'Taking you to the top of the home page.',
+      'Opening the home section now.',
+      'Got it. Jumping to home.',
+    ],
+  },
+  {
+    id: 'about',
+    label: 'About',
+    action: { type: 'scroll', target: '#about' },
+    keywords: ['about', 'bio', 'story', 'background', 'jack', 'person'],
+    phrases: ['about me', 'who is jack', 'jack story', 'about section'],
+    responses: [
+      'Taking you to the About section.',
+      'Opening the About section now.',
+      'Got it. Jumping to About.',
+    ],
+  },
+  {
+    id: 'photos',
+    label: 'Photos',
+    action: { type: 'scroll', target: '#shop' },
+    keywords: ['photo', 'photos', 'image', 'images', 'picture', 'gallery', 'gallary', 'portfolio'],
+    phrases: ['photo gallery', 'show photos', 'open gallery', 'find photos'],
+    responses: [
+      'Opening the photo gallery section.',
+      'Taking you to Photos now.',
+      'Got it. Jumping to the gallery.',
+    ],
+  },
+  {
+    id: 'videos',
+    label: 'Videos',
+    action: { type: 'route', path: '/videos' },
+    keywords: ['video', 'videos', 'film', 'films', 'movie', 'movies', 'reel', 'reels', 'clip', 'clips', 'vedio', 'vedios'],
+    phrases: ['video page', 'show videos', 'open videos', 'find videos', 'watch videos'],
+    responses: [
+      'Opening the videos page.',
+      'Taking you to Videos now.',
+      'Got it. Jumping to the videos section.',
+    ],
+  },
+  {
+    id: 'contact',
+    label: 'Contact',
+    action: { type: 'scroll', target: '#contact' },
+    keywords: ['contact', 'email', 'reach', 'message', 'talk'],
+    phrases: ['contact info', 'how to contact', 'reach jack', 'email jack'],
+    responses: [
+      'Taking you to Contact.',
+      'Opening the contact section now.',
+      'Got it. Jumping to Contact.',
+    ],
+  },
+];
+
+const initialMessages = [
+  {
+    id: 'intro',
+    role: 'bot',
+    text: 'Hi, I am the site helper. You can talk normally, like "hello i want to find the videos pls".',
+  },
+];
+
+const normalizeText = (value) => value
+  .toLowerCase()
+  .replace(/[^a-z0-9\s]/g, ' ')
+  .replace(/\s+/g, ' ')
+  .trim();
+
+const tokenize = (value) => value.split(' ').filter(Boolean);
+
+const hasAnyWord = (tokens, dictionary) => tokens.some((token) => dictionary.has(token));
+
+const hasPhrase = (normalized, phrases) => phrases.some((phrase) => normalized.includes(phrase));
+
+const isOneEditAway = (a, b) => {
+  if (a === b) {
+    return true;
+  }
+
+  if (Math.abs(a.length - b.length) > 1) {
+    return false;
+  }
+
+  let i = 0;
+  let j = 0;
+  let edits = 0;
+
+  while (i < a.length && j < b.length) {
+    if (a[i] === b[j]) {
+      i += 1;
+      j += 1;
+      continue;
+    }
+
+    edits += 1;
+    if (edits > 1) {
+      return false;
+    }
+
+    if (a.length > b.length) {
+      i += 1;
+    } else if (a.length < b.length) {
+      j += 1;
+    } else {
+      i += 1;
+      j += 1;
+    }
+  }
+
+  return true;
+};
+
+const tokenMatchesKeyword = (token, keyword) => {
+  if (token === keyword) {
+    return 'exact';
+  }
+
+  if (token.length >= 4 && keyword.startsWith(token)) {
+    return 'near';
+  }
+
+  if (keyword.length >= 4 && token.startsWith(keyword)) {
+    return 'near';
+  }
+
+  if (token.length >= 4 && keyword.length >= 4 && isOneEditAway(token, keyword)) {
+    return 'near';
+  }
+
+  return null;
+};
+
+const scoreIntent = (intent, normalized, tokens) => {
+  let score = 0;
+  const matchedKeywords = new Set();
+
+  if (hasPhrase(normalized, intent.phrases)) {
+    score += 4.4;
+  }
+
+  tokens.forEach((token) => {
+    for (let index = 0; index < intent.keywords.length; index += 1) {
+      const keyword = intent.keywords[index];
+      const matchType = tokenMatchesKeyword(token, keyword);
+
+      if (!matchType) {
+        continue;
+      }
+
+      matchedKeywords.add(keyword);
+      score += matchType === 'exact' ? 2.2 : 1.35;
+      break;
+    }
+  });
+
+  if (matchedKeywords.size >= 2) {
+    score += 1.1;
+  }
+
+  if (matchedKeywords.size >= 1 && tokens.length <= 3) {
+    score += 0.8;
+  }
+
+  if (matchedKeywords.size > 0 && hasAnyWord(tokens, actionCues)) {
+    score += 0.7;
+  }
+
+  return score;
+};
+
+const pickRandom = (items) => items[Math.floor(Math.random() * items.length)];
+
+const analyzeMessage = (rawValue, pendingIntent) => {
+  const normalized = normalizeText(rawValue);
+
+  if (!normalized) {
+    return { type: 'empty' };
+  }
+
+  const tokens = tokenize(normalized);
+
+  if (pendingIntent && hasAnyWord(tokens, confirmWords)) {
+    return { type: 'confirm', intent: pendingIntent };
+  }
+
+  if (pendingIntent && hasAnyWord(tokens, cancelWords)) {
+    return { type: 'cancel' };
+  }
+
+  const ranked = siteIntents
+    .map((intent) => ({ intent, score: scoreIntent(intent, normalized, tokens) }))
+    .sort((a, b) => b.score - a.score);
+
+  const top = ranked[0];
+  const second = ranked[1];
+
+  if (top && top.score >= 2.7) {
+    const isAmbiguous = second
+      && second.score >= 2.2
+      && Math.abs(top.score - second.score) <= 0.8;
+
+    if (isAmbiguous) {
+      return { type: 'ambiguous', intents: [top.intent, second.intent] };
+    }
+
+    return { type: 'intent', intent: top.intent };
+  }
+
+  if (top && top.score >= 1.6) {
+    return { type: 'suggest', intent: top.intent };
+  }
+
+  if (hasAnyWord(tokens, thanksWords)) {
+    return { type: 'thanks' };
+  }
+
+  if (
+    normalized.includes('what can you do')
+    || normalized.includes('how can you help')
+    || hasAnyWord(tokens, helpWords)
+  ) {
+    return { type: 'help' };
+  }
+
+  if (hasAnyWord(tokens, greetingWords)) {
+    return { type: 'greeting' };
+  }
+
+  return { type: 'fallback' };
+};
+
+const SiteHelperChat = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState('');
+  const [messages, setMessages] = useState(initialMessages);
+  const [pendingIntent, setPendingIntent] = useState(null);
+
+  const scrollAnchorRef = useRef(null);
+
+  const panelId = useMemo(() => 'site-helper-panel', []);
+
+  const appendMessage = (role, text) => {
+    setMessages((prev) => [
+      ...prev.slice(-15),
+      { id: `${role}-${Date.now()}-${Math.random()}`, role, text },
+    ]);
+  };
+
+  const runAction = (action) => {
+    if (!action) {
+      return;
+    }
+
+    if (action.type === 'route') {
+      if (location.pathname !== action.path) {
+        navigate(action.path);
+      }
+      return;
+    }
+
+    navigate('/', { state: { scrollTarget: action.target } });
+  };
+
+  const handleIntent = (intent) => {
+    appendMessage('bot', pickRandom(intent.responses));
+    runAction(intent.action);
+    setPendingIntent(null);
+  };
+
+  const submitQuery = (rawValue) => {
+    const value = rawValue.trim();
+
+    if (!value) {
+      return;
+    }
+
+    appendMessage('user', value);
+
+    const result = analyzeMessage(value, pendingIntent);
+
+    if (result.type === 'empty') {
+      return;
+    }
+
+    if (result.type === 'confirm') {
+      handleIntent(result.intent);
+      return;
+    }
+
+    if (result.type === 'cancel') {
+      setPendingIntent(null);
+      appendMessage('bot', 'No problem. Ask me for another section any time.');
+      return;
+    }
+
+    if (result.type === 'intent') {
+      handleIntent(result.intent);
+      return;
+    }
+
+    if (result.type === 'suggest') {
+      setPendingIntent(result.intent);
+      appendMessage('bot', `I think you mean ${result.intent.label}. Say "yes" and I will open it.`);
+      return;
+    }
+
+    if (result.type === 'ambiguous') {
+      setPendingIntent(null);
+      appendMessage(
+        'bot',
+        `I can take you to ${result.intents[0].label} or ${result.intents[1].label}. Which one do you want?`
+      );
+      return;
+    }
+
+    if (result.type === 'thanks') {
+      setPendingIntent(null);
+      appendMessage('bot', 'Anytime. I can still help with Home, About, Photos, Videos, or Contact.');
+      return;
+    }
+
+    if (result.type === 'help') {
+      setPendingIntent(null);
+      appendMessage('bot', 'I can navigate to Home, About, Photos, Videos, or Contact. Just ask naturally.');
+      return;
+    }
+
+    if (result.type === 'greeting') {
+      setPendingIntent(null);
+      appendMessage('bot', 'Hey. Tell me what you want to find and I will take you there.');
+      return;
+    }
+
+    setPendingIntent(null);
+    appendMessage('bot', 'I can help with Home, About, Photos, Videos, and Contact. Try asking for one of those.');
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    submitQuery(query);
+    setQuery('');
+  };
+
+  const handleQuickPrompt = (prompt) => {
+    submitQuery(prompt);
+  };
+
+  useEffect(() => {
+    if (!open) {
+      return;
+    }
+
+    scrollAnchorRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  }, [messages, open]);
+
+  return (
+    <Root>
+      <AnimatePresence>
+        {open && (
+          <ChatPanel
+            id={panelId}
+            aria-label="Site helper chat"
+            initial={{ opacity: 0, y: 12, x: 8, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, x: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 8, x: 8, scale: 0.98 }}
+            transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <Header>
+              <div>
+                <h3>Site Helper</h3>
+                <p>Smart local guide (no cloud AI needed)</p>
+              </div>
+              <CloseButton type="button" onClick={() => setOpen(false)}>Close</CloseButton>
+            </Header>
+
+            <Messages>
+              {messages.map((message) => (
+                <Bubble key={message.id} $role={message.role}>{message.text}</Bubble>
+              ))}
+              <div ref={scrollAnchorRef} />
+            </Messages>
+
+            <QuickActions>
+              {quickPrompts.map((prompt) => (
+                <Chip key={prompt} type="button" onClick={() => handleQuickPrompt(prompt)}>{prompt}</Chip>
+              ))}
+            </QuickActions>
+
+            <InputForm onSubmit={handleSubmit} role="search" aria-label="Ask site helper">
+              <Input
+                type="search"
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                placeholder="Try: hello i want to find videos pls"
+                aria-label="Find something on site"
+              />
+              <Send type="submit">Send</Send>
+            </InputForm>
+          </ChatPanel>
+        )}
+      </AnimatePresence>
+
+      <ToggleButton
+        type="button"
+        onClick={() => setOpen((prev) => !prev)}
+        aria-controls={panelId}
+        aria-expanded={open}
+        aria-label={open ? 'Close site helper' : 'Open site helper'}
+      >
+        <ChatIcon aria-hidden="true">
+          <svg viewBox="0 0 24 24" focusable="false">
+            <path
+              d="M4 5.5C4 4.12 5.12 3 6.5 3h11C18.88 3 20 4.12 20 5.5v7C20 11.88 18.88 13 17.5 13H10l-4.6 4.2c-.64.58-1.67.13-1.67-.74V5.5Z"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <circle cx="8.5" cy="8.6" r="1" fill="currentColor" />
+            <circle cx="12" cy="8.6" r="1" fill="currentColor" />
+            <circle cx="15.5" cy="8.6" r="1" fill="currentColor" />
+          </svg>
+        </ChatIcon>
+      </ToggleButton>
+    </Root>
+  );
+};
+
+export default SiteHelperChat;

@@ -4,6 +4,7 @@ import { ThemeProvider } from 'styled-components';
 
 import ClarityTracker from './components/ClarityTracker';
 import GeoBlockGate from './components/GeoBlockGate';
+import SiteHelperChat from './components/SiteHelperChat';
 import GlobalStyles from './styles/GlobalStyles';
 import { dark } from './styles/Themes';
 
@@ -24,6 +25,7 @@ function App() {
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </Suspense>
+          <SiteHelperChat />
         </GeoBlockGate>
       </ThemeProvider>
     </>

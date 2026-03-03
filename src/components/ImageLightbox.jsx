@@ -73,7 +73,8 @@ const isHomeHashRoute = () => {
 };
 
 const ImageLightbox = ({ image, onClose }) => {
-  const { scroll } = useLocomotiveScroll();
+  const locoContext = useLocomotiveScroll();
+  const scroll = locoContext?.scroll;
 
   useEffect(() => {
     const savedScrollY = window.scrollY;

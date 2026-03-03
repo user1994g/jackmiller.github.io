@@ -17,14 +17,27 @@ const VideoContainer = styled.section.attrs({ className: 'container' })`
   overflow: hidden;
 `;
 
-const ScaleDownLayer = styled.div.attrs({ className: 'scaleDown' })`
+const ScaleFrame = styled.div`
   width: 120vw;
   height: 120vh;
   position: absolute;
   top: 50%;
   left: 50%;
+  transform: translate(-50%, -50%);
+
+  @media (max-width: 48em) {
+    width: 128vw;
+    height: 116vh;
+  }
+`;
+
+const ScaleMotionLayer = styled.div`
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 0px;
   transform-origin: 50% 50%;
-  will-change: transform;
+  will-change: transform, border-radius, box-shadow;
 
   video {
     width: 100%;
@@ -34,9 +47,6 @@ const ScaleDownLayer = styled.div.attrs({ className: 'scaleDown' })`
   }
 
   @media (max-width: 48em) {
-    width: 128vw;
-    height: 116vh;
-
     video {
       object-position: center 42%;
     }
@@ -63,6 +73,11 @@ const Title = styled(motion.div)`
   align-items: flex-start;
   padding: clamp(5rem, 10vw, 9rem) clamp(1.1rem, 4vw, 4rem);
   color: ${(props) => props.theme.text};
+`;
+
+const TitleContent = styled.div`
+  transform-origin: 0% 100%;
+  will-change: transform;
 
   span {
     letter-spacing: 0.16em;
@@ -99,6 +114,7 @@ const Title = styled(motion.div)`
 const CoverVideo = () => {
   const containerRef = useRef(null);
   const scaleLayerRef = useRef(null);
+  const titleContentRef = useRef(null);
   const videoRef = useRef(null);
   const locoContext = useLocomotiveScroll();
   const scroll = locoContext?.scroll;
@@ -106,24 +122,36 @@ const CoverVideo = () => {
   useLayoutEffect(() => {
     const containerElement = containerRef.current;
     const scaleElement = scaleLayerRef.current;
+    const titleElement = titleContentRef.current;
 
-    if (!containerElement || !scaleElement) {
+    if (!containerElement || !scaleElement || !titleElement) {
       return undefined;
+    }
+
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
     }
 
     const scrollerFallback = document.querySelector('[data-scroll-container]');
     const scrollerElement = scroll?.el || scrollerFallback;
 
+    ScrollTrigger.getById('hero-video-scale')?.kill();
+
     gsap.set(scaleElement, {
-      xPercent: -50,
-      yPercent: -50,
       scale: 1,
+      borderRadius: 0,
+      boxShadow: '0 0 0 rgba(0, 0, 0, 0)',
       force3D: true,
+      transformOrigin: '50% 50%',
     });
 
-    const tween = gsap.to(scaleElement, {
-      scale: 0.6667,
-      ease: 'none',
+    gsap.set(titleElement, {
+      scale: 1,
+      force3D: true,
+      transformOrigin: '0% 100%',
+    });
+
+    const timeline = gsap.timeline({
       scrollTrigger: {
         id: 'hero-video-scale',
         trigger: containerElement,
@@ -137,6 +165,18 @@ const CoverVideo = () => {
       },
     });
 
+    timeline.to(
+      scaleElement,
+      {
+        scale: 0.6667,
+        borderRadius: 28,
+        boxShadow: '0 26px 60px rgba(0, 0, 0, 0.42)',
+        ease: 'none',
+      },
+      0,
+    );
+    timeline.to(titleElement, { scale: 0.6667, ease: 'none' }, 0);
+
     const refreshTrigger = () => ScrollTrigger.refresh();
     const videoElement = videoRef.current;
 
@@ -148,8 +188,9 @@ const CoverVideo = () => {
       window.cancelAnimationFrame(rafId);
       window.clearTimeout(timeoutId);
       videoElement?.removeEventListener('loadedmetadata', refreshTrigger);
-      tween.scrollTrigger?.kill();
-      tween.kill();
+      timeline.scrollTrigger?.kill();
+      timeline.kill();
+      ScrollTrigger.getById('hero-video-scale')?.kill();
     };
   }, [scroll]);
 
@@ -162,18 +203,22 @@ const CoverVideo = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.9, delay: 0.35 }}
       >
-        <span>Creative Media Portfolio</span>
-        <h1>Jack Miller</h1>
-        <h2>Film, Photography, and Visual Storytelling</h2>
-        <p>
-          A dark cinematic body of work exploring atmosphere, shadow, and narrative composition
-          through motion and still imagery.
-        </p>
+        <TitleContent ref={titleContentRef}>
+          <span>Creative Media Portfolio</span>
+          <h1>Jack Miller</h1>
+          <h2>Film, Photography, and Visual Storytelling</h2>
+          <p>
+            A dark cinematic body of work exploring atmosphere, shadow, and narrative composition
+            through motion and still imagery.
+          </p>
+        </TitleContent>
       </Title>
 
-      <ScaleDownLayer ref={scaleLayerRef}>
-        <video ref={videoRef} src={MainVideo} type="video/mp4" autoPlay muted loop playsInline preload="metadata" />
-      </ScaleDownLayer>
+      <ScaleFrame>
+        <ScaleMotionLayer ref={scaleLayerRef}>
+          <video ref={videoRef} src={MainVideo} type="video/mp4" autoPlay muted loop playsInline preload="metadata" />
+        </ScaleMotionLayer>
+      </ScaleFrame>
     </VideoContainer>
   );
 };

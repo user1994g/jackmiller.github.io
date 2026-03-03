@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import gsap from 'gsap';
 import ScrollTrigger from 'gsap/ScrollTrigger';
-import React, { useEffect, useRef } from 'react';
+import React, { useLayoutEffect, useRef } from 'react';
 import { useLocomotiveScroll } from 'react-locomotive-scroll';
 import styled from 'styled-components';
 
@@ -103,47 +103,53 @@ const CoverVideo = () => {
   const locoContext = useLocomotiveScroll();
   const scroll = locoContext?.scroll;
 
-  useEffect(() => {
-    if (!containerRef.current || !scaleLayerRef.current) {
+  useLayoutEffect(() => {
+    const containerElement = containerRef.current;
+    const scaleElement = scaleLayerRef.current;
+
+    if (!containerElement || !scaleElement) {
       return undefined;
     }
 
-    const scrollerElement = scroll?.el;
+    const scrollerFallback = document.querySelector('[data-scroll-container]');
+    const scrollerElement = scroll?.el || scrollerFallback;
 
-    const context = gsap.context(() => {
-      gsap.set(scaleLayerRef.current, {
-        xPercent: -50,
-        yPercent: -50,
-        scale: 1,
-        force3D: true,
-      });
+    gsap.set(scaleElement, {
+      xPercent: -50,
+      yPercent: -50,
+      scale: 1,
+      force3D: true,
+    });
 
-      gsap.to(scaleLayerRef.current, {
-        scale: 0.6667,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: containerRef.current,
-          pin: containerRef.current,
-          scrub: true,
-          start: 'top top',
-          end: '+=200%',
-          anticipatePin: 1,
-          invalidateOnRefresh: true,
-          ...(scrollerElement ? { scroller: scrollerElement } : {}),
-        },
-      });
-    }, containerRef);
+    const tween = gsap.to(scaleElement, {
+      scale: 0.6667,
+      ease: 'none',
+      scrollTrigger: {
+        id: 'hero-video-scale',
+        trigger: containerElement,
+        pin: containerElement,
+        scrub: true,
+        start: 'top top',
+        end: '+=200%',
+        anticipatePin: 1,
+        invalidateOnRefresh: true,
+        ...(scrollerElement ? { scroller: scrollerElement } : {}),
+      },
+    });
 
     const refreshTrigger = () => ScrollTrigger.refresh();
-    const rafId = window.requestAnimationFrame(refreshTrigger);
     const videoElement = videoRef.current;
 
     videoElement?.addEventListener('loadedmetadata', refreshTrigger);
+    const rafId = window.requestAnimationFrame(refreshTrigger);
+    const timeoutId = window.setTimeout(refreshTrigger, 320);
 
     return () => {
       window.cancelAnimationFrame(rafId);
+      window.clearTimeout(timeoutId);
       videoElement?.removeEventListener('loadedmetadata', refreshTrigger);
-      context.revert();
+      tween.scrollTrigger?.kill();
+      tween.kill();
     };
   }, [scroll]);
 

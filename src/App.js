@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 
 import ClarityTracker from './components/ClarityTracker';
+import DesktopMouseAura from './components/DesktopMouseAura';
 import GeoBlockGate from './components/GeoBlockGate';
 import SiteHelperChat from './components/SiteHelperChat';
 import HomePage from './pages/HomePage';
@@ -22,6 +23,7 @@ function App() {
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
           <SiteHelperChat />
+          <DesktopMouseAura />
         </GeoBlockGate>
       </ThemeProvider>
     </>

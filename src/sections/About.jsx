@@ -1,11 +1,23 @@
 import { AnimatePresence } from 'framer-motion';
-import React, { useState } from 'react';
+import anime from 'animejs/lib/anime.es.js';
+import gsap from 'gsap';
+import Flip from 'gsap/Flip';
+import ScrollTrigger from 'gsap/ScrollTrigger';
+import React, { useLayoutEffect, useRef, useState } from 'react';
+import { useLocomotiveScroll } from 'react-locomotive-scroll';
 import styled from 'styled-components';
 
 import img1 from '../assets/Images/1.webp';
 import img2 from '../assets/Images/2.webp';
 import img3 from '../assets/Images/3.webp';
+import img4 from '../assets/Images/4.webp';
+import img5 from '../assets/Images/5.webp';
+import img6 from '../assets/Images/6.webp';
+import img7 from '../assets/Images/7.webp';
+import img8 from '../assets/Images/8.webp';
 import ImageLightbox from '../components/ImageLightbox';
+
+gsap.registerPlugin(ScrollTrigger, Flip);
 
 const Section = styled.section`
   width: min(var(--content-max), 92vw);
@@ -23,7 +35,7 @@ const Section = styled.section`
   }
 `;
 
-const Title = styled.h1`
+const Title = styled.h2`
   position: absolute;
   top: -0.7rem;
   left: 0;
@@ -33,6 +45,9 @@ const Title = styled.h1`
   font-size: clamp(2.6rem, 7vw, 5.5rem);
   font-weight: 300;
   color: rgba(255, 255, 255, 0.93);
+
+  opacity: 0;
+  transform: translateY(22px);
 
   @media (max-width: 64em) {
     position: relative;
@@ -49,10 +64,15 @@ const Copy = styled.div`
   background: rgba(18, 20, 26, 0.72);
   backdrop-filter: blur(8px);
 
+  opacity: 0;
+  transform: translateY(30px);
+
   p {
     font-size: clamp(0.88rem, 1.25vw, 1.08rem);
     line-height: 1.75;
     color: rgba(240, 242, 245, 0.85);
+    opacity: 0;
+    transform: translateY(14px);
   }
 
   p + p {
@@ -64,32 +84,67 @@ const Copy = styled.div`
   }
 `;
 
-const Gallery = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-auto-rows: minmax(170px, auto);
-  gap: 0.9rem;
+const GalleryWrap = styled.div`
+  position: relative;
+  width: 100%;
+  height: 50vh;
   margin-top: clamp(2.5rem, 6vw, 4.25rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16px;
 
   @media (max-width: 64em) {
     margin-top: 0;
+    height: clamp(340px, 58vh, 560px);
   }
 `;
 
-const Card = styled.button`
-  border-radius: 16px;
+const GalleryGrid = styled.div`
+  position: relative;
+  width: 100%;
+  height: 100%;
+  flex: none;
+
+  display: grid;
+  gap: 1vh;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  justify-content: center;
+  align-content: center;
+
+  &.gallery--final {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 99;
+    padding: 1vw;
+    background: rgba(18, 20, 26, 0.95);
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    gap: 1vh;
+  }
+`;
+
+const GalleryItem = styled.button`
+  background-position: 50% 50%;
+  background-size: cover;
+  flex: none;
+  position: relative;
+  border-radius: 12px;
   overflow: hidden;
+  cursor: zoom-in;
   border: 1px solid rgba(255, 255, 255, 0.18);
   background: rgba(255, 255, 255, 0.03);
-  width: 100%;
   padding: 0;
-  cursor: zoom-in;
 
   img {
+    object-fit: cover;
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    transition: transform 0.35s ease;
+    transition: transform 0.4s ease;
   }
 
   &:hover img {
@@ -101,69 +156,265 @@ const Card = styled.button`
     outline-offset: 2px;
   }
 
-  &:first-child {
-    grid-column: 1 / -1;
-    min-height: 420px;
+  &:nth-child(1) {
+    grid-area: 1 / 1 / 3 / 2;
   }
-
-  @media (max-width: 64em) {
-    &:first-child {
-      min-height: 320px;
-    }
+  &:nth-child(2) {
+    grid-area: 1 / 2 / 2 / 3;
+  }
+  &:nth-child(3) {
+    grid-area: 2 / 2 / 4 / 3;
+  }
+  &:nth-child(4) {
+    grid-area: 1 / 3 / 3 / 3;
+  }
+  &:nth-child(5) {
+    grid-area: 3 / 1 / 3 / 2;
+  }
+  &:nth-child(6) {
+    grid-area: 3 / 3 / 5 / 4;
+  }
+  &:nth-child(7) {
+    grid-area: 4 / 1 / 5 / 2;
+  }
+  &:nth-child(8) {
+    grid-area: 4 / 2 / 5 / 3;
   }
 `;
 
 const aboutPhotos = [
-  { src: img1, alt: 'Portrait with cinematic lighting', width: 1000, height: 750, speed: '1' },
-  { src: img2, alt: 'Styled photography composition', width: 700, height: 1000, speed: '2' },
-  { src: img3, alt: 'Moody portrait close-up', width: 700, height: 1000, speed: '-1' },
+  { src: img1, alt: 'Portfolio Image 1' },
+  { src: img2, alt: 'Portfolio Image 2' },
+  { src: img3, alt: 'Portfolio Image 3' },
+  { src: img4, alt: 'Portfolio Image 4' },
+  { src: img5, alt: 'Portfolio Image 5' },
+  { src: img6, alt: 'Portfolio Image 6' },
+  { src: img7, alt: 'Portfolio Image 7' },
+  { src: img8, alt: 'Portfolio Image 8' },
 ];
 
 const About = () => {
   const [activeImage, setActiveImage] = useState(null);
+  const titleRef = useRef(null);
+  const copyRef = useRef(null);
+  const galleryWrapRef = useRef(null);
+  const galleryRef = useRef(null);
+  const locoContext = useLocomotiveScroll();
+  const scroll = locoContext?.scroll;
+
+  useLayoutEffect(() => {
+    const titleElement = titleRef.current;
+    const copyElement = copyRef.current;
+    const galleryWrapElement = galleryWrapRef.current;
+    const galleryElement = galleryRef.current;
+
+    if (!titleElement || !copyElement || !galleryWrapElement || !galleryElement) {
+      return undefined;
+    }
+
+    const scrollerFallback = document.querySelector('[data-scroll-container]');
+    const scrollerElement = scroll?.el || scrollerFallback;
+
+    const prefersReducedMotion =
+      typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const isMobileLike =
+      typeof window !== 'undefined' &&
+      (window.matchMedia('(pointer: coarse)').matches || window.matchMedia('(max-width: 64em)').matches);
+
+    let titleAnime = null;
+    let copyAnime = null;
+    let cardsAnime = null;
+    let mobileCardsTrigger = null;
+
+    const runAnimeIntro = () => {
+      if (prefersReducedMotion) {
+        gsap.set(titleElement, { opacity: 1, y: 0, clearProps: 'transform' });
+        gsap.set(copyElement.querySelectorAll('.about-copy-line'), {
+          opacity: 1,
+          y: 0,
+          clearProps: 'transform',
+        });
+        return;
+      }
+
+      titleAnime = anime({
+        targets: titleElement,
+        opacity: [0, 1],
+        translateY: [22, 0],
+        duration: 860,
+        easing: 'easeOutQuad',
+      });
+
+      const lines = copyElement.querySelectorAll('.about-copy-line');
+      anime.set(lines, { opacity: 0, translateY: 14 });
+      copyAnime = anime({
+        targets: lines,
+        opacity: [0, 1],
+        translateY: [14, 0],
+        delay: anime.stagger(120),
+        duration: 720,
+        easing: 'easeOutCubic',
+      });
+    };
+
+    const copyAnim = gsap.to(copyElement, {
+      scrollTrigger: {
+        trigger: copyElement,
+        start: 'top 85%',
+        once: true,
+        onEnter: runAnimeIntro,
+        ...(scrollerElement ? { scroller: scrollerElement } : {}),
+      },
+      opacity: 1,
+      y: 0,
+      duration: 0.8,
+      ease: 'power2.out',
+    });
+
+    const cards = galleryElement.querySelectorAll('.gallery__item');
+
+    if (isMobileLike) {
+      gsap.set(cards, { opacity: 1, y: 0, scale: 1, clearProps: 'all' });
+
+      mobileCardsTrigger = ScrollTrigger.create({
+        trigger: galleryWrapElement,
+        start: 'top 82%',
+        once: true,
+        onEnter: () => {
+          if (prefersReducedMotion) {
+            return;
+          }
+
+          anime.set(cards, { opacity: 0, translateY: 24, scale: 0.97 });
+          cardsAnime = anime({
+            targets: cards,
+            opacity: [0, 1],
+            translateY: [24, 0],
+            scale: [0.97, 1],
+            delay: anime.stagger(75),
+            duration: 660,
+            easing: 'easeOutCubic',
+          });
+        },
+        ...(scrollerElement ? { scroller: scrollerElement } : {}),
+      });
+
+      return () => {
+        copyAnim.scrollTrigger?.kill();
+        copyAnim.kill();
+        mobileCardsTrigger?.kill();
+        titleAnime?.pause();
+        copyAnime?.pause();
+        cardsAnime?.pause();
+        anime.remove([titleElement, ...cards, ...copyElement.querySelectorAll('.about-copy-line')]);
+      };
+    }
+
+    gsap.set(cards, { opacity: 0, y: 40, scale: 0.95 });
+
+    const entranceAnim = gsap.to(cards, {
+      scrollTrigger: {
+        trigger: galleryWrapElement,
+        start: 'top 80%',
+        ...(scrollerElement ? { scroller: scrollerElement } : {}),
+      },
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      duration: 0.8,
+      stagger: 0.1,
+      ease: 'back.out(1.2)',
+    });
+
+    let flipAnim;
+    const flipCtx = gsap.context(() => {
+      galleryElement.classList.add('gallery--final');
+      const flipState = Flip.getState(cards);
+      galleryElement.classList.remove('gallery--final');
+
+      const flip = Flip.to(flipState, {
+        simple: true,
+        ease: 'power1.inOut',
+      });
+
+      flipAnim = gsap.timeline({
+        scrollTrigger: {
+          id: 'bento-gallery-pin',
+          trigger: galleryWrapElement,
+          start: 'center center',
+          end: '+=150%',
+          scrub: true,
+          pin: true,
+          ...(scrollerElement ? { scroller: scrollerElement } : {}),
+        },
+      });
+
+      flipAnim.add(flip);
+
+      return () => {
+        gsap.set(cards, { clearProps: 'all' });
+      };
+    });
+
+    return () => {
+      copyAnim.scrollTrigger?.kill();
+      copyAnim.kill();
+      entranceAnim.scrollTrigger?.kill();
+      entranceAnim.kill();
+      flipAnim?.scrollTrigger?.kill();
+      flipAnim?.kill();
+      ScrollTrigger.getById('bento-gallery-pin')?.kill();
+      flipCtx.revert();
+      titleAnime?.pause();
+      copyAnime?.pause();
+      anime.remove([titleElement, ...copyElement.querySelectorAll('.about-copy-line')]);
+    };
+  }, [scroll]);
 
   return (
     <Section id="about" className="about">
-      <Title data-scroll data-scroll-speed="-1">about me</Title>
+      <Title ref={titleRef}>about me</Title>
 
-      <Copy>
-        <p>
+      <Copy ref={copyRef}>
+        <p className="about-copy-line">
           I build visual stories through film and photography, focusing on mood, tension, and
           cinematic composition. My process starts with atmosphere: controlled light, shadow, and
           framing that guide emotion before dialogue begins.
         </p>
-        <p>
+        <p className="about-copy-line">
           Every project in this portfolio, from concept to final edit, has been produced by me. I
           blend camera technique, colour grading, and sound-led pacing to create work that feels
           immersive and intentional on both still and moving formats.
         </p>
-        <p>
+        <p className="about-copy-line">
           This collection reflects my development as a creative media student and my goal to produce
           distinctive visuals that stay memorable across screens of every size.
         </p>
       </Copy>
 
-      <Gallery>
-        {aboutPhotos.map((photo, index) => (
-          <Card
-            key={photo.alt}
-            type="button"
-            aria-label={`Open ${photo.alt}`}
-            onClick={() => setActiveImage({ src: photo.src, alt: photo.alt })}
-            data-scroll
-            data-scroll-speed={photo.speed}
-          >
-            <img
-              width={photo.width}
-              height={photo.height}
-              src={photo.src}
-              alt={photo.alt}
-              loading={index === 0 ? 'eager' : 'lazy'}
-              decoding="async"
-            />
-          </Card>
-        ))}
-      </Gallery>
+      <GalleryWrap ref={galleryWrapRef}>
+        <GalleryGrid ref={galleryRef}>
+          {aboutPhotos.map((photo) => (
+            <GalleryItem
+              key={photo.alt}
+              type="button"
+              className="gallery__item"
+              aria-label={`Open ${photo.alt}`}
+              onClick={() => setActiveImage({ src: photo.src, alt: photo.alt })}
+            >
+              <img
+                src={photo.src}
+                alt={photo.alt}
+                loading="lazy"
+                decoding="async"
+                width="1200"
+                height="900"
+                sizes="(max-width: 64em) 92vw, 45vw"
+              />
+            </GalleryItem>
+          ))}
+        </GalleryGrid>
+      </GalleryWrap>
 
       <AnimatePresence>
         {activeImage && <ImageLightbox image={activeImage} onClose={() => setActiveImage(null)} />}

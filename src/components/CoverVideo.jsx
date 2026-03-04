@@ -1,7 +1,7 @@
-import { motion } from 'framer-motion';
+import anime from 'animejs/lib/anime.es.js';
 import gsap from 'gsap';
 import ScrollTrigger from 'gsap/ScrollTrigger';
-import React, { useLayoutEffect, useRef } from 'react';
+import React, { useEffect, useLayoutEffect, useRef } from 'react';
 import { useLocomotiveScroll } from 'react-locomotive-scroll';
 import styled from 'styled-components';
 
@@ -35,7 +35,7 @@ const ScaleMotionLayer = styled.div`
   width: 100%;
   height: 100%;
   overflow: hidden;
-  border-radius: 0px;
+  border-radius: 0;
   transform-origin: 50% 50%;
   will-change: transform, border-radius, box-shadow;
 
@@ -62,7 +62,7 @@ const DarkOverlay = styled.div`
     radial-gradient(circle at 20% 10%, rgba(255, 255, 255, 0.14), transparent 40%);
 `;
 
-const Title = styled(motion.div)`
+const Title = styled.div`
   position: absolute;
   inset: 0;
   z-index: 5;
@@ -79,7 +79,15 @@ const TitleContent = styled.div`
   transform-origin: 0% 100%;
   will-change: transform;
 
-  span {
+  .hero-kicker,
+  .hero-name,
+  .hero-subtitle,
+  .hero-body {
+    opacity: 0;
+    transform: translateY(32px);
+  }
+
+  .hero-kicker {
     letter-spacing: 0.16em;
     text-transform: uppercase;
     font-size: clamp(0.7rem, 0.9vw, 0.9rem);
@@ -87,15 +95,16 @@ const TitleContent = styled.div`
     margin-bottom: 0.85rem;
   }
 
-  h1 {
-    font-family: 'Kaushan Script';
-    font-size: clamp(3.2rem, 10vw, 9rem);
+  .hero-name {
+    font-size: clamp(3.2rem, 8vw, 7rem);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
     text-shadow: 1px 1px 1px ${(props) => props.theme.body};
-    line-height: 0.95;
-    max-width: 10ch;
+    line-height: 1;
+    margin-bottom: 0.4rem;
   }
 
-  h2 {
+  .hero-subtitle {
     margin-top: 0.65rem;
     font-size: clamp(0.95rem, 1.9vw, 1.6rem);
     font-weight: 500;
@@ -103,7 +112,7 @@ const TitleContent = styled.div`
     text-transform: uppercase;
   }
 
-  p {
+  .hero-body {
     margin-top: 1rem;
     width: min(52ch, 92%);
     color: rgba(255, 255, 255, 0.84);
@@ -119,6 +128,53 @@ const CoverVideo = () => {
   const locoContext = useLocomotiveScroll();
   const scroll = locoContext?.scroll;
 
+  useEffect(() => {
+    const titleElement = titleContentRef.current;
+
+    if (!titleElement) {
+      return undefined;
+    }
+
+    const reduceMotion =
+      typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const targets = titleElement.querySelectorAll('.hero-kicker, .hero-name, .hero-subtitle, .hero-body');
+
+    if (reduceMotion) {
+      gsap.set(targets, { opacity: 1, y: 0, clearProps: 'transform' });
+      return undefined;
+    }
+
+    anime.set(targets, { opacity: 0, translateY: 32 });
+
+    const introTimeline = anime.timeline({
+      easing: 'easeOutExpo',
+      duration: 920,
+    });
+
+    introTimeline.add({
+      targets,
+      opacity: [0, 1],
+      translateY: [32, 0],
+      delay: anime.stagger(120),
+    });
+
+    const nameFloat = anime({
+      targets: titleElement.querySelector('.hero-name'),
+      translateY: [0, -4],
+      easing: 'easeInOutSine',
+      duration: 3200,
+      direction: 'alternate',
+      loop: true,
+      autoplay: true,
+    });
+
+    return () => {
+      introTimeline.pause();
+      nameFloat.pause();
+      anime.remove(targets);
+    };
+  }, []);
+
   useLayoutEffect(() => {
     const containerElement = containerRef.current;
     const scaleElement = scaleLayerRef.current;
@@ -126,10 +182,6 @@ const CoverVideo = () => {
 
     if (!containerElement || !scaleElement || !titleElement) {
       return undefined;
-    }
-
-    if (typeof window !== 'undefined') {
-      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
     }
 
     const scrollerFallback = document.querySelector('[data-scroll-container]');
@@ -147,6 +199,7 @@ const CoverVideo = () => {
 
     gsap.set(titleElement, {
       scale: 1,
+      y: 0,
       force3D: true,
       transformOrigin: '0% 100%',
     });
@@ -175,7 +228,7 @@ const CoverVideo = () => {
       },
       0,
     );
-    timeline.to(titleElement, { scale: 0.6667, ease: 'none' }, 0);
+    timeline.to(titleElement, { scale: 0.6667, y: -120, ease: 'none' }, 0);
 
     const refreshTrigger = () => ScrollTrigger.refresh();
     const videoElement = videoRef.current;
@@ -198,16 +251,12 @@ const CoverVideo = () => {
     <VideoContainer ref={containerRef}>
       <DarkOverlay />
 
-      <Title
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.9, delay: 0.35 }}
-      >
+      <Title>
         <TitleContent ref={titleContentRef}>
-          <span>Creative Media Portfolio</span>
-          <h1>Jack Miller</h1>
-          <h2>Film, Photography, and Visual Storytelling</h2>
-          <p>
+          <span className="hero-kicker">Creative Media Portfolio</span>
+          <h1 className="hero-name">Jack Miller</h1>
+          <h2 className="hero-subtitle">Film, Photography, and Visual Storytelling</h2>
+          <p className="hero-body">
             A dark cinematic body of work exploring atmosphere, shadow, and narrative composition
             through motion and still imagery.
           </p>

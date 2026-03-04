@@ -1,7 +1,7 @@
-import React, { Suspense } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 
-const CoverVideo = React.lazy(() => import('../components/CoverVideo'));
+import CoverVideo from '../components/CoverVideo';
 
 const Section = styled.section`
   position: relative;
@@ -12,9 +12,7 @@ const Section = styled.section`
 const Home = () => {
   return (
     <Section id="home">
-      <Suspense fallback={<></>}>
-        <CoverVideo />
-      </Suspense>
+      <CoverVideo />
     </Section>
   );
 };

@@ -1,13 +1,7 @@
 {
   "files": {
     "main.css": "/jackmiller.github.io/static/css/main.f2b4090c.css",
-    "main.js": "/jackmiller.github.io/static/js/main.3aab3b6d.js",
-    "static/js/64.0bf72ed7.chunk.js": "/jackmiller.github.io/static/js/64.0bf72ed7.chunk.js",
-    "static/js/518.7c4bf8b9.chunk.js": "/jackmiller.github.io/static/js/518.7c4bf8b9.chunk.js",
-    "static/js/375.ffa1bb84.chunk.js": "/jackmiller.github.io/static/js/375.ffa1bb84.chunk.js",
-    "static/js/904.88f2b9cf.chunk.js": "/jackmiller.github.io/static/js/904.88f2b9cf.chunk.js",
-    "static/js/634.898358d6.chunk.js": "/jackmiller.github.io/static/js/634.898358d6.chunk.js",
-    "static/js/594.3f7c6e75.chunk.js": "/jackmiller.github.io/static/js/594.3f7c6e75.chunk.js",
+    "main.js": "/jackmiller.github.io/static/js/main.50f6c888.js",
     "static/media/Walking Girl.mp4": "/jackmiller.github.io/static/media/Walking Girl.dca083e23d7a563ff57e.mp4",
     "static/media/10.webp": "/jackmiller.github.io/static/media/10.9d55ebaf49e2a1566285.webp",
     "static/media/4.webp": "/jackmiller.github.io/static/media/4.de6233805d060fa97921.webp",
@@ -43,6 +37,6 @@
   },
   "entrypoints": [
     "static/css/main.f2b4090c.css",
-    "static/js/main.3aab3b6d.js"
+    "static/js/main.50f6c888.js"
   ]
 }

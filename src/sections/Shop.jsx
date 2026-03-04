@@ -39,7 +39,7 @@ const Header = styled.div`
   }
 `;
 
-const Title = styled.h1`
+const Title = styled.h2`
   font-family: 'Kaushan Script';
   font-size: clamp(2.6rem, 7vw, 5.8rem);
   font-weight: 300;

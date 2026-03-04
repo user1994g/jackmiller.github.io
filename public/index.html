@@ -63,6 +63,97 @@
       })(window, document, "clarity", "script", "vklxf38ijp");
     </script>
 
+    <script type="text/javascript">
+      (function () {
+        var RETRY_KEY = 'jack-boot-retry-v2';
+        var RETRY_TTL_MS = 15000;
+
+        function rootHasContent() {
+          var root = document.getElementById('root');
+          return !!(root && root.children && root.children.length > 0);
+        }
+
+        function getMainScriptSrc() {
+          var scripts = document.getElementsByTagName('script');
+          for (var i = 0; i < scripts.length; i += 1) {
+            var src = scripts[i].getAttribute('src');
+            if (src && src.indexOf('/static/js/main.') !== -1) {
+              return src;
+            }
+          }
+          return null;
+        }
+
+        function setRetryState(step) {
+          try {
+            window.sessionStorage.setItem(RETRY_KEY, JSON.stringify({ step: step, ts: Date.now() }));
+          } catch (error) {}
+        }
+
+        function getRetryState() {
+          try {
+            var raw = window.sessionStorage.getItem(RETRY_KEY);
+            if (!raw) {
+              return null;
+            }
+            var parsed = JSON.parse(raw);
+            if (!parsed || typeof parsed.step !== 'number' || typeof parsed.ts !== 'number') {
+              return null;
+            }
+            if (Date.now() - parsed.ts > RETRY_TTL_MS) {
+              window.sessionStorage.removeItem(RETRY_KEY);
+              return null;
+            }
+            return parsed;
+          } catch (error) {
+            return null;
+          }
+        }
+
+        function clearRetryState() {
+          try {
+            window.sessionStorage.removeItem(RETRY_KEY);
+          } catch (error) {}
+        }
+
+        window.__jackMarkBooted = function () {
+          window.__jackAppBooted = true;
+          clearRetryState();
+        };
+
+        window.addEventListener('load', function () {
+          window.setTimeout(function () {
+            if (window.__jackAppBooted || rootHasContent()) {
+              clearRetryState();
+              return;
+            }
+
+            var mainSrc = getMainScriptSrc();
+            if (!mainSrc) {
+              return;
+            }
+
+            var state = getRetryState();
+
+            if (!state || state.step < 1) {
+              setRetryState(1);
+              var separator = window.location.href.indexOf('?') === -1 ? '?' : '&';
+              window.location.replace(window.location.href + separator + 'boot_retry=1&v=' + String(Date.now()));
+              return;
+            }
+
+            if (state.step === 1) {
+              setRetryState(2);
+              var fallbackScript = document.createElement('script');
+              fallbackScript.defer = true;
+              fallbackScript.src = mainSrc + (mainSrc.indexOf('?') === -1 ? '?v=' : '&v=') + String(Date.now());
+              document.head.appendChild(fallbackScript);
+            }
+          }, 3200);
+        });
+      })();
+    </script>
+
     <title>Jack Miller Portfolio | Film & Photography</title>
   </head>
   <body>

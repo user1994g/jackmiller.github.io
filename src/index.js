@@ -12,3 +12,10 @@ ReactDOM.render(
   </React.StrictMode>,
   document.getElementById('root')
 );
+
+if (typeof window !== 'undefined') {
+  window.__jackAppBooted = true;
+  if (typeof window.__jackMarkBooted === 'function') {
+    window.__jackMarkBooted();
+  }
+}

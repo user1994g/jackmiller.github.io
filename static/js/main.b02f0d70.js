@@ -1,1 +1,1 @@
-(function(){var src="/jackmiller.github.io/static/js/main.619142e9.js";if(window.__jackBundleBootstrapped)return;window.__jackBundleBootstrapped=true;var s=document.createElement("script");s.defer=true;s.src=src;document.head.appendChild(s);}());
+(function(){var src="/jackmiller.github.io/static/js/main.619142e9.js";var s=document.createElement("script");s.defer=true;s.src=src+(src.indexOf("?")===-1?"?v=":"&v=")+String(Date.now());document.head.appendChild(s);}());

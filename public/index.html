@@ -65,9 +65,6 @@
 
     <script type="text/javascript">
       (function () {
-        var RETRY_KEY = 'jack-boot-retry-v2';
-        var RETRY_TTL_MS = 15000;
-
         function rootHasContent() {
           var root = document.getElementById('root');
           return !!(root && root.children && root.children.length > 0);
@@ -84,72 +81,86 @@
           return null;
         }
 
-        function setRetryState(step) {
-          try {
-            window.sessionStorage.setItem(RETRY_KEY, JSON.stringify({ step: step, ts: Date.now() }));
-          } catch (error) {}
-        }
-
-        function getRetryState() {
-          try {
-            var raw = window.sessionStorage.getItem(RETRY_KEY);
-            if (!raw) {
-              return null;
-            }
-            var parsed = JSON.parse(raw);
-            if (!parsed || typeof parsed.step !== 'number' || typeof parsed.ts !== 'number') {
-              return null;
-            }
-            if (Date.now() - parsed.ts > RETRY_TTL_MS) {
-              window.sessionStorage.removeItem(RETRY_KEY);
-              return null;
-            }
-            return parsed;
-          } catch (error) {
-            return null;
+        function showRecoveryHint(mainSrc) {
+          if (document.getElementById('jack-boot-hint')) {
+            return;
           }
-        }
 
-        function clearRetryState() {
-          try {
-            window.sessionStorage.removeItem(RETRY_KEY);
-          } catch (error) {}
+          var hint = document.createElement('div');
+          hint.id = 'jack-boot-hint';
+          hint.style.position = 'fixed';
+          hint.style.left = '50%';
+          hint.style.bottom = '20px';
+          hint.style.transform = 'translateX(-50%)';
+          hint.style.zIndex = '99999';
+          hint.style.padding = '10px 12px';
+          hint.style.border = '1px solid rgba(255,255,255,0.28)';
+          hint.style.borderRadius = '10px';
+          hint.style.background = 'rgba(10,12,16,0.95)';
+          hint.style.color = '#f2f4f8';
+          hint.style.fontFamily = 'Arial, sans-serif';
+          hint.style.fontSize = '13px';
+          hint.style.maxWidth = 'calc(100vw - 24px)';
+          hint.style.textAlign = 'center';
+
+          var msg = document.createElement('span');
+          msg.textContent = 'Page is taking longer than expected. ';
+
+          var btn = document.createElement('button');
+          btn.type = 'button';
+          btn.textContent = 'Reload';
+          btn.style.marginLeft = '6px';
+          btn.style.padding = '4px 8px';
+          btn.style.border = '1px solid rgba(255,255,255,0.3)';
+          btn.style.borderRadius = '8px';
+          btn.style.background = 'rgba(255,255,255,0.08)';
+          btn.style.color = '#fff';
+          btn.style.cursor = 'pointer';
+          btn.onclick = function () {
+            if (mainSrc) {
+              var separator = window.location.href.indexOf('?') === -1 ? '?' : '&';
+              window.location.replace(window.location.href + separator + 'v=' + String(Date.now()));
+              return;
+            }
+            window.location.reload();
+          };
+
+          hint.appendChild(msg);
+          hint.appendChild(btn);
+          document.body.appendChild(hint);
         }
 
         window.__jackMarkBooted = function () {
           window.__jackAppBooted = true;
-          clearRetryState();
+          var hint = document.getElementById('jack-boot-hint');
+          if (hint && hint.parentNode) {
+            hint.parentNode.removeChild(hint);
+          }
         };
 
         window.addEventListener('load', function () {
           window.setTimeout(function () {
             if (window.__jackAppBooted || rootHasContent()) {
-              clearRetryState();
               return;
             }
 
             var mainSrc = getMainScriptSrc();
             if (!mainSrc) {
+              showRecoveryHint(null);
               return;
             }
 
-            var state = getRetryState();
+            var retryScript = document.createElement('script');
+            retryScript.defer = true;
+            retryScript.src = mainSrc + (mainSrc.indexOf('?') === -1 ? '?v=' : '&v=') + String(Date.now());
+            document.head.appendChild(retryScript);
 
-            if (!state || state.step < 1) {
-              setRetryState(1);
-              var separator = window.location.href.indexOf('?') === -1 ? '?' : '&';
-              window.location.replace(window.location.href + separator + 'boot_retry=1&v=' + String(Date.now()));
-              return;
-            }
-
-            if (state.step === 1) {
-              setRetryState(2);
-              var fallbackScript = document.createElement('script');
-              fallbackScript.defer = true;
-              fallbackScript.src = mainSrc + (mainSrc.indexOf('?') === -1 ? '?v=' : '&v=') + String(Date.now());
-              document.head.appendChild(fallbackScript);
-            }
-          }, 3200);
+            window.setTimeout(function () {
+              if (!window.__jackAppBooted && !rootHasContent()) {
+                showRecoveryHint(mainSrc);
+              }
+            }, 2800);
+          }, 8000);
         });
       })();
     </script>

@@ -27,23 +27,101 @@ import thumb13 from '../assets/VideoThumbs/13-thumb.jpg';
 import thumb14 from '../assets/VideoThumbs/14-thumb.jpg';
 
 const Section = styled.section`
+  position: relative;
   width: 100%;
-  background: #07080b;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 14% 12%, rgba(89, 116, 190, 0.22), transparent 40%),
+    radial-gradient(circle at 84% 24%, rgba(182, 124, 93, 0.2), transparent 34%),
+    linear-gradient(180deg, #06070b 0%, #05060a 55%, #030408 100%);
+  padding: clamp(4.8rem, 8vw, 6.8rem) 0 clamp(3.2rem, 8vw, 5rem);
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      repeating-linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.02) 0,
+        rgba(255, 255, 255, 0.02) 1px,
+        transparent 1px,
+        transparent 3px
+      );
+    mix-blend-mode: soft-light;
+    opacity: 0.38;
+  }
 `;
 
 const Canvas = styled.div`
   position: relative;
-  width: min(1600px, 100%);
+  z-index: 1;
+  width: min(1500px, 92vw);
   margin: 0 auto;
+  display: grid;
+  gap: clamp(1.5rem, 2.8vw, 2.6rem);
 `;
 
-const Hero = styled.article`
+const Intro = styled.header`
+  display: grid;
+  gap: 0.8rem;
+  width: min(78ch, 100%);
+`;
+
+const IntroTag = styled.span`
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  font-size: clamp(0.64rem, 0.9vw, 0.82rem);
+  color: rgba(236, 215, 177, 0.9);
+`;
+
+const IntroTitle = styled.h1`
+  font-family: 'Sirin Stencil', 'Trebuchet MS', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  line-height: 0.94;
+  font-size: clamp(2rem, 6.2vw, 4.8rem);
+  color: rgba(249, 249, 249, 0.98);
+  margin: 0;
+`;
+
+const IntroBody = styled.p`
+  margin: 0;
+  color: rgba(230, 233, 240, 0.82);
+  width: min(68ch, 100%);
+  font-size: clamp(0.9rem, 1.2vw, 1.05rem);
+  line-height: 1.6;
+`;
+
+const Featured = styled(motion.article)`
+  display: grid;
+  grid-template-columns: 1.08fr 0.92fr;
+  gap: clamp(1rem, 2vw, 1.6rem);
+
+  @media (max-width: 70em) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const StageMedia = styled.button`
   position: relative;
-  min-height: clamp(520px, 92vh, 940px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 1.2rem;
   overflow: hidden;
+  background: #0a0b11;
+  min-height: clamp(260px, 46vw, 560px);
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+
+  &:focus-visible {
+    outline: 2px solid rgba(240, 216, 173, 0.96);
+    outline-offset: 2px;
+  }
 `;
 
-const HeroImage = styled.img`
+const StageImage = styled.img`
   position: absolute;
   inset: 0;
   width: 100%;
@@ -52,450 +130,374 @@ const HeroImage = styled.img`
   object-position: center;
 `;
 
-const HeroGlow = styled.div`
+const StageOverlay = styled.div`
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(140% 90% at 76% 45%, rgba(255, 121, 54, 0.28), transparent 56%),
-    linear-gradient(90deg, rgba(6, 7, 10, 0.9) 14%, rgba(6, 7, 10, 0.52) 48%, rgba(6, 7, 10, 0.92) 100%),
-    linear-gradient(180deg, rgba(6, 7, 10, 0.1) 0%, rgba(6, 7, 10, 0.84) 100%);
+    radial-gradient(circle at 72% 30%, rgba(255, 202, 152, 0.24), transparent 46%),
+    linear-gradient(180deg, rgba(7, 8, 12, 0.18) 8%, rgba(7, 8, 12, 0.86) 92%);
 `;
 
-const LeftDock = styled.nav`
+const StageBadge = styled.span`
   position: absolute;
-  left: clamp(0.55rem, 1.8vw, 1.1rem);
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 6;
-  display: grid;
-  gap: 0.56rem;
-
-  @media (max-width: 70em) {
-    display: none;
-  }
+  top: 1rem;
+  left: 1rem;
+  border: 1px solid rgba(240, 216, 173, 0.66);
+  border-radius: 999px;
+  background: rgba(8, 10, 15, 0.7);
+  color: rgba(247, 229, 195, 0.96);
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 0.63rem;
+  padding: 0.34rem 0.58rem;
 `;
 
-const DockButton = styled.button`
-  width: 2.3rem;
-  height: 2.3rem;
-  border-radius: 0.64rem;
-  border: 1px solid ${({ $active }) => ($active ? 'rgba(240, 216, 173, 0.82)' : 'rgba(255, 255, 255, 0.24)')};
-  background: ${({ $active }) => ($active ? 'rgba(240, 216, 173, 0.2)' : 'rgba(10, 11, 15, 0.58)')};
-  color: ${({ $active }) => ($active ? 'rgba(255, 244, 216, 0.98)' : 'rgba(255, 255, 255, 0.84)')};
+const StageCaption = styled.div`
+  position: absolute;
+  left: 1rem;
+  right: 1rem;
+  bottom: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.7rem;
+`;
+
+const StageCaptionText = styled.span`
+  color: rgba(241, 244, 249, 0.92);
+  font-size: clamp(0.74rem, 1vw, 0.88rem);
+  letter-spacing: 0.06em;
+`;
+
+const PlayDot = styled.span`
+  width: 2.1rem;
+  height: 2.1rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.34);
+  background: rgba(9, 11, 16, 0.72);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0;
-  cursor: pointer;
-
-  &:hover,
-  &:focus-visible {
-    border-color: rgba(240, 216, 173, 0.88);
-    background: rgba(240, 216, 173, 0.2);
-    color: rgba(255, 244, 216, 0.98);
-    outline: none;
-  }
-
-  svg {
-    width: 1rem;
-    height: 1rem;
-  }
+  color: rgba(255, 255, 255, 0.94);
+  font-size: 0.75rem;
 `;
 
-const HeroContent = styled(motion.div)`
-  position: relative;
-  z-index: 5;
-  min-height: inherit;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  gap: clamp(0.78rem, 1.7vw, 1.15rem);
-  padding: clamp(6rem, 10vw, 8.4rem) clamp(1.2rem, 5vw, 4.8rem) clamp(6.1rem, 9vw, 8rem)
-    clamp(1.2rem, 9vw, 8.4rem);
-
-  @media (max-width: 70em) {
-    padding-left: clamp(1.2rem, 4vw, 3rem);
-  }
-
-  @media (max-width: 48em) {
-    padding-bottom: clamp(5rem, 12vw, 6.2rem);
-  }
+const StagePanel = styled.div`
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 1.2rem;
+  background: linear-gradient(180deg, rgba(12, 14, 20, 0.86), rgba(6, 8, 13, 0.94));
+  padding: clamp(1rem, 2vw, 1.5rem);
+  display: grid;
+  gap: 1rem;
+  align-content: start;
 `;
 
-const SeriesMark = styled.div`
+const CollectionPill = styled.span`
   display: inline-flex;
-  align-items: center;
-  gap: 0.62rem;
-
-  b {
-    width: 1.55rem;
-    height: 1.55rem;
-    border-radius: 0.32rem;
-    border: 1px solid rgba(240, 216, 173, 0.64);
-    background: rgba(240, 216, 173, 0.2);
-    color: rgba(255, 245, 220, 0.98);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.96rem;
-    font-weight: 700;
-  }
-
-  span {
-    text-transform: uppercase;
-    letter-spacing: 0.18em;
-    font-size: clamp(0.72rem, 1vw, 0.9rem);
-    color: rgba(242, 242, 242, 0.88);
-  }
-`;
-
-const BigTitle = styled.h1`
-  width: min(12ch, 100%);
-  font-family: 'Georgia', 'Times New Roman', serif;
-  font-size: clamp(2.3rem, 8.8vw, 6.4rem);
-  line-height: 0.86;
-  letter-spacing: 0.01em;
-  color: rgba(255, 255, 255, 0.98);
+  width: fit-content;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(229, 233, 241, 0.9);
   text-transform: uppercase;
-  text-shadow: 0 8px 32px rgba(0, 0, 0, 0.55);
+  letter-spacing: 0.16em;
+  font-size: 0.62rem;
+  padding: 0.34rem 0.6rem;
 `;
 
-const RankRow = styled.div`
-  display: inline-flex;
-  align-items: center;
-  gap: 0.52rem;
-
-  b {
-    border-radius: 0.28rem;
-    background: rgba(210, 36, 36, 0.9);
-    color: rgba(255, 255, 255, 0.98);
-    padding: 0.2rem 0.36rem;
-    font-size: 0.7rem;
-    letter-spacing: 0.07em;
-    text-transform: uppercase;
-  }
-
-  span {
-    font-size: clamp(0.98rem, 1.8vw, 1.45rem);
-    font-weight: 700;
-    color: rgba(255, 255, 255, 0.96);
-  }
+const StageTitle = styled.h2`
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  line-height: 0.94;
+  font-size: clamp(1.5rem, 3vw, 2.5rem);
+  color: rgba(250, 250, 251, 0.98);
 `;
 
-const Description = styled.p`
-  width: min(62ch, 100%);
-  color: rgba(243, 243, 243, 0.92);
-  font-size: clamp(0.92rem, 1.5vw, 1.16rem);
-  line-height: 1.58;
+const StageLogline = styled.p`
+  margin: 0;
+  color: rgba(229, 233, 242, 0.85);
+  font-size: clamp(0.88rem, 1.15vw, 1rem);
+  line-height: 1.62;
 `;
 
-const ButtonRow = styled.div`
+const MetaRow = styled.div`
   display: flex;
-  align-items: center;
-  gap: 0.7rem;
+  gap: 0.46rem;
   flex-wrap: wrap;
 `;
 
-const PlayButton = styled.button`
+const MetaChip = styled.span`
+  border-radius: 0.52rem;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(233, 237, 245, 0.92);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0.28rem 0.48rem;
+`;
+
+const ActionRow = styled.div`
+  display: flex;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+`;
+
+const PrimaryButton = styled.button`
   border: none;
-  border-radius: 0.56rem;
-  padding: 0.74rem 1.3rem;
-  background: #ffffff;
-  color: #06070b;
-  font-size: 1.02rem;
+  border-radius: 0.62rem;
+  padding: 0.66rem 0.98rem;
+  background: rgba(243, 222, 189, 0.96);
+  color: #0c0d12;
+  font-size: 0.82rem;
   font-weight: 700;
+  letter-spacing: 0.04em;
   cursor: pointer;
 
   &:hover,
   &:focus-visible {
-    background: rgba(255, 255, 255, 0.86);
+    background: rgba(245, 226, 197, 1);
     outline: none;
   }
 `;
 
-const InfoButton = styled.button`
-  border: 1px solid rgba(255, 255, 255, 0.32);
-  border-radius: 0.56rem;
-  padding: 0.74rem 1.24rem;
-  background: rgba(58, 60, 66, 0.72);
-  color: rgba(255, 255, 255, 0.96);
-  font-size: 1.02rem;
+const GhostButton = styled.button`
+  border-radius: 0.62rem;
+  border: 1px solid rgba(255, 255, 255, 0.26);
+  padding: 0.64rem 0.96rem;
+  background: rgba(255, 255, 255, 0.03);
+  color: rgba(238, 242, 248, 0.95);
+  font-size: 0.82rem;
   font-weight: 600;
+  letter-spacing: 0.04em;
   cursor: pointer;
 
   &:hover,
   &:focus-visible {
-    background: rgba(77, 79, 87, 0.86);
+    background: rgba(255, 255, 255, 0.08);
     outline: none;
   }
 `;
 
-const Maturity = styled.div`
-  position: absolute;
-  right: clamp(0.72rem, 2vw, 1.4rem);
-  bottom: clamp(1.3rem, 2.6vw, 2.1rem);
-  z-index: 5;
-  border-left: 3px solid rgba(255, 255, 255, 0.86);
-  background: rgba(6, 7, 9, 0.62);
-  color: rgba(255, 255, 255, 0.96);
-  letter-spacing: 0.06em;
-  font-size: clamp(0.94rem, 1.6vw, 1.38rem);
-  padding: 0.56rem 1.04rem;
-`;
-
-const Rows = styled.div`
-  width: min(1540px, 98vw);
-  margin: clamp(-5.6rem, -6vw, -4rem) auto 0;
-  position: relative;
-  z-index: 7;
-  padding-bottom: clamp(1.2rem, 2.8vw, 2.4rem);
+const CollectionStack = styled.div`
   display: grid;
-  gap: 1.05rem;
-
-  @media (max-width: 56em) {
-    margin-top: -2.2rem;
-  }
+  gap: clamp(1.2rem, 2.2vw, 1.8rem);
 `;
 
-const Row = styled.section`
+const Collection = styled(motion.section)`
   display: grid;
-  gap: 0.58rem;
+  gap: 0.7rem;
 `;
 
-const RowTitle = styled.h3`
-  padding-left: clamp(0.65rem, 1.4vw, 1rem);
-  font-size: clamp(0.98rem, 1.24vw, 1.16rem);
-  color: rgba(250, 250, 250, 0.96);
-  font-weight: 700;
+const CollectionHead = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  flex-wrap: wrap;
 `;
 
-const Shelf = styled.div`
+const CollectionTitle = styled.h3`
+  margin: 0;
+  color: rgba(248, 248, 249, 0.98);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: clamp(0.82rem, 1.18vw, 0.94rem);
+`;
+
+const CollectionNote = styled.p`
+  margin: 0;
+  color: rgba(214, 220, 230, 0.72);
+  font-size: clamp(0.76rem, 0.92vw, 0.88rem);
+`;
+
+const ProjectGrid = styled.div`
   display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: clamp(92px, 8.2vw, 128px);
-  gap: clamp(0.22rem, 0.48vw, 0.36rem);
-  overflow-x: auto;
-  padding: 0 0.6rem 0.2rem;
-
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.28) transparent;
-
-  &::-webkit-scrollbar {
-    height: 7px;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.28);
-  }
+  gap: 0.82rem;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
 `;
 
-const Card = styled(motion.button)`
-  position: relative;
-  border: 1px solid ${({ $active }) => ($active ? 'rgba(240, 216, 173, 0.8)' : 'rgba(255, 255, 255, 0.15)')};
-  border-radius: 0.42rem;
-  background: rgba(8, 9, 13, 0.9);
+const ProjectCard = styled(motion.button)`
+  border: 1px solid ${({ $active }) => ($active ? 'rgba(240, 216, 173, 0.8)' : 'rgba(255, 255, 255, 0.14)')};
+  border-radius: 0.9rem;
+  background: linear-gradient(180deg, rgba(11, 13, 18, 0.94), rgba(8, 10, 15, 0.92));
   overflow: hidden;
   padding: 0;
+  text-align: left;
   cursor: pointer;
 
-  img {
-    width: 100%;
-    height: clamp(58px, 5.4vw, 84px);
-    object-fit: cover;
-    display: block;
-  }
-
   &:focus-visible {
-    outline: 2px solid rgba(240, 216, 173, 0.95);
-    outline-offset: -2px;
+    outline: 2px solid rgba(240, 216, 173, 0.92);
+    outline-offset: 2px;
   }
 `;
 
-const CardMark = styled.span`
-  position: absolute;
-  top: 0.32rem;
-  left: 0.32rem;
-  border-radius: 0.2rem;
-  background: rgba(215, 39, 39, 0.92);
-  color: rgba(255, 255, 255, 0.98);
-  font-size: 0.54rem;
-  line-height: 1;
+const ProjectImage = styled.img`
+  width: 100%;
+  aspect-ratio: var(--aspect, 16 / 10);
+  object-fit: cover;
+  display: block;
+`;
+
+const ProjectInfo = styled.div`
+  padding: 0.62rem 0.62rem 0.74rem;
+  display: grid;
+  gap: 0.32rem;
+`;
+
+const ProjectName = styled.h4`
+  margin: 0;
+  color: rgba(248, 248, 249, 0.98);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: clamp(0.8rem, 0.95vw, 0.9rem);
+`;
+
+const ProjectMeta = styled.p`
+  margin: 0;
+  color: rgba(214, 220, 230, 0.72);
+  font-size: 0.74rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  padding: 0.16rem 0.22rem;
 `;
 
-const dockIcons = [
-  (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <circle cx="11" cy="11" r="6" />
-      <line x1="20" y1="20" x2="16.6" y2="16.6" />
-    </svg>
-  ),
-  (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M3 11.8L12 4l9 7.8" />
-      <path d="M6.5 10.7v8.8h11v-8.8" />
-    </svg>
-  ),
-  (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M17.8 6.2H6.2v11.6h11.6z" />
-      <path d="M9 3.8h6" />
-      <path d="M9 20.2h6" />
-    </svg>
-  ),
-  (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M5 19l14-14" />
-      <path d="M12 5h7v7" />
-      <path d="M5 12v7h7" />
-    </svg>
-  ),
-  (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <rect x="3.8" y="5.5" width="16.4" height="12.2" rx="2" />
-      <line x1="8" y1="20" x2="16" y2="20" />
-    </svg>
-  ),
-  (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M4.5 18.2h15" />
-      <path d="M6.8 8.2h10.4v7.8H6.8z" />
-      <path d="M10.2 5.8h3.6" />
-    </svg>
-  ),
-  (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <line x1="12" y1="5" x2="12" y2="19" />
-      <line x1="5" y1="12" x2="19" y2="12" />
-    </svg>
-  ),
-];
-
-const rows = [
+const collections = [
   {
-    title: 'Trending Now',
+    title: 'Narrative Shorts',
+    note: 'Character-led scenes with mood-driven pacing.',
     items: [
       {
         image: img11,
         title: 'Shadowline',
-        rank: '#1 in TV Shows Today',
-        description:
-          'When a young editor vanishes, a small city unravels into covert experiments and volatile signals.',
+        category: 'Drama short',
+        duration: '04:12',
+        year: '2026',
+        tools: 'Premiere + Lumetri',
+        logline: 'A night editor follows visual glitches through one city block and uncovers a hidden story trail.',
+        aspect: '16 / 10',
       },
       {
         image: img4,
         title: 'Signal Field',
-        rank: 'Top 10 in Drama',
-        description: 'A frequency map buried in old tapes points to a hidden district underneath the station.',
-      },
-      {
-        image: img5,
-        title: 'Liminal Room',
-        rank: 'Trending #3',
-        description: 'A controlled studio set begins changing each night before cameras roll.',
+        category: 'Cinematic study',
+        duration: '03:31',
+        year: '2026',
+        tools: 'Sony A7 + DaVinci',
+        logline: 'An experiment in contrast, rhythm, and urban texture captured during blue hour.',
+        aspect: '4 / 3',
       },
       {
         image: img6,
         title: 'Cold Frame',
-        rank: 'Trending #4',
-        description: 'Each overexposed negative contains coordinates to a place that should not exist.',
-      },
-      {
-        image: img7,
-        title: 'No Sleep City',
-        rank: 'Trending #5',
-        description: 'Night interviews reveal one witness appearing in every unsolved file.',
-      },
-      {
-        image: img12,
-        title: 'Red Corridor',
-        rank: 'Trending #6',
-        description: 'A corridor lit in emergency red opens to a locked archive floor.',
-      },
-    ],
-  },
-  {
-    title: 'Continue Watching',
-    items: [
-      {
-        image: img8,
-        title: 'Echo Transfer',
-        rank: 'Continue at 19:24',
-        description: 'A missing voice returns in reversed audio from a decommissioned relay.',
-      },
-      {
-        image: img9,
-        title: 'Night Junction',
-        rank: 'Continue at 36:02',
-        description: 'Three disappearances converge through one old rail control feed.',
+        category: 'Visual poem',
+        duration: '02:58',
+        year: '2025',
+        tools: 'FX3 + Resolve',
+        logline: 'Still architecture and moving shadows become a single visual sentence.',
+        aspect: '5 / 4',
       },
       {
         image: img10,
         title: 'Final Composition',
-        rank: 'Continue at 48:01',
-        description: 'A final cut keeps revealing frames no editor added.',
-      },
-      {
-        image: img13,
-        title: 'Glass Division',
-        rank: 'Continue at 14:10',
-        description: 'Mirror reflections show an extra person never present on set.',
-      },
-      {
-        image: img14,
-        title: 'Zero Ground',
-        rank: 'Continue at 31:56',
-        description: 'Drone footage captures movement below sealed concrete.',
-      },
-      {
-        image: img4,
-        title: 'Mirror Exit',
-        rank: 'Continue at 21:08',
-        description: 'Parallel edits sync perfectly until the final 7 seconds.',
+        category: 'Edit exercise',
+        duration: '05:06',
+        year: '2025',
+        tools: 'Premiere + After Effects',
+        logline: 'A montage project exploring continuity cuts and emotional transitions.',
+        aspect: '16 / 9',
       },
     ],
   },
   {
-    title: 'New Releases',
+    title: 'Documentary Fragments',
+    note: 'Observed moments, natural light, and grounded sound design.',
     items: [
       {
-        image: img6,
-        title: 'Blue Sector',
-        rank: 'New this week',
-        description: 'A frozen control room reactivates after years of silence.',
+        image: img8,
+        title: 'Echo Transfer',
+        category: 'Doc fragment',
+        duration: '06:14',
+        year: '2026',
+        tools: 'Zoom H6 + FX30',
+        logline: 'A quiet portrait of late-night transit workers and the spaces between shifts.',
+        aspect: '16 / 9',
+      },
+      {
+        image: img9,
+        title: 'Night Junction',
+        category: 'Field study',
+        duration: '04:47',
+        year: '2025',
+        tools: 'Handheld + 35mm',
+        logline: 'One rail route, three viewpoints, and a layered soundscape built from station ambience.',
+        aspect: '3 / 2',
+      },
+      {
+        image: img13,
+        title: 'Glass Division',
+        category: 'Interview piece',
+        duration: '05:22',
+        year: '2025',
+        tools: 'Resolve Fairlight',
+        logline: 'Reflections and off-axis framing turn a simple interview into visual narrative.',
+        aspect: '4 / 3',
+      },
+      {
+        image: img14,
+        title: 'Zero Ground',
+        category: 'Location study',
+        duration: '03:55',
+        year: '2024',
+        tools: 'Gimbal + ND filters',
+        logline: 'A texture-first exploration of concrete, rain, and negative space.',
+        aspect: '16 / 10',
+      },
+    ],
+  },
+  {
+    title: 'Experimental Visuals',
+    note: 'Motion design tests, color language, and concept edits.',
+    items: [
+      {
+        image: img5,
+        title: 'Liminal Room',
+        category: 'Concept loop',
+        duration: '02:09',
+        year: '2026',
+        tools: 'After Effects + Grain',
+        logline: 'Set design and looping edits create a shifting, dreamlike room sequence.',
+        aspect: '16 / 9',
       },
       {
         image: img7,
-        title: 'Rain Archive',
-        rank: 'New this week',
-        description: 'Recovered storm tapes reopen a closed investigation.',
-      },
-      {
-        image: img11,
-        title: 'Static Breach',
-        rank: 'New this week',
-        description: 'White-noise patterns align with unseen surveillance routes.',
+        title: 'No Sleep City',
+        category: 'Night study',
+        duration: '03:18',
+        year: '2025',
+        tools: 'Long exposure + AE',
+        logline: 'Neon motion and shutter drag are blended into an abstract city sketch.',
+        aspect: '5 / 4',
       },
       {
         image: img12,
-        title: 'Terminal North',
-        rank: 'New this week',
-        description: 'One traveler appears at three checkpoints in one minute.',
+        title: 'Red Corridor',
+        category: 'Atmosphere piece',
+        duration: '04:02',
+        year: '2025',
+        tools: 'Color isolation',
+        logline: 'A single red-lit location becomes a sequence of tension-driven compositions.',
+        aspect: '4 / 3',
       },
       {
-        image: img10,
-        title: 'After Voltage',
-        rank: 'New this week',
-        description: 'Restored power reveals untouched recordings from closed sets.',
-      },
-      {
-        image: img8,
-        title: 'Concrete Sky',
-        rank: 'New this week',
-        description: 'A rooftop feed tracks a silhouette before each blackout.',
+        image: img6,
+        title: 'Blue Sector',
+        category: 'Studio test',
+        duration: '02:44',
+        year: '2024',
+        tools: 'LED practicals',
+        logline: 'Controlled lighting and practical effects push a minimalist sci-fi look.',
+        aspect: '16 / 10',
       },
     ],
   },
@@ -518,86 +520,98 @@ const thumbnailByImage = new Map([
 const getThumbnail = (source) => thumbnailByImage.get(source) || source;
 
 const Videos = () => {
-  const [activeDock, setActiveDock] = useState(1);
-  const [featured, setFeatured] = useState(rows[0].items[0]);
+  const allItems = useMemo(
+    () =>
+      collections.flatMap((collection) =>
+        collection.items.map((item) => ({
+          ...item,
+          collectionTitle: collection.title,
+          collectionNote: collection.note,
+        })),
+      ),
+    [],
+  );
 
-  const titleLines = useMemo(() => {
-    const words = featured.title.split(' ');
-    if (words.length <= 1) {
-      return featured.title;
-    }
-    const split = Math.ceil(words.length / 2);
-    return `${words.slice(0, split).join(' ')}\n${words.slice(split).join(' ')}`;
-  }, [featured.title]);
+  const [featured, setFeatured] = useState(allItems[0]);
 
   return (
     <Section id="videos">
       <Canvas>
-        <Hero>
-          <HeroImage src={featured.image} alt="" aria-hidden="true" />
-          <HeroGlow />
+        <Intro>
+          <IntroTag>Student Film Showcase</IntroTag>
+          <IntroTitle>Jack Miller Moving Image Projects</IntroTitle>
+          <IntroBody>
+            A curated reel of student-led films, documentary fragments, and experimental edits. Built as a
+            portfolio wall instead of a streaming interface, focused on craft, process, and visual identity.
+          </IntroBody>
+        </Intro>
 
-          <LeftDock aria-label="Videos quick navigation">
-            {dockIcons.map((icon, index) => (
-              <DockButton
-                key={`dock-${index + 1}`}
-                type="button"
-                $active={activeDock === index}
-                onClick={() => setActiveDock(index)}
-                aria-label={`Quick icon ${index + 1}`}
-              >
-                {icon}
-              </DockButton>
-            ))}
-          </LeftDock>
+        <Featured
+          key={featured.title}
+          initial={{ opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.42, ease: 'easeOut' }}
+        >
+          <StageMedia type="button" onClick={() => setFeatured(featured)} aria-label={`Featured project ${featured.title}`}>
+            <StageImage src={featured.image} alt={featured.title} />
+            <StageOverlay />
+            <StageBadge>{featured.category}</StageBadge>
+            <StageCaption>
+              <StageCaptionText>{featured.year} showcase cut</StageCaptionText>
+              <PlayDot aria-hidden="true">▶</PlayDot>
+            </StageCaption>
+          </StageMedia>
 
-          <HeroContent
-            initial={{ opacity: 0, y: 22 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.45, ease: 'easeOut' }}
-          >
-            <SeriesMark>
-              <b>J</b>
-              <span>Series</span>
-            </SeriesMark>
+          <StagePanel>
+            <CollectionPill>{featured.collectionTitle}</CollectionPill>
+            <StageTitle>{featured.title}</StageTitle>
+            <StageLogline>{featured.logline}</StageLogline>
+            <MetaRow>
+              <MetaChip>{featured.duration}</MetaChip>
+              <MetaChip>{featured.year}</MetaChip>
+              <MetaChip>{featured.tools}</MetaChip>
+            </MetaRow>
+            <ActionRow>
+              <PrimaryButton type="button">Watch Project</PrimaryButton>
+              <GhostButton type="button">View Breakdown</GhostButton>
+            </ActionRow>
+          </StagePanel>
+        </Featured>
 
-            <BigTitle>{titleLines}</BigTitle>
-
-            <RankRow>
-              <b>Top</b>
-              <span>{featured.rank}</span>
-            </RankRow>
-
-            <Description>{featured.description}</Description>
-
-            <ButtonRow>
-              <PlayButton type="button">Play</PlayButton>
-              <InfoButton type="button">More info</InfoButton>
-            </ButtonRow>
-          </HeroContent>
-
-          <Maturity>TV-14</Maturity>
-        </Hero>
-
-        <Rows>
-          {rows.map((row) => (
-            <Row key={row.title}>
-              <RowTitle>{row.title}</RowTitle>
-              <Shelf>
-                {row.items.map((item) => {
-                  const isActive = item.title === featured.title;
+        <CollectionStack>
+          {collections.map((collection, collectionIndex) => (
+            <Collection
+              key={collection.title}
+              initial={{ opacity: 0, y: 14 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.36, delay: collectionIndex * 0.05 }}
+            >
+              <CollectionHead>
+                <CollectionTitle>{collection.title}</CollectionTitle>
+                <CollectionNote>{collection.note}</CollectionNote>
+              </CollectionHead>
+              <ProjectGrid>
+                {collection.items.map((item, index) => {
+                  const active = featured.title === item.title;
                   return (
-                    <Card
-                      key={`${row.title}-${item.title}`}
+                    <ProjectCard
+                      key={`${collection.title}-${item.title}`}
                       type="button"
-                      $active={isActive}
-                      onClick={() => setFeatured(item)}
-                      whileHover={{ y: -3, scale: 1.015 }}
+                      $active={active}
+                      style={{ '--aspect': item.aspect }}
+                      onClick={() =>
+                        setFeatured({
+                          ...item,
+                          collectionTitle: collection.title,
+                          collectionNote: collection.note,
+                        })
+                      }
+                      whileHover={{ y: -6, scale: 1.01 }}
                       transition={{ duration: 0.2 }}
-                      aria-label={`Feature ${item.title}`}
+                      aria-label={`Open ${item.title}`}
                     >
-                      <CardMark>J</CardMark>
-                      <img
+                      <ProjectImage
                         src={getThumbnail(item.image)}
                         alt={item.title}
                         width="1280"
@@ -605,13 +619,19 @@ const Videos = () => {
                         loading="lazy"
                         decoding="async"
                       />
-                    </Card>
+                      <ProjectInfo>
+                        <ProjectName>{item.title}</ProjectName>
+                        <ProjectMeta>
+                          {item.category} · {item.duration}
+                        </ProjectMeta>
+                      </ProjectInfo>
+                    </ProjectCard>
                   );
                 })}
-              </Shelf>
-            </Row>
+              </ProjectGrid>
+            </Collection>
           ))}
-        </Rows>
+        </CollectionStack>
       </Canvas>
     </Section>
   );

@@ -125,6 +125,7 @@ const CoverVideo = () => {
   const scaleLayerRef = useRef(null);
   const titleContentRef = useRef(null);
   const videoRef = useRef(null);
+
   const locoContext = useLocomotiveScroll();
   const scroll = locoContext?.scroll;
 
@@ -228,12 +229,22 @@ const CoverVideo = () => {
       },
       0,
     );
-    timeline.to(titleElement, { scale: 0.6667, y: -120, ease: 'none' }, 0);
+
+    timeline.to(
+      titleElement,
+      {
+        scale: 0.6667,
+        y: -120,
+        ease: 'none',
+      },
+      0,
+    );
 
     const refreshTrigger = () => ScrollTrigger.refresh();
     const videoElement = videoRef.current;
 
     videoElement?.addEventListener('loadedmetadata', refreshTrigger);
+
     const rafId = window.requestAnimationFrame(refreshTrigger);
     const timeoutId = window.setTimeout(refreshTrigger, 320);
 
@@ -249,6 +260,7 @@ const CoverVideo = () => {
 
   return (
     <VideoContainer ref={containerRef}>
+
       <DarkOverlay />
 
       <Title>

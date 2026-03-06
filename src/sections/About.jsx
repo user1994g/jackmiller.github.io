@@ -1,10 +1,5 @@
 import { AnimatePresence } from 'framer-motion';
-import anime from 'animejs/lib/anime.es.js';
-import gsap from 'gsap';
-import Flip from 'gsap/Flip';
-import ScrollTrigger from 'gsap/ScrollTrigger';
-import React, { useLayoutEffect, useRef, useState } from 'react';
-import { useLocomotiveScroll } from 'react-locomotive-scroll';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 
 import img1 from '../assets/Images/1.webp';
@@ -16,8 +11,6 @@ import img6 from '../assets/Images/6.webp';
 import img7 from '../assets/Images/7.webp';
 import img8 from '../assets/Images/8.webp';
 import ImageLightbox from '../components/ImageLightbox';
-
-gsap.registerPlugin(ScrollTrigger, Flip);
 
 const Section = styled.section`
   width: min(var(--content-max), 92vw);
@@ -46,9 +39,6 @@ const Title = styled.h2`
   font-weight: 300;
   color: rgba(255, 255, 255, 0.93);
 
-  opacity: 0;
-  transform: translateY(22px);
-
   @media (max-width: 64em) {
     position: relative;
     top: 0;
@@ -64,15 +54,10 @@ const Copy = styled.div`
   background: rgba(18, 20, 26, 0.72);
   backdrop-filter: blur(8px);
 
-  opacity: 0;
-  transform: translateY(30px);
-
   p {
     font-size: clamp(0.88rem, 1.25vw, 1.08rem);
     line-height: 1.75;
     color: rgba(240, 242, 245, 0.85);
-    opacity: 0;
-    transform: translateY(14px);
   }
 
   p + p {
@@ -112,20 +97,6 @@ const GalleryGrid = styled.div`
   grid-template-rows: repeat(4, 1fr);
   justify-content: center;
   align-content: center;
-
-  &.gallery--final {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: 99;
-    padding: 1vw;
-    background: rgba(18, 20, 26, 0.95);
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(4, 1fr);
-    gap: 1vh;
-  }
 `;
 
 const GalleryItem = styled.button`
@@ -144,11 +115,6 @@ const GalleryItem = styled.button`
     object-fit: cover;
     width: 100%;
     height: 100%;
-    transition: transform 0.4s ease;
-  }
-
-  &:hover img {
-    transform: scale(1.05);
   }
 
   &:focus-visible {
@@ -195,205 +161,30 @@ const aboutPhotos = [
 
 const About = () => {
   const [activeImage, setActiveImage] = useState(null);
-  const titleRef = useRef(null);
-  const copyRef = useRef(null);
-  const galleryWrapRef = useRef(null);
-  const galleryRef = useRef(null);
-  const locoContext = useLocomotiveScroll();
-  const scroll = locoContext?.scroll;
-
-  useLayoutEffect(() => {
-    const titleElement = titleRef.current;
-    const copyElement = copyRef.current;
-    const galleryWrapElement = galleryWrapRef.current;
-    const galleryElement = galleryRef.current;
-
-    if (!titleElement || !copyElement || !galleryWrapElement || !galleryElement) {
-      return undefined;
-    }
-
-    const scrollerFallback = document.querySelector('[data-scroll-container]');
-    const scrollerElement = scroll?.el || scrollerFallback;
-
-    const prefersReducedMotion =
-      typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const isMobileLike =
-      typeof window !== 'undefined' &&
-      (window.matchMedia('(pointer: coarse)').matches || window.matchMedia('(max-width: 64em)').matches);
-
-    let titleAnime = null;
-    let copyAnime = null;
-    let cardsAnime = null;
-    let mobileCardsTrigger = null;
-
-    const runAnimeIntro = () => {
-      if (prefersReducedMotion) {
-        gsap.set(titleElement, { opacity: 1, y: 0, clearProps: 'transform' });
-        gsap.set(copyElement.querySelectorAll('.about-copy-line'), {
-          opacity: 1,
-          y: 0,
-          clearProps: 'transform',
-        });
-        return;
-      }
-
-      titleAnime = anime({
-        targets: titleElement,
-        opacity: [0, 1],
-        translateY: [22, 0],
-        duration: 860,
-        easing: 'easeOutQuad',
-      });
-
-      const lines = copyElement.querySelectorAll('.about-copy-line');
-      anime.set(lines, { opacity: 0, translateY: 14 });
-      copyAnime = anime({
-        targets: lines,
-        opacity: [0, 1],
-        translateY: [14, 0],
-        delay: anime.stagger(120),
-        duration: 720,
-        easing: 'easeOutCubic',
-      });
-    };
-
-    const copyAnim = gsap.to(copyElement, {
-      scrollTrigger: {
-        trigger: copyElement,
-        start: 'top 85%',
-        once: true,
-        onEnter: runAnimeIntro,
-        ...(scrollerElement ? { scroller: scrollerElement } : {}),
-      },
-      opacity: 1,
-      y: 0,
-      duration: 0.8,
-      ease: 'power2.out',
-    });
-
-    const cards = galleryElement.querySelectorAll('.gallery__item');
-
-    if (isMobileLike) {
-      gsap.set(cards, { opacity: 1, y: 0, scale: 1, clearProps: 'all' });
-
-      mobileCardsTrigger = ScrollTrigger.create({
-        trigger: galleryWrapElement,
-        start: 'top 82%',
-        once: true,
-        onEnter: () => {
-          if (prefersReducedMotion) {
-            return;
-          }
-
-          anime.set(cards, { opacity: 0, translateY: 24, scale: 0.97 });
-          cardsAnime = anime({
-            targets: cards,
-            opacity: [0, 1],
-            translateY: [24, 0],
-            scale: [0.97, 1],
-            delay: anime.stagger(75),
-            duration: 660,
-            easing: 'easeOutCubic',
-          });
-        },
-        ...(scrollerElement ? { scroller: scrollerElement } : {}),
-      });
-
-      return () => {
-        copyAnim.scrollTrigger?.kill();
-        copyAnim.kill();
-        mobileCardsTrigger?.kill();
-        titleAnime?.pause();
-        copyAnime?.pause();
-        cardsAnime?.pause();
-        anime.remove([titleElement, ...cards, ...copyElement.querySelectorAll('.about-copy-line')]);
-      };
-    }
-
-    gsap.set(cards, { opacity: 0, y: 40, scale: 0.95 });
-
-    const entranceAnim = gsap.to(cards, {
-      scrollTrigger: {
-        trigger: galleryWrapElement,
-        start: 'top 80%',
-        ...(scrollerElement ? { scroller: scrollerElement } : {}),
-      },
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      duration: 0.8,
-      stagger: 0.1,
-      ease: 'back.out(1.2)',
-    });
-
-    let flipAnim;
-    const flipCtx = gsap.context(() => {
-      galleryElement.classList.add('gallery--final');
-      const flipState = Flip.getState(cards);
-      galleryElement.classList.remove('gallery--final');
-
-      const flip = Flip.to(flipState, {
-        simple: true,
-        ease: 'power1.inOut',
-      });
-
-      flipAnim = gsap.timeline({
-        scrollTrigger: {
-          id: 'bento-gallery-pin',
-          trigger: galleryWrapElement,
-          start: 'center center',
-          end: '+=150%',
-          scrub: true,
-          pin: true,
-          ...(scrollerElement ? { scroller: scrollerElement } : {}),
-        },
-      });
-
-      flipAnim.add(flip);
-
-      return () => {
-        gsap.set(cards, { clearProps: 'all' });
-      };
-    });
-
-    return () => {
-      copyAnim.scrollTrigger?.kill();
-      copyAnim.kill();
-      entranceAnim.scrollTrigger?.kill();
-      entranceAnim.kill();
-      flipAnim?.scrollTrigger?.kill();
-      flipAnim?.kill();
-      ScrollTrigger.getById('bento-gallery-pin')?.kill();
-      flipCtx.revert();
-      titleAnime?.pause();
-      copyAnime?.pause();
-      anime.remove([titleElement, ...copyElement.querySelectorAll('.about-copy-line')]);
-    };
-  }, [scroll]);
 
   return (
     <Section id="about" className="about">
-      <Title ref={titleRef}>about me</Title>
+      <Title>about me</Title>
 
-      <Copy ref={copyRef}>
-        <p className="about-copy-line">
+      <Copy>
+        <p>
           I build visual stories through film and photography, focusing on mood, tension, and
           cinematic composition. My process starts with atmosphere: controlled light, shadow, and
           framing that guide emotion before dialogue begins.
         </p>
-        <p className="about-copy-line">
+        <p>
           Every project in this portfolio, from concept to final edit, has been produced by me. I
           blend camera technique, colour grading, and sound-led pacing to create work that feels
           immersive and intentional on both still and moving formats.
         </p>
-        <p className="about-copy-line">
+        <p>
           This collection reflects my development as a creative media student and my goal to produce
           distinctive visuals that stay memorable across screens of every size.
         </p>
       </Copy>
 
-      <GalleryWrap ref={galleryWrapRef}>
-        <GalleryGrid ref={galleryRef}>
+      <GalleryWrap>
+        <GalleryGrid>
           {aboutPhotos.map((photo) => (
             <GalleryItem
               key={photo.alt}

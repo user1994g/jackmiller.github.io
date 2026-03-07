@@ -375,6 +375,37 @@ const SheetNotice = styled.div`
   line-height: 1.55;
 `;
 
+
+const SheetActions = styled.div`
+  display: flex;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+`;
+
+const SheetPlayButton = styled.button`
+  border: none;
+  border-radius: 0.6rem;
+  padding: 0.68rem 1rem;
+  background: rgba(245, 245, 246, 0.96);
+  color: #090a0d;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+`;
+
+const SheetGhostButton = styled.button`
+  border-radius: 0.6rem;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  padding: 0.66rem 0.96rem;
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(245, 247, 250, 0.94);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+`;
+
 const collections = [
   {
     title: 'Narrative Shorts',
@@ -694,6 +725,12 @@ const Videos = () => {
                     <MetaChip>{featured.tools}</MetaChip>
                     <MetaChip>{featured.collectionTitle}</MetaChip>
                   </Meta>
+                  <SheetActions>
+                    <SheetPlayButton type="button">Play</SheetPlayButton>
+                    <SheetGhostButton type="button" onClick={() => setSheetOpen(false)}>
+                      Back to Library
+                    </SheetGhostButton>
+                  </SheetActions>
                   <SheetNotice>
                     Playback is off for now. This page is currently a poster-based showcase while the final video
                     library is being prepared.

@@ -25,7 +25,6 @@ import thumb11 from '../assets/VideoThumbs/11-thumb.jpg';
 import thumb12 from '../assets/VideoThumbs/12-thumb.jpg';
 import thumb13 from '../assets/VideoThumbs/13-thumb.jpg';
 import thumb14 from '../assets/VideoThumbs/14-thumb.jpg';
-import MainVideo from '../assets/Walking Girl.mp4';
 
 const Section = styled.section`
   position: relative;
@@ -254,7 +253,7 @@ const CardMeta = styled.span`
   letter-spacing: 0.08em;
 `;
 
-const PlayerBackdrop = styled(motion.div)`
+const SheetBackdrop = styled(motion.div)`
   position: fixed;
   inset: 0;
   z-index: 90;
@@ -265,8 +264,8 @@ const PlayerBackdrop = styled(motion.div)`
   padding: clamp(0.8rem, 2.5vw, 1.2rem);
 `;
 
-const PlayerPanel = styled(motion.div)`
-  width: min(1200px, 100%);
+const SheetPanel = styled(motion.div)`
+  width: min(1080px, 100%);
   border-radius: 0.9rem;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -274,7 +273,7 @@ const PlayerPanel = styled(motion.div)`
   box-shadow: 0 32px 80px rgba(0, 0, 0, 0.58);
 `;
 
-const PlayerTop = styled.div`
+const SheetTop = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -290,7 +289,7 @@ const PlayerTop = styled.div`
   }
 `;
 
-const Close = styled.button`
+const SheetClose = styled.button`
   border-radius: 0.5rem;
   border: 1px solid rgba(255, 255, 255, 0.28);
   padding: 0.42rem 0.6rem;
@@ -302,10 +301,78 @@ const Close = styled.button`
   cursor: pointer;
 `;
 
-const PlayerVideo = styled.video`
-  width: 100%;
-  max-height: min(78vh, 760px);
+const SheetBody = styled.div`
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(300px, 0.92fr);
+  gap: 0;
+
+  @media (max-width: 62em) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const SheetVisual = styled.div`
+  position: relative;
+  min-height: clamp(280px, 48vw, 620px);
   background: #05060a;
+`;
+
+const SheetPoster = styled.img`
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+`;
+
+const SheetShade = styled.div`
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(5, 6, 10, 0.12) 0%, rgba(5, 6, 10, 0.84) 100%),
+    radial-gradient(circle at 72% 28%, rgba(255, 206, 148, 0.22), transparent 48%);
+`;
+
+const SheetInfo = styled.div`
+  padding: clamp(1rem, 2.2vw, 1.4rem);
+  display: grid;
+  align-content: start;
+  gap: 0.85rem;
+  background: linear-gradient(180deg, rgba(9, 10, 14, 0.96), rgba(6, 7, 10, 0.98));
+`;
+
+const SheetEyebrow = styled.span`
+  color: rgba(240, 216, 173, 0.88);
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 0.62rem;
+`;
+
+const SheetTitle = styled.h2`
+  margin: 0;
+  color: rgba(249, 250, 252, 0.98);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  line-height: 0.96;
+  font-size: clamp(1.3rem, 2.4vw, 2rem);
+`;
+
+const SheetText = styled.p`
+  margin: 0;
+  color: rgba(226, 231, 239, 0.82);
+  font-size: 0.92rem;
+  line-height: 1.62;
+`;
+
+const SheetNotice = styled.div`
+  border-radius: 0.65rem;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.04);
+  padding: 0.78rem 0.82rem;
+  color: rgba(244, 246, 249, 0.88);
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  line-height: 1.55;
 `;
 
 const collections = [
@@ -481,10 +548,10 @@ const Videos = () => {
   );
 
   const [featured, setFeatured] = useState(allItems[0]);
-  const [playerOpen, setPlayerOpen] = useState(false);
+  const [sheetOpen, setSheetOpen] = useState(false);
 
   useEffect(() => {
-    if (!playerOpen) {
+    if (!sheetOpen) {
       return undefined;
     }
 
@@ -493,7 +560,7 @@ const Videos = () => {
 
     const onEsc = (event) => {
       if (event.key === 'Escape') {
-        setPlayerOpen(false);
+        setSheetOpen(false);
       }
     };
 
@@ -503,7 +570,7 @@ const Videos = () => {
       document.body.style.overflow = previousOverflow;
       window.removeEventListener('keydown', onEsc);
     };
-  }, [playerOpen]);
+  }, [sheetOpen]);
 
   const openItem = (item, collection) => {
     setFeatured({
@@ -511,7 +578,7 @@ const Videos = () => {
       collectionTitle: collection.title,
       collectionNote: collection.note,
     });
-    setPlayerOpen(true);
+    setSheetOpen(true);
   };
 
   return (
@@ -525,7 +592,7 @@ const Videos = () => {
           <BillboardPoster src={featured.image} alt={featured.title} />
           <BillboardShade />
           <BillboardInner>
-            <Kicker>Film Library</Kicker>
+            <Kicker>Jack Miller Film Library</Kicker>
             <Title>{featured.title}</Title>
             <Meta>
               <MetaChip>{featured.year}</MetaChip>
@@ -534,7 +601,7 @@ const Videos = () => {
             </Meta>
             <Description>{featured.logline}</Description>
             <Actions>
-              <Primary type="button" onClick={() => setPlayerOpen(true)}>Play</Primary>
+              <Primary type="button" onClick={() => setSheetOpen(true)}>View Project</Primary>
               <Secondary
                 type="button"
                 onClick={() => rowsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
@@ -571,7 +638,7 @@ const Videos = () => {
                       onClick={() => openItem(item, collection)}
                       whileHover={{ scale: 1.05, y: -4 }}
                       transition={{ duration: 0.18 }}
-                      aria-label={`Play ${item.title}`}
+                      aria-label={`Open ${item.title}`}
                     >
                       <CardImage src={getThumbnail(item.image)} alt={item.title} loading="lazy" decoding="async" />
                       <CardOverlay>
@@ -590,35 +657,51 @@ const Videos = () => {
       </Wrap>
 
       <AnimatePresence>
-        {playerOpen ? (
-          <PlayerBackdrop
+        {sheetOpen ? (
+          <SheetBackdrop
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={() => setPlayerOpen(false)}
+            onClick={() => setSheetOpen(false)}
           >
-            <PlayerPanel
+            <SheetPanel
               initial={{ opacity: 0, y: 14, scale: 0.99 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 10, scale: 0.99 }}
               transition={{ duration: 0.22 }}
               onClick={(event) => event.stopPropagation()}
             >
-              <PlayerTop>
+              <SheetTop>
                 <strong>{featured.title}</strong>
-                <Close type="button" onClick={() => setPlayerOpen(false)}>Close</Close>
-              </PlayerTop>
-              <PlayerVideo
-                key={featured.title}
-                src={MainVideo}
-                poster={featured.image}
-                controls
-                autoPlay
-                playsInline
-                preload="metadata"
-              />
-            </PlayerPanel>
-          </PlayerBackdrop>
+                <SheetClose type="button" onClick={() => setSheetOpen(false)}>Close</SheetClose>
+              </SheetTop>
+              <SheetBody>
+                <SheetVisual>
+                  <SheetPoster src={featured.image} alt={featured.title} />
+                  <SheetShade />
+                </SheetVisual>
+                <SheetInfo>
+                  <SheetEyebrow>Jack Miller Media</SheetEyebrow>
+                  <SheetTitle>{featured.title}</SheetTitle>
+                  <Meta>
+                    <MetaChip>{featured.year}</MetaChip>
+                    <MetaChip>{featured.duration}</MetaChip>
+                    <MetaChip>{featured.category}</MetaChip>
+                  </Meta>
+                  <SheetText>{featured.logline}</SheetText>
+                  <SheetText>{featured.collectionNote}</SheetText>
+                  <Meta>
+                    <MetaChip>{featured.tools}</MetaChip>
+                    <MetaChip>{featured.collectionTitle}</MetaChip>
+                  </Meta>
+                  <SheetNotice>
+                    Playback is off for now. This page is currently a poster-based showcase while the final video
+                    library is being prepared.
+                  </SheetNotice>
+                </SheetInfo>
+              </SheetBody>
+            </SheetPanel>
+          </SheetBackdrop>
         ) : null}
       </AnimatePresence>
     </Section>

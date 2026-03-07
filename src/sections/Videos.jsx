@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import img4 from '../assets/VideoHeroes/4-hero.jpg';
@@ -25,6 +25,7 @@ import thumb11 from '../assets/VideoThumbs/11-thumb.jpg';
 import thumb12 from '../assets/VideoThumbs/12-thumb.jpg';
 import thumb13 from '../assets/VideoThumbs/13-thumb.jpg';
 import thumb14 from '../assets/VideoThumbs/14-thumb.jpg';
+import MainVideo from '../assets/Walking Girl.mp4';
 
 const Section = styled.section`
   position: relative;
@@ -95,44 +96,52 @@ const IntroBody = styled.p`
 `;
 
 const Featured = styled(motion.article)`
+  position: sticky;
+  top: clamp(4.8rem, 7vw, 6.2rem);
+  z-index: 4;
   display: grid;
   grid-template-columns: 1.08fr 0.92fr;
   gap: clamp(1rem, 2vw, 1.6rem);
+  padding: clamp(0.7rem, 1.1vw, 0.9rem);
+  border-radius: 1.4rem;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: linear-gradient(180deg, rgba(8, 10, 16, 0.84), rgba(6, 8, 13, 0.92));
+  backdrop-filter: blur(12px);
 
   @media (max-width: 70em) {
+    position: static;
     grid-template-columns: 1fr;
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    backdrop-filter: none;
   }
 `;
 
-const StageMedia = styled.button`
+const StageMedia = styled.div`
   position: relative;
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 1.2rem;
   overflow: hidden;
   background: #0a0b11;
   min-height: clamp(260px, 46vw, 560px);
-  padding: 0;
-  cursor: pointer;
-  text-align: left;
-
-  &:focus-visible {
-    outline: 2px solid rgba(240, 216, 173, 0.96);
-    outline-offset: 2px;
-  }
 `;
 
-const StageImage = styled.img`
+const StageVideo = styled.video`
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
   object-position: center;
+  background: #07090f;
 `;
 
 const StageOverlay = styled.div`
   position: absolute;
   inset: 0;
+  pointer-events: none;
   background:
     radial-gradient(circle at 72% 30%, rgba(255, 202, 152, 0.24), transparent 46%),
     linear-gradient(180deg, rgba(7, 8, 12, 0.18) 8%, rgba(7, 8, 12, 0.86) 92%);
@@ -142,6 +151,7 @@ const StageBadge = styled.span`
   position: absolute;
   top: 1rem;
   left: 1rem;
+  pointer-events: none;
   border: 1px solid rgba(240, 216, 173, 0.66);
   border-radius: 999px;
   background: rgba(8, 10, 15, 0.7);
@@ -161,6 +171,7 @@ const StageCaption = styled.div`
   justify-content: space-between;
   align-items: center;
   gap: 0.7rem;
+  pointer-events: none;
 `;
 
 const StageCaptionText = styled.span`
@@ -314,8 +325,32 @@ const CollectionNote = styled.p`
 
 const ProjectGrid = styled.div`
   display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(clamp(180px, 22vw, 280px), 1fr);
   gap: 0.82rem;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  overflow-x: auto;
+  padding-bottom: 0.35rem;
+  scroll-snap-type: x proximity;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(240, 216, 173, 0.6) rgba(255, 255, 255, 0.1);
+
+  &::-webkit-scrollbar {
+    height: 0.5rem;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(240, 216, 173, 0.56);
+    border-radius: 999px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 999px;
+  }
+
+  @media (max-width: 48em) {
+    grid-auto-columns: minmax(170px, 78vw);
+  }
 `;
 
 const ProjectCard = styled(motion.button)`
@@ -326,6 +361,7 @@ const ProjectCard = styled(motion.button)`
   padding: 0;
   text-align: left;
   cursor: pointer;
+  scroll-snap-align: start;
 
   &:focus-visible {
     outline: 2px solid rgba(240, 216, 173, 0.92);
@@ -533,6 +569,39 @@ const Videos = () => {
   );
 
   const [featured, setFeatured] = useState(allItems[0]);
+  const playerRef = useRef(null);
+
+  const playFeatured = (restart = false) => {
+    const player = playerRef.current;
+    if (!player) {
+      return;
+    }
+
+    if (restart) {
+      player.currentTime = 0;
+    }
+
+    const playAttempt = player.play();
+    if (playAttempt && typeof playAttempt.catch === 'function') {
+      playAttempt.catch(() => {});
+    }
+  };
+
+  const pauseFeatured = () => {
+    playerRef.current?.pause();
+  };
+
+  const selectFeatured = (item, collection, autoplay = false) => {
+    setFeatured({
+      ...item,
+      collectionTitle: collection.title,
+      collectionNote: collection.note,
+    });
+
+    if (autoplay) {
+      playFeatured(true);
+    }
+  };
 
   return (
     <Section id="videos">
@@ -541,19 +610,24 @@ const Videos = () => {
           <IntroTag>Student Film Showcase</IntroTag>
           <IntroTitle>Jack Miller Moving Image Projects</IntroTitle>
           <IntroBody>
-            A curated reel of student-led films, documentary fragments, and experimental edits. Built as a
-            portfolio wall instead of a streaming interface, focused on craft, process, and visual identity.
+            A curated reel of student-led films, documentary fragments, and experimental edits in a premium streaming-style showcase focused on craft and visual identity.
           </IntroBody>
         </Intro>
 
         <Featured
-          key={featured.title}
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.42, ease: 'easeOut' }}
         >
-          <StageMedia type="button" onClick={() => setFeatured(featured)} aria-label={`Featured project ${featured.title}`}>
-            <StageImage src={featured.image} alt={featured.title} />
+          <StageMedia aria-label={`Featured project ${featured.title}`}>
+            <StageVideo
+              ref={playerRef}
+              src={MainVideo}
+              poster={featured.image}
+              controls
+              playsInline
+              preload="metadata"
+            />
             <StageOverlay />
             <StageBadge>{featured.category}</StageBadge>
             <StageCaption>
@@ -572,8 +646,8 @@ const Videos = () => {
               <MetaChip>{featured.tools}</MetaChip>
             </MetaRow>
             <ActionRow>
-              <PrimaryButton type="button">Watch Project</PrimaryButton>
-              <GhostButton type="button">View Breakdown</GhostButton>
+              <PrimaryButton type="button" onClick={() => playFeatured(true)}>Play Project</PrimaryButton>
+              <GhostButton type="button" onClick={pauseFeatured}>Pause</GhostButton>
             </ActionRow>
           </StagePanel>
         </Featured>
@@ -592,7 +666,7 @@ const Videos = () => {
                 <CollectionNote>{collection.note}</CollectionNote>
               </CollectionHead>
               <ProjectGrid>
-                {collection.items.map((item, index) => {
+                {collection.items.map((item) => {
                   const active = featured.title === item.title;
                   return (
                     <ProjectCard
@@ -600,16 +674,10 @@ const Videos = () => {
                       type="button"
                       $active={active}
                       style={{ '--aspect': item.aspect }}
-                      onClick={() =>
-                        setFeatured({
-                          ...item,
-                          collectionTitle: collection.title,
-                          collectionNote: collection.note,
-                        })
-                      }
+                      onClick={() => selectFeatured(item, collection, true)}
                       whileHover={{ y: -6, scale: 1.01 }}
                       transition={{ duration: 0.2 }}
-                      aria-label={`Open ${item.title}`}
+                      aria-label={`Play ${item.title}`}
                     >
                       <ProjectImage
                         src={getThumbnail(item.image)}

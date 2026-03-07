@@ -20,7 +20,7 @@ const HomePage = () => {
     <>
       <Navbar />
 
-      <main className="App">
+      <main id="main-content" className="App" role="main">
         <Home />
         <About />
         <Shop />

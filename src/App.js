@@ -14,6 +14,7 @@ function App() {
   return (
     <>
       <GlobalStyles />
+      <a className="skip-link" href="#main-content">Skip to main content</a>
       <ThemeProvider theme={dark}>
         <GeoBlockGate>
           <ClarityTracker />

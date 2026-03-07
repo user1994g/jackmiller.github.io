@@ -83,6 +83,27 @@ const GlobalStyles = createGlobalStyle`
   .App {
     overflow: hidden;
   }
+
+
+  .skip-link {
+    position: fixed;
+    left: 0.75rem;
+    top: -3rem;
+    z-index: 9999;
+    padding: 0.55rem 0.75rem;
+    border-radius: 0.45rem;
+    background: rgba(5, 8, 13, 0.94);
+    color: #f5f7fb;
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    font-size: 0.8rem;
+    letter-spacing: 0.04em;
+    transition: top 0.2s ease;
+  }
+
+  .skip-link:focus {
+    top: 0.75rem;
+    outline: none;
+  }
 `;
 
 export default GlobalStyles;

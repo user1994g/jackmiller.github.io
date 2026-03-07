@@ -12,11 +12,9 @@ const Section = styled.section`
 `;
 
 const Bottom = styled(motion.div)`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 1rem;
-  flex-wrap: wrap;
+  display: grid;
+  gap: 0.7rem;
+  justify-items: center;
   text-align: center;
 
   span {
@@ -26,10 +24,40 @@ const Bottom = styled(motion.div)`
   }
 `;
 
+const NavLinks = styled.nav`
+  display: flex;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+  justify-content: center;
+
+  a {
+    font-size: 0.74rem;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: rgba(255, 255, 255, 0.84);
+    padding: 0.2rem 0.35rem;
+    border-radius: 6px;
+  }
+
+  a:hover,
+  a:focus-visible {
+    color: rgba(255, 255, 255, 0.98);
+    background: rgba(255, 255, 255, 0.08);
+    outline: none;
+  }
+`;
+
 const Footer = () => {
   return (
     <Section id="contact">
       <Bottom initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ duration: 0.6 }}>
+        <NavLinks aria-label="Footer navigation">
+          <a href="/#">Home</a>
+          <a href="/#about">About</a>
+          <a href="/#shop">Photos</a>
+          <a href="/#contact">Contact</a>
+          <a href="/#/videos">Videos</a>
+        </NavLinks>
         <span>&copy; 2026 Jack Miller. All Rights Reserved.</span>
       </Bottom>
     </Section>

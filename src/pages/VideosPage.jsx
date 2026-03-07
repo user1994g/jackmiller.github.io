@@ -13,7 +13,7 @@ const VideosPage = () => {
   return (
     <>
       <Navbar />
-      <PageMain className="App">
+      <PageMain id="main-content" className="App" role="main">
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}

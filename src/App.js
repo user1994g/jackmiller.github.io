@@ -1,16 +1,43 @@
+import React, { Suspense, lazy, useEffect, useState } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 
 import ClarityTracker from './components/ClarityTracker';
-import DesktopMouseAura from './components/DesktopMouseAura';
 import GeoBlockGate from './components/GeoBlockGate';
-import SiteHelperChat from './components/SiteHelperChat';
 import HomePage from './pages/HomePage';
 import VideosPage from './pages/VideosPage';
 import GlobalStyles from './styles/GlobalStyles';
 import { dark } from './styles/Themes';
 
+const SiteHelperChat = lazy(() => import('./components/SiteHelperChat'));
+const DesktopMouseAura = lazy(() => import('./components/DesktopMouseAura'));
+
 function App() {
+  const [deferredUiReady, setDeferredUiReady] = useState(false);
+  const [enableDesktopAura, setEnableDesktopAura] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return undefined;
+    }
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const coarsePointer = window.matchMedia('(pointer: coarse)').matches;
+    const hasTouchPoints = (window.navigator?.maxTouchPoints || 0) > 0;
+
+    setEnableDesktopAura(!prefersReducedMotion && !coarsePointer && !hasTouchPoints);
+
+    const enableDeferredUi = () => setDeferredUiReady(true);
+
+    if ('requestIdleCallback' in window) {
+      const id = window.requestIdleCallback(enableDeferredUi, { timeout: 1800 });
+      return () => window.cancelIdleCallback(id);
+    }
+
+    const timeout = window.setTimeout(enableDeferredUi, 900);
+    return () => window.clearTimeout(timeout);
+  }, []);
+
   return (
     <>
       <GlobalStyles />
@@ -23,8 +50,11 @@ function App() {
             <Route path="/videos" element={<VideosPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
-          <SiteHelperChat />
-          <DesktopMouseAura />
+
+          <Suspense fallback={null}>
+            {deferredUiReady ? <SiteHelperChat /> : null}
+            {deferredUiReady && enableDesktopAura ? <DesktopMouseAura /> : null}
+          </Suspense>
         </GeoBlockGate>
       </ThemeProvider>
     </>

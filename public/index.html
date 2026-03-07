@@ -29,19 +29,25 @@
       content="Film, photography, and cinematic visual storytelling by Jack Miller."
     />
     <meta property="og:url" content="https://jackmillermedia.com/" />
-    <meta property="og:image" content="https://jackmillermedia.com/logo512.png" />
+    <meta property="og:image" content="https://jackmillermedia.com/social-preview.png" />
     <meta property="og:image:alt" content="Jack Miller portfolio preview image" />
-    <meta property="og:image:width" content="512" />
-    <meta property="og:image:height" content="512" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:secure_url" content="https://jackmillermedia.com/social-preview.png" />
     <meta property="og:locale" content="en_GB" />
 
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@jackmillermedia" />
+    <meta name="twitter:creator" content="@jackmillermedia" />
     <meta name="twitter:title" content="Jack Miller Portfolio" />
+    <meta name="twitter:url" content="https://jackmillermedia.com/" />
+    <meta name="twitter:domain" content="jackmillermedia.com" />
     <meta
       name="twitter:description"
       content="Film, photography, and cinematic visual storytelling by Jack Miller."
     />
-    <meta name="twitter:image" content="https://jackmillermedia.com/logo512.png" />
+    <meta name="twitter:image" content="https://jackmillermedia.com/social-preview.png" />
     <meta name="twitter:image:alt" content="Jack Miller portfolio preview image" />
 
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -51,6 +57,9 @@
     <link rel="canonical" href="https://jackmillermedia.com/" />
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <link rel="me" href="https://github.com/user1994g" />
+    <link rel="me" href="https://www.instagram.com/jackmillermedia/" />
+    <link rel="me" href="https://www.youtube.com/@jackmillermedia" />
 
     <script type="application/ld+json">
       {
@@ -60,7 +69,26 @@
         "url": "https://jackmillermedia.com/",
         "jobTitle": "Creative Media Portfolio",
         "description": "Film, photography, and visual storytelling portfolio.",
-        "sameAs": []
+        "sameAs": [
+          "https://github.com/user1994g",
+          "https://www.instagram.com/jackmillermedia/",
+          "https://www.youtube.com/@jackmillermedia"
+        ]
+      }
+    </script>
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Jack Miller Media",
+        "url": "https://jackmillermedia.com/",
+        "logo": "https://jackmillermedia.com/logo512.png",
+        "sameAs": [
+          "https://github.com/user1994g",
+          "https://www.instagram.com/jackmillermedia/",
+          "https://www.youtube.com/@jackmillermedia"
+        ]
       }
     </script>
 
@@ -70,16 +98,39 @@
         "@type": "WebSite",
         "name": "Jack Miller Portfolio",
         "url": "https://jackmillermedia.com/",
-        "description": "Film, photography, and visual storytelling portfolio by Jack Miller."
+        "description": "Film, photography, and visual storytelling portfolio by Jack Miller.",
+        "publisher": {
+          "@type": "Organization",
+          "name": "Jack Miller Media"
+        },
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://jackmillermedia.com/site-links.html?q={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
       }
     </script>
 
     <script type="text/javascript">
-      (function(c,l,a,r,i,t,y){
-          c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-          t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-          y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-      })(window, document, "clarity", "script", "vklxf38ijp");
+      (function () {
+        function injectClarity() {
+          if (window.__jackClarityLoaded) return;
+          window.__jackClarityLoaded = true;
+          var script = document.createElement('script');
+          script.async = true;
+          script.src = 'https://www.clarity.ms/tag/vklxf38ijp';
+          document.head.appendChild(script);
+        }
+
+        if (document.readyState === 'complete') {
+          window.setTimeout(injectClarity, 1800);
+          return;
+        }
+
+        window.addEventListener('load', function () {
+          window.setTimeout(injectClarity, 1800);
+        }, { once: true });
+      })();
     </script>
 
     <script type="text/javascript">
@@ -187,7 +238,30 @@
     <title>Jack Miller Portfolio | Film & Photography</title>
   </head>
   <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <noscript>
+      <main style="padding:20px;font-family:Arial,sans-serif;background:#0b0d12;color:#f5f8ff;line-height:1.6;">
+        <h1 style="margin:0 0 10px;">Jack Miller Portfolio</h1>
+        <p style="margin:0 0 14px;">
+          Film, photography, and cinematic visual storytelling.
+        </p>
+        <h2 style="margin:18px 0 8px;font-size:18px;">Main links</h2>
+        <ul style="padding-left:18px;margin:0;">
+          <li><a href="https://jackmillermedia.com/" style="color:#f0d8ad;">Home</a></li>
+          <li><a href="https://jackmillermedia.com/#about" style="color:#f0d8ad;">About</a></li>
+          <li><a href="https://jackmillermedia.com/#shop" style="color:#f0d8ad;">Photos</a></li>
+          <li><a href="https://jackmillermedia.com/#/videos" style="color:#f0d8ad;">Videos</a></li>
+          <li><a href="https://jackmillermedia.com/site-links.html" style="color:#f0d8ad;">Site map</a></li>
+          <li><a href="https://jackmillermedia.com/sitemap.xml" style="color:#f0d8ad;">XML sitemap</a></li>
+          <li><a href="https://jackmillermedia.com/robots.txt" style="color:#f0d8ad;">Robots.txt</a></li>
+        </ul>
+        <h2 style="margin:18px 0 8px;font-size:18px;">Social</h2>
+        <ul style="padding-left:18px;margin:0;">
+          <li><a href="https://github.com/user1994g" style="color:#f0d8ad;">GitHub</a></li>
+          <li><a href="https://www.instagram.com/jackmillermedia/" style="color:#f0d8ad;">Instagram</a></li>
+          <li><a href="https://www.youtube.com/@jackmillermedia" style="color:#f0d8ad;">YouTube</a></li>
+        </ul>
+      </main>
+    </noscript>
     <div id="root"></div>
   </body>
 </html>

@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-const BLOCKED_COUNTRY_CODES = new Set(['RU', 'UA', 'AE']);
+const BLOCKED_COUNTRY_CODES = new Set(['RU', 'AE']);
 const BLOCKED_CITY_NAMES = new Set(['dubai']);
-const GEO_BLOCK_CACHE_KEY = 'geo-block-cache-v1';
+const GEO_BLOCK_CACHE_KEY = 'geo-block-cache-v2';
 const GEO_BLOCK_CACHE_TTL_MS = 1000 * 60 * 60 * 24;
 
 const BlockedMain = styled.main`
@@ -94,6 +94,32 @@ const isBlockedLocation = (payload) => {
   return BLOCKED_COUNTRY_CODES.has(countryCode) || BLOCKED_CITY_NAMES.has(city);
 };
 
+const fetchGeoPayload = async (signal) => {
+  const primary = await fetch('https://ipwho.is/?fields=success,country_code,city', {
+    signal,
+    cache: 'no-store',
+  }).then((response) => (response.ok ? response.json() : null));
+
+  if (primary && primary.success !== false) {
+    return primary;
+  }
+
+  const fallback = await fetch('https://ipapi.co/json/', {
+    signal,
+    cache: 'no-store',
+  }).then((response) => (response.ok ? response.json() : null));
+
+  if (!fallback) {
+    return null;
+  }
+
+  return {
+    success: true,
+    country_code: fallback.country_code,
+    city: fallback.city,
+  };
+};
+
 const GeoBlockGate = ({ children }) => {
   const [blocked, setBlocked] = useState(() => readCachedDecision() ?? false);
 
@@ -109,13 +135,9 @@ const GeoBlockGate = ({ children }) => {
     }
 
     const controller = new AbortController();
-    const timeoutId = window.setTimeout(() => controller.abort(), 1500);
+    const timeoutId = window.setTimeout(() => controller.abort(), 1800);
 
-    fetch('https://ipwho.is/?fields=success,country_code,city', {
-      signal: controller.signal,
-      cache: 'no-store',
-    })
-      .then((response) => (response.ok ? response.json() : null))
+    fetchGeoPayload(controller.signal)
       .then((payload) => {
         const shouldBlock = isBlockedLocation(payload);
         setBlocked(shouldBlock);

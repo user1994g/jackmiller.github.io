@@ -3,8 +3,10 @@ import styled from 'styled-components';
 
 const BLOCKED_COUNTRY_CODES = new Set(['RU', 'AE']);
 const BLOCKED_CITY_NAMES = new Set(['dubai']);
-const GEO_BLOCK_CACHE_KEY = 'geo-block-cache-v2';
-const GEO_BLOCK_CACHE_TTL_MS = 1000 * 60 * 60 * 24;
+const BLOCKED_TIMEZONES = new Set(['asia/dubai']);
+const GEO_BLOCK_CACHE_KEY = 'geo-block-cache-v3';
+const BLOCKED_CACHE_TTL_MS = 1000 * 60 * 60 * 24;
+const ALLOWED_CACHE_TTL_MS = 1000 * 60 * 10;
 
 const BlockedMain = styled.main`
   min-height: 100dvh;
@@ -75,7 +77,7 @@ const cacheDecision = (blocked) => {
   try {
     const payload = {
       blocked,
-      expiresAt: Date.now() + GEO_BLOCK_CACHE_TTL_MS,
+      expiresAt: Date.now() + (blocked ? BLOCKED_CACHE_TTL_MS : ALLOWED_CACHE_TTL_MS),
     };
     window.localStorage.setItem(GEO_BLOCK_CACHE_KEY, JSON.stringify(payload));
   } catch {
@@ -88,36 +90,84 @@ const isBlockedLocation = (payload) => {
     return false;
   }
 
-  const countryCode = normalize(payload.country_code).toUpperCase();
-  const city = normalize(payload.city);
+  const countryCode = normalize(payload.country_code || payload.countryCode || payload.country).toUpperCase();
+  const city = normalize(payload.city || payload.region_city || payload.district);
+  const timezone = normalize(payload.timezone || payload.time_zone || payload.tz);
 
-  return BLOCKED_COUNTRY_CODES.has(countryCode) || BLOCKED_CITY_NAMES.has(city);
+  return (
+    BLOCKED_COUNTRY_CODES.has(countryCode) ||
+    BLOCKED_CITY_NAMES.has(city) ||
+    BLOCKED_TIMEZONES.has(timezone)
+  );
 };
 
 const fetchGeoPayload = async (signal) => {
-  const primary = await fetch('https://ipwho.is/?fields=success,country_code,city', {
-    signal,
-    cache: 'no-store',
-  }).then((response) => (response.ok ? response.json() : null));
+  const providers = [
+    async () => {
+      const data = await fetch('https://ipwho.is/?fields=success,country_code,city,timezone', {
+        signal,
+        cache: 'no-store',
+      }).then((response) => (response.ok ? response.json() : null));
 
-  if (primary && primary.success !== false) {
-    return primary;
+      if (!data || data.success === false) {
+        return null;
+      }
+
+      return {
+        success: true,
+        country_code: data.country_code,
+        city: data.city,
+        timezone: data.timezone,
+      };
+    },
+    async () => {
+      const data = await fetch('https://ipapi.co/json/', {
+        signal,
+        cache: 'no-store',
+      }).then((response) => (response.ok ? response.json() : null));
+
+      if (!data) {
+        return null;
+      }
+
+      return {
+        success: true,
+        country_code: data.country_code,
+        city: data.city,
+        timezone: data.timezone,
+      };
+    },
+    async () => {
+      const data = await fetch('https://ipinfo.io/json', {
+        signal,
+        cache: 'no-store',
+      }).then((response) => (response.ok ? response.json() : null));
+
+      if (!data) {
+        return null;
+      }
+
+      return {
+        success: true,
+        country_code: data.country,
+        city: data.city,
+        timezone: data.timezone,
+      };
+    },
+  ];
+
+  for (const provider of providers) {
+    try {
+      const payload = await provider();
+      if (payload) {
+        return payload;
+      }
+    } catch {
+      // Try next provider.
+    }
   }
 
-  const fallback = await fetch('https://ipapi.co/json/', {
-    signal,
-    cache: 'no-store',
-  }).then((response) => (response.ok ? response.json() : null));
-
-  if (!fallback) {
-    return null;
-  }
-
-  return {
-    success: true,
-    country_code: fallback.country_code,
-    city: fallback.city,
-  };
+  return null;
 };
 
 const GeoBlockGate = ({ children }) => {
@@ -134,8 +184,15 @@ const GeoBlockGate = ({ children }) => {
       return undefined;
     }
 
+    const clientTimezone = normalize(Intl.DateTimeFormat().resolvedOptions().timeZone);
+    if (BLOCKED_TIMEZONES.has(clientTimezone)) {
+      setBlocked(true);
+      cacheDecision(true);
+      return undefined;
+    }
+
     const controller = new AbortController();
-    const timeoutId = window.setTimeout(() => controller.abort(), 1800);
+    const timeoutId = window.setTimeout(() => controller.abort(), 2500);
 
     fetchGeoPayload(controller.signal)
       .then((payload) => {
@@ -144,7 +201,7 @@ const GeoBlockGate = ({ children }) => {
         cacheDecision(shouldBlock);
       })
       .catch(() => {
-        cacheDecision(false);
+        setBlocked(false);
       })
       .finally(() => {
         window.clearTimeout(timeoutId);

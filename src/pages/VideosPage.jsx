@@ -2,7 +2,6 @@ import { motion } from 'framer-motion';
 import styled from 'styled-components';
 
 import Navbar from '../components/Navbar';
-import Footer from '../sections/Footer';
 import Videos from '../sections/Videos';
 
 const PageMain = styled.main`
@@ -20,9 +19,7 @@ const VideosPage = () => {
           transition={{ duration: 0.38 }}
         >
           <Videos />
-        </motion.div>
-        <Footer />
-      </PageMain>
+        </motion.div>      </PageMain>
     </>
   );
 };

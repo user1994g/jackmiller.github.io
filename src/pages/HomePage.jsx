@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 
 import Navbar from '../components/Navbar';
 import About from '../sections/About';
-import Footer from '../sections/Footer';
 import Home from '../sections/Home';
 import Marquee from '../sections/Marquee';
 import Shop from '../sections/Shop';
@@ -24,9 +23,7 @@ const HomePage = () => {
         <Home />
         <About />
         <Shop />
-        <Marquee />
-        <Footer />
-      </main>
+        <Marquee />      </main>
     </>
   );
 };

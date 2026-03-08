@@ -413,7 +413,7 @@ const collections = [
     items: [
       {
         image: img11,
-        title: 'Shadowline',
+        title: "The dark echo's of 1939",
         category: 'Drama short',
         duration: '04:12',
         year: '2026',

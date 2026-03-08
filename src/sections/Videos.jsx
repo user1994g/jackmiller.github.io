@@ -404,6 +404,70 @@ const SheetGhostButton = styled.button`
   font-weight: 600;
   letter-spacing: 0.04em;
   cursor: pointer;
+
+  &:disabled {
+    opacity: 0.46;
+    cursor: not-allowed;
+  }
+`;
+
+const PlayerBackdrop = styled(motion.div)`
+  position: fixed;
+  inset: 0;
+  z-index: 110;
+  background: rgba(0, 0, 0, 0.94);
+  backdrop-filter: blur(10px);
+  display: grid;
+  place-items: center;
+  padding: clamp(0.8rem, 2.5vw, 1.3rem);
+`;
+
+const PlayerPanel = styled(motion.div)`
+  width: min(1200px, 100%);
+  display: grid;
+  gap: 0.75rem;
+`;
+
+const PlayerTop = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+
+  strong {
+    color: rgba(248, 250, 252, 0.96);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 0.82rem;
+  }
+`;
+
+const PlayerClose = styled.button`
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  padding: 0.66rem 0.95rem;
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(248, 249, 252, 0.96);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+`;
+
+const PlayerFrame = styled.div`
+  border-radius: 1rem;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: #000;
+  box-shadow: 0 36px 90px rgba(0, 0, 0, 0.56);
+
+  video {
+    width: 100%;
+    max-height: min(78vh, 820px);
+    display: block;
+    background: #000;
+  }
 `;
 
 const collections = [
@@ -420,6 +484,7 @@ const collections = [
         tools: 'Premiere + Lumetri',
         logline: 'A night editor follows visual glitches through one city block and uncovers a hidden story trail.',
         aspect: '16 / 9',
+        video: 'https://cnszcstsixqnqnoacbmq.supabase.co/functions/v1/stream-video?key=934e5a6a-d612-406a-b894-a09841909fe5',
       },
       {
         image: img4,
@@ -580,9 +645,10 @@ const Videos = () => {
 
   const [featured, setFeatured] = useState(allItems[0]);
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [playerOpen, setPlayerOpen] = useState(false);
 
   useEffect(() => {
-    if (!sheetOpen) {
+    if (!sheetOpen && !playerOpen) {
       return undefined;
     }
 
@@ -591,6 +657,11 @@ const Videos = () => {
 
     const onEsc = (event) => {
       if (event.key === 'Escape') {
+        if (playerOpen) {
+          setPlayerOpen(false);
+          return;
+        }
+
         setSheetOpen(false);
       }
     };
@@ -601,15 +672,24 @@ const Videos = () => {
       document.body.style.overflow = previousOverflow;
       window.removeEventListener('keydown', onEsc);
     };
-  }, [sheetOpen]);
+  }, [playerOpen, sheetOpen]);
 
   const openItem = (item, collection) => {
+    setPlayerOpen(false);
     setFeatured({
       ...item,
       collectionTitle: collection.title,
       collectionNote: collection.note,
     });
     setSheetOpen(true);
+  };
+
+  const openPlayer = () => {
+    if (!featured.video) {
+      return;
+    }
+
+    setPlayerOpen(true);
   };
 
   return (
@@ -726,19 +806,49 @@ const Videos = () => {
                     <MetaChip>{featured.collectionTitle}</MetaChip>
                   </Meta>
                   <SheetActions>
-                    <SheetPlayButton type="button">Play</SheetPlayButton>
+                    <SheetPlayButton type="button" onClick={openPlayer} disabled={!featured.video}>
+                      Play
+                    </SheetPlayButton>
                     <SheetGhostButton type="button" onClick={() => setSheetOpen(false)}>
                       Back to Library
                     </SheetGhostButton>
                   </SheetActions>
                   <SheetNotice>
-                    Playback is off for now. This page is currently a poster-based showcase while the final video
-                    library is being prepared.
+                    {featured.video
+                      ? "Press play to open the full video. Close returns you straight back to the library sheet."
+                      : "Playback is off for this title right now. This page is still being built into the final video library."}
                   </SheetNotice>
                 </SheetInfo>
               </SheetBody>
             </SheetPanel>
           </SheetBackdrop>
+        ) : null}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {playerOpen && featured.video ? (
+          <PlayerBackdrop
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setPlayerOpen(false)}
+          >
+            <PlayerPanel
+              initial={{ opacity: 0, scale: 0.98, y: 12 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.98, y: 10 }}
+              transition={{ duration: 0.22 }}
+              onClick={(event) => event.stopPropagation()}
+            >
+              <PlayerTop>
+                <strong>{featured.title}</strong>
+                <PlayerClose type="button" onClick={() => setPlayerOpen(false)}>Close Video</PlayerClose>
+              </PlayerTop>
+              <PlayerFrame>
+                <video src={featured.video} controls autoPlay playsInline preload="metadata" />
+              </PlayerFrame>
+            </PlayerPanel>
+          </PlayerBackdrop>
         ) : null}
       </AnimatePresence>
     </Section>

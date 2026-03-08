@@ -245,7 +245,7 @@ const Send = styled.button`
   }
 `;
 
-const quickPrompts = ['Home', 'About me', 'Photos', 'Videos', 'Contact'];
+const quickPrompts = ['Home', 'About me', 'Photos', 'Videos', '3D Art'];
 
 const actionCues = new Set([
   'go',
@@ -317,6 +317,18 @@ const siteIntents = [
       'Opening the videos page.',
       'Taking you to Videos now.',
       'Got it. Jumping to the videos section.',
+    ],
+  },
+  {
+    id: 'threedart',
+    label: '3D Art',
+    action: { type: 'route', path: '/3d-art' },
+    keywords: ['3d', '3d art', 'three d', 'three d art', 'cgi', 'render', 'renders'],
+    phrases: ['3d art', 'open 3d art', 'show 3d art', 'find 3d art'],
+    responses: [
+      'Opening the 3D Art page.',
+      'Taking you to 3D Art now.',
+      'Got it. Jumping to the 3D Art page.',
     ],
   },
   {
@@ -599,13 +611,13 @@ const SiteHelperChat = () => {
 
     if (result.type === 'thanks') {
       setPendingIntent(null);
-      appendMessage('bot', 'Anytime. I can still help with Home, About, Photos, Videos, or Contact.');
+      appendMessage('bot', 'Anytime. I can still help with Home, About, Photos, Videos, or 3D Art.');
       return;
     }
 
     if (result.type === 'help') {
       setPendingIntent(null);
-      appendMessage('bot', 'I can navigate to Home, About, Photos, Videos, or Contact. Just ask naturally.');
+      appendMessage('bot', 'I can navigate to Home, About, Photos, Videos, or 3D Art. Just ask naturally.');
       return;
     }
 
@@ -616,7 +628,7 @@ const SiteHelperChat = () => {
     }
 
     setPendingIntent(null);
-    appendMessage('bot', 'I can help with Home, About, Photos, Videos, and Contact. Try asking for one of those.');
+    appendMessage('bot', 'I can help with Home, About, Photos, Videos, and 3D Art. Try asking for one of those.');
   };
 
   const handleSubmit = (event) => {

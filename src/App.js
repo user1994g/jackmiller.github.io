@@ -6,6 +6,7 @@ import ClarityTracker from './components/ClarityTracker';
 import GeoBlockGate from './components/GeoBlockGate';
 import HomePage from './pages/HomePage';
 import VideosPage from './pages/VideosPage';
+import ThreeDArtPage from './pages/ThreeDArtPage';
 import GlobalStyles from './styles/GlobalStyles';
 import { dark } from './styles/Themes';
 
@@ -48,6 +49,7 @@ function App() {
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/videos" element={<VideosPage />} />
+            <Route path="/3d-art" element={<ThreeDArtPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
 

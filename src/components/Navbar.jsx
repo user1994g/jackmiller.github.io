@@ -414,6 +414,7 @@ const menuItems = [
   { label: 'Home', type: 'route', path: '/' },
   { label: 'About', type: 'scroll', target: '#about' },
   { label: 'Videos', type: 'route', path: '/videos' },
+  { label: '3D Art', type: 'route', path: '/3d-art' },
   { label: 'Gallery', type: 'scroll', target: '#shop' },
 ];
 
@@ -421,6 +422,7 @@ const lookupTargets = [
   { keywords: ['home', 'start', 'top'], action: { type: 'route', path: '/' } },
   { keywords: ['about', 'bio', 'me'], action: { type: 'scroll', target: '#about' } },
   { keywords: ['video', 'videos', 'film', 'netflix'], action: { type: 'route', path: '/videos' } },
+  { keywords: ['3d', '3dart', 'art', '3d art', 'three d', 'three d art'], action: { type: 'route', path: '/3d-art' } },
   { keywords: ['gallery', 'photo', 'photos', 'image', 'images', 'shop'], action: { type: 'scroll', target: '#shop' } },
   { keywords: ['contact', 'email'], action: { type: 'scroll', target: '#contact' } },
 ];

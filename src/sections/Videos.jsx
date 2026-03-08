@@ -502,7 +502,7 @@ const PlayerFrame = styled.div`
 const collections = [
   {
     title: 'Narrative Shorts',
-    note: 'Character-led scenes with mood-driven pacing.',
+    note: 'A story about someone discovering that their mum has died.',
     items: [
       {
         image: img11,
@@ -511,7 +511,7 @@ const collections = [
         duration: '04:12',
         year: '2026',
         tools: 'Premiere + Lumetri',
-        logline: 'A night editor follows visual glitches through one city block and uncovers a hidden story trail.',
+        logline: 'A young person begins to piece together the truth after finding out their mum has died.',
         aspect: '16 / 9',
         video: 'https://cnszcstsixqnqnoacbmq.supabase.co/functions/v1/stream-video?key=934e5a6a-d612-406a-b894-a09841909fe5',
       },

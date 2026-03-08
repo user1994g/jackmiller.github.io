@@ -28,8 +28,9 @@ const ToggleButton = styled.button`
   right: max(1rem, env(safe-area-inset-right, 0px));
   bottom: 1rem;
   bottom: max(1rem, env(safe-area-inset-bottom, 0px));
-  width: 3.15rem;
+  min-width: 3.15rem;
   height: 3.15rem;
+  padding: 0 0.8rem;
   border: 1px solid rgba(255, 255, 255, 0.25);
   border-radius: 999px;
   background: linear-gradient(180deg, rgba(17, 18, 22, 0.95), rgba(8, 9, 12, 0.96));
@@ -78,7 +79,6 @@ const ChatPanel = styled(motion.section)`
   gap: 0.6rem;
   padding: 0.72rem;
   transform-origin: bottom right;
-
   border-radius: 14px;
   border: 1px solid rgba(255, 255, 255, 0.24);
   background:
@@ -262,11 +262,13 @@ const actionCues = new Set([
   'want',
   'looking',
   'lookingfor',
+  'help',
+  'needhelp',
 ]);
 
 const greetingWords = new Set(['hi', 'hello', 'hey', 'yo', 'sup']);
 const thanksWords = new Set(['thanks', 'thank', 'thx', 'cheers']);
-const helpWords = new Set(['help', 'options', 'menu', 'commands']);
+const helpWords = new Set(['help', 'options', 'menu', 'commands', 'guide']);
 const confirmWords = new Set(['yes', 'yeah', 'yep', 'sure', 'ok', 'okay', 'please', 'doit']);
 const cancelWords = new Set(['no', 'nope', 'nah', 'stop', 'cancel', 'nevermind']);
 
@@ -276,48 +278,52 @@ const siteIntents = [
     label: 'Home',
     action: { type: 'scroll', target: '#home' },
     keywords: ['home', 'top', 'start', 'landing', 'main'],
-    phrases: ['go home', 'take me home', 'back to top', 'home page'],
+    phrases: ['go home', 'take me home', 'back to top', 'home page', 'front page'],
     responses: [
       'Taking you to the top of the home page.',
       'Opening the home section now.',
       'Got it. Jumping to home.',
     ],
+    guidance: 'Use Home for the hero section and main landing view.',
   },
   {
     id: 'about',
     label: 'About',
     action: { type: 'scroll', target: '#about' },
     keywords: ['about', 'bio', 'story', 'background', 'jack', 'person'],
-    phrases: ['about me', 'who is jack', 'jack story', 'about section'],
+    phrases: ['about me', 'who is jack', 'jack story', 'about section', 'about page'],
     responses: [
       'Taking you to the About section.',
       'Opening the About section now.',
       'Got it. Jumping to About.',
     ],
+    guidance: 'Use About for your story, background, and profile section.',
   },
   {
     id: 'photos',
     label: 'Photos',
     action: { type: 'scroll', target: '#shop' },
-    keywords: ['photo', 'photos', 'image', 'images', 'picture', 'gallery', 'gallary', 'portfolio'],
-    phrases: ['photo gallery', 'show photos', 'open gallery', 'find photos'],
+    keywords: ['photo', 'photos', 'image', 'images', 'picture', 'gallery', 'gallary', 'portfolio', 'stills'],
+    phrases: ['photo gallery', 'show photos', 'open gallery', 'find photos', 'show me pictures'],
     responses: [
       'Opening the photo gallery section.',
       'Taking you to Photos now.',
       'Got it. Jumping to the gallery.',
     ],
+    guidance: 'Use Photos for still images and gallery work.',
   },
   {
     id: 'videos',
     label: 'Videos',
     action: { type: 'route', path: '/videos' },
     keywords: ['video', 'videos', 'film', 'films', 'movie', 'movies', 'reel', 'reels', 'clip', 'clips', 'vedio', 'vedios'],
-    phrases: ['video page', 'show videos', 'open videos', 'find videos', 'watch videos'],
+    phrases: ['video page', 'show videos', 'open videos', 'find videos', 'watch videos', 'show me films'],
     responses: [
       'Opening the videos page.',
       'Taking you to Videos now.',
       'Got it. Jumping to the videos section.',
     ],
+    guidance: 'Use Videos for film work, poster rows, and playable titles.',
   },
   {
     id: 'threedart',
@@ -330,6 +336,7 @@ const siteIntents = [
       'Taking you to 3D Art now.',
       'Got it. Jumping to the 3D Art page.',
     ],
+    guidance: 'Use 3D Art for CGI, renders, and future 3D work.',
   },
   {
     id: 'contact',
@@ -342,14 +349,30 @@ const siteIntents = [
       'Opening the contact section now.',
       'Got it. Jumping to Contact.',
     ],
+    guidance: 'Use Contact to get in touch or find contact details.',
   },
+];
+
+const videoTitles = [
+  "the dark echo's of 1939",
+  'signal field',
+  'cold frame',
+  'final composition',
+  'echo transfer',
+  'night junction',
+  'glass division',
+  'zero ground',
+  'liminal room',
+  'no sleep city',
+  'red corridor',
+  'blue sector',
 ];
 
 const initialMessages = [
   {
     id: 'intro',
     role: 'bot',
-    text: 'Hi, I am the site helper. You can talk normally, like "hello i want to find the videos pls".',
+    text: 'Hi, I am the Site Helper. Ask naturally and I will guide you to the right part of the site.',
   },
 ];
 
@@ -450,7 +473,7 @@ const scoreIntent = (intent, normalized, tokens) => {
     score += 1.1;
   }
 
-  if (matchedKeywords.size >= 1 && tokens.length <= 3) {
+  if (matchedKeywords.size >= 1 && tokens.length <= 4) {
     score += 0.8;
   }
 
@@ -458,10 +481,16 @@ const scoreIntent = (intent, normalized, tokens) => {
     score += 0.7;
   }
 
+  if (normalized.includes('looking for') || normalized.includes('trying to find')) {
+    score += 0.5;
+  }
+
   return score;
 };
 
 const pickRandom = (items) => items[Math.floor(Math.random() * items.length)];
+
+const detectVideoTitleMention = (normalized) => videoTitles.find((title) => normalized.includes(title));
 
 const analyzeMessage = (rawValue, pendingIntent) => {
   const normalized = normalizeText(rawValue);
@@ -480,6 +509,21 @@ const analyzeMessage = (rawValue, pendingIntent) => {
     return { type: 'cancel' };
   }
 
+  if (normalized.includes('what is on this page') || normalized.includes('where am i')) {
+    return { type: 'page-status' };
+  }
+
+  if (normalized.includes('best place') || normalized.includes('where should i go') || normalized.includes('what should i look at')) {
+    return { type: 'recommend' };
+  }
+
+  if (normalized.includes('play ') || normalized.includes('watch ') || normalized.includes('find ') || normalized.includes('show ')) {
+    const matchedTitle = detectVideoTitleMention(normalized);
+    if (matchedTitle) {
+      return { type: 'video-title', title: matchedTitle };
+    }
+  }
+
   const ranked = siteIntents
     .map((intent) => ({ intent, score: scoreIntent(intent, normalized, tokens) }))
     .sort((a, b) => b.score - a.score);
@@ -488,9 +532,7 @@ const analyzeMessage = (rawValue, pendingIntent) => {
   const second = ranked[1];
 
   if (top && top.score >= 2.7) {
-    const isAmbiguous = second
-      && second.score >= 2.2
-      && Math.abs(top.score - second.score) <= 0.8;
+    const isAmbiguous = second && second.score >= 2.2 && Math.abs(top.score - second.score) <= 0.8;
 
     if (isAmbiguous) {
       return { type: 'ambiguous', intents: [top.intent, second.intent] };
@@ -507,11 +549,7 @@ const analyzeMessage = (rawValue, pendingIntent) => {
     return { type: 'thanks' };
   }
 
-  if (
-    normalized.includes('what can you do')
-    || normalized.includes('how can you help')
-    || hasAnyWord(tokens, helpWords)
-  ) {
+  if (normalized.includes('what can you do') || normalized.includes('how can you help') || hasAnyWord(tokens, helpWords)) {
     return { type: 'help' };
   }
 
@@ -520,6 +558,18 @@ const analyzeMessage = (rawValue, pendingIntent) => {
   }
 
   return { type: 'fallback' };
+};
+
+const pageLabelByPath = (pathname) => {
+  if (pathname === '/videos') {
+    return 'Videos';
+  }
+
+  if (pathname === '/3d-art') {
+    return '3D Art';
+  }
+
+  return 'Home';
 };
 
 const SiteHelperChat = () => {
@@ -532,7 +582,6 @@ const SiteHelperChat = () => {
   const [pendingIntent, setPendingIntent] = useState(null);
 
   const scrollAnchorRef = useRef(null);
-
   const panelId = useMemo(() => 'site-helper-panel', []);
 
   const appendMessage = (role, text) => {
@@ -585,7 +634,7 @@ const SiteHelperChat = () => {
 
     if (result.type === 'cancel') {
       setPendingIntent(null);
-      appendMessage('bot', 'No problem. Ask me for another section any time.');
+      appendMessage('bot', 'No problem. Ask me for another part of the site any time.');
       return;
     }
 
@@ -602,33 +651,53 @@ const SiteHelperChat = () => {
 
     if (result.type === 'ambiguous') {
       setPendingIntent(null);
-      appendMessage(
-        'bot',
-        `I can take you to ${result.intents[0].label} or ${result.intents[1].label}. Which one do you want?`
-      );
+      appendMessage('bot', `I can take you to ${result.intents[0].label} or ${result.intents[1].label}. Which one do you want?`);
+      return;
+    }
+
+    if (result.type === 'video-title') {
+      setPendingIntent(siteIntents.find((intent) => intent.id === 'videos'));
+      appendMessage('bot', `That title is on the Videos page. Say "yes" and I will open Videos so you can find ${result.title}.`);
+      return;
+    }
+
+    if (result.type === 'page-status') {
+      setPendingIntent(null);
+      appendMessage('bot', `You are on the ${pageLabelByPath(location.pathname)} page right now.`);
+      return;
+    }
+
+    if (result.type === 'recommend') {
+      setPendingIntent(null);
+      if (location.pathname === '/videos') {
+        appendMessage('bot', 'You are already in the strongest place for film work. Browse the poster rows or open The dark echo\'s of 1939 first.');
+        return;
+      }
+
+      appendMessage('bot', 'If you want motion work, go to Videos. If you want still images, go to Photos. If you want CGI later, use 3D Art.');
       return;
     }
 
     if (result.type === 'thanks') {
       setPendingIntent(null);
-      appendMessage('bot', 'Anytime. I can still help with Home, About, Photos, Videos, or 3D Art.');
+      appendMessage('bot', 'Anytime. I can still help with Home, About, Photos, Videos, and 3D Art.');
       return;
     }
 
     if (result.type === 'help') {
       setPendingIntent(null);
-      appendMessage('bot', 'I can navigate to Home, About, Photos, Videos, or 3D Art. Just ask naturally.');
+      appendMessage('bot', 'I can guide you to Home, About, Photos, Videos, and 3D Art. You can ask naturally, like "take me to the videos" or "where is the photo gallery".');
       return;
     }
 
     if (result.type === 'greeting') {
       setPendingIntent(null);
-      appendMessage('bot', 'Hey. Tell me what you want to find and I will take you there.');
+      appendMessage('bot', 'Hi. Tell me what you want to find and I will point you to the right page.');
       return;
     }
 
     setPendingIntent(null);
-    appendMessage('bot', 'I can help with Home, About, Photos, Videos, and 3D Art. Try asking for one of those.');
+    appendMessage('bot', 'I can help you find Home, About, Photos, Videos, or 3D Art. Try asking in a full sentence and I will work it out.');
   };
 
   const handleSubmit = (event) => {
@@ -664,7 +733,7 @@ const SiteHelperChat = () => {
             <Header>
               <div>
                 <h3>Site Helper</h3>
-                <p>Smart local guide (no cloud AI needed)</p>
+                <p>Smarter local guide for navigation and finding work</p>
               </div>
               <CloseButton type="button" onClick={() => setOpen(false)}>Close</CloseButton>
             </Header>
@@ -687,7 +756,7 @@ const SiteHelperChat = () => {
                 type="search"
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
-                placeholder="Try: hello i want to find videos pls"
+                placeholder="Try: hello i want to find the videos pls"
                 aria-label="Find something on site"
               />
               <Send type="submit">Send</Send>
@@ -719,7 +788,7 @@ const SiteHelperChat = () => {
               <circle cx="15.5" cy="8.6" r="1" fill="currentColor" />
             </svg>
           </ChatIcon>
-          <span style={{ fontSize: '0.52rem', letterSpacing: '0.08em', textTransform: 'uppercase' }}>AI</span>
+          <span style={{ fontSize: '0.52rem', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Site Helper</span>
         </span>
       </ToggleButton>
     </Root>

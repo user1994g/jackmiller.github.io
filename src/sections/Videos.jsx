@@ -420,12 +420,25 @@ const PlayerBackdrop = styled(motion.div)`
   display: grid;
   place-items: center;
   padding: clamp(0.8rem, 2.5vw, 1.3rem);
+
+  @media (max-width: 48em) {
+    backdrop-filter: none;
+    padding: 0;
+    place-items: start stretch;
+  }
 `;
 
 const PlayerPanel = styled(motion.div)`
   width: min(1200px, 100%);
   display: grid;
   gap: 0.75rem;
+
+  @media (max-width: 48em) {
+    width: 100%;
+    min-height: 100dvh;
+    gap: 0;
+    background: #000;
+  }
 `;
 
 const PlayerTop = styled.div`
@@ -439,6 +452,11 @@ const PlayerTop = styled.div`
     text-transform: uppercase;
     letter-spacing: 0.05em;
     font-size: 0.82rem;
+  }
+
+  @media (max-width: 48em) {
+    padding: 0.8rem 0.8rem 0.65rem;
+    background: rgba(0, 0, 0, 0.92);
   }
 `;
 
@@ -467,6 +485,17 @@ const PlayerFrame = styled.div`
     max-height: min(78vh, 820px);
     display: block;
     background: #000;
+  }
+
+  @media (max-width: 48em) {
+    border-radius: 0;
+    border: none;
+    box-shadow: none;
+
+    video {
+      max-height: none;
+      min-height: 0;
+    }
   }
 `;
 
@@ -630,6 +659,7 @@ const getThumbnail = (source) => thumbnailByImage.get(source) || source;
 
 const Videos = () => {
   const rowsRef = useRef(null);
+  const playerRef = useRef(null);
 
   const allItems = useMemo(
     () =>
@@ -666,11 +696,19 @@ const Videos = () => {
       }
     };
 
+    const onContextMenu = (event) => {
+      if (playerRef.current && playerRef.current.contains(event.target)) {
+        event.preventDefault();
+      }
+    };
+
     window.addEventListener('keydown', onEsc);
+    window.addEventListener('contextmenu', onContextMenu);
 
     return () => {
       document.body.style.overflow = previousOverflow;
       window.removeEventListener('keydown', onEsc);
+      window.removeEventListener('contextmenu', onContextMenu);
     };
   }, [playerOpen, sheetOpen]);
 
@@ -845,7 +883,7 @@ const Videos = () => {
                 <PlayerClose type="button" onClick={() => setPlayerOpen(false)}>Close Video</PlayerClose>
               </PlayerTop>
               <PlayerFrame>
-                <video src={featured.video} controls autoPlay playsInline preload="metadata" />
+                <video ref={playerRef} src={featured.video} controls autoPlay playsInline preload="none" controlsList="nodownload noplaybackrate" disablePictureInPicture disableRemotePlayback onContextMenu={(event) => event.preventDefault()} onDragStart={(event) => event.preventDefault()} />
               </PlayerFrame>
             </PlayerPanel>
           </PlayerBackdrop>

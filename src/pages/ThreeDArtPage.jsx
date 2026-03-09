@@ -138,6 +138,14 @@ const ModelEyebrow = styled.p`
   font-size: 0.72rem;
 `;
 
+
+const ModelNote = styled.p`
+  margin: 0;
+  color: rgba(238, 242, 248, 0.72);
+  font-size: clamp(0.88rem, 1vw, 1rem);
+  line-height: 1.6;
+`;
+
 const ModelGrid = styled.div`
   display: flex;
   flex-wrap: wrap;
@@ -362,6 +370,7 @@ const ThreeDArtPage = () => {
             <ModelShell>
               <ModelHeader>
                 <ModelEyebrow>Car 3D Models</ModelEyebrow>
+                <ModelNote>This site uses Sketchfab to display these 3D car models.</ModelNote>
                 <ModelGrid>
                   <ModelCardButton
                     type="button"

@@ -474,79 +474,29 @@ const PlayerClose = styled.button`
 `;
 
 const PlayerFrame = styled.div`
-  position: relative;
   border-radius: 1rem;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.14);
   background: #000;
   box-shadow: 0 36px 90px rgba(0, 0, 0, 0.56);
 
+  video {
+    width: 100%;
+    max-height: min(78vh, 820px);
+    display: block;
+    background: #000;
+  }
+
   @media (max-width: 48em) {
     border-radius: 0;
     border: none;
     box-shadow: none;
+
+    video {
+      max-height: none;
+      min-height: 0;
+    }
   }
-`;
-
-const PlayerVideo = styled.video`
-  width: 100%;
-  max-height: min(78vh, 820px);
-  display: block;
-  background: #000;
-
-  @media (max-width: 48em) {
-    max-height: none;
-    min-height: 0;
-  }
-`;
-
-const PlayerStatus = styled.div`
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  padding: 1rem;
-  background: ${({ $error }) => ($error ? 'rgba(0, 0, 0, 0.72)' : 'linear-gradient(180deg, rgba(0, 0, 0, 0.22) 0%, rgba(0, 0, 0, 0.58) 100%)')};
-  pointer-events: ${({ $interactive }) => ($interactive ? 'auto' : 'none')};
-`;
-
-const PlayerStatusCard = styled.div`
-  display: grid;
-  gap: 0.65rem;
-  min-width: min(100%, 24rem);
-  text-align: center;
-  justify-items: center;
-  padding: 1rem 1.15rem;
-  border-radius: 0.9rem;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  background: rgba(5, 7, 11, 0.82);
-  color: rgba(246, 248, 251, 0.94);
-`;
-
-const PlayerStatusTitle = styled.strong`
-  font-size: 0.82rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-`;
-
-const PlayerStatusText = styled.p`
-  margin: 0;
-  font-size: 0.82rem;
-  line-height: 1.55;
-  color: rgba(224, 230, 238, 0.86);
-`;
-
-const PlayerRetryButton = styled.button`
-  border: 1px solid rgba(255, 255, 255, 0.24);
-  border-radius: 999px;
-  padding: 0.62rem 0.95rem;
-  background: rgba(255, 255, 255, 0.08);
-  color: rgba(248, 249, 252, 0.96);
-  font-size: 0.74rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  cursor: pointer;
 `;
 
 const collections = [
@@ -563,7 +513,7 @@ const collections = [
         tools: 'Premiere + Lumetri',
         logline: 'A young person begins to piece together the truth after finding out their mum has died.',
         aspect: '16 / 9',
-        video: 'https://cnszcstsixqnqnoacbmq.supabase.co/functions/v1/stream-video?key=02f58992-8af5-48d9-af00-bfac212866f8',
+        video: 'https://cnszcstsixqnqnoacbmq.supabase.co/functions/v1/stream-video?key=934e5a6a-d612-406a-b894-a09841909fe5',
       },
       {
         image: img4,
@@ -710,7 +660,6 @@ const getThumbnail = (source) => thumbnailByImage.get(source) || source;
 const Videos = () => {
   const rowsRef = useRef(null);
   const playerRef = useRef(null);
-  const stallTimeoutRef = useRef(null);
 
   const allItems = useMemo(
     () =>
@@ -727,10 +676,6 @@ const Videos = () => {
   const [featured, setFeatured] = useState(allItems[0]);
   const [sheetOpen, setSheetOpen] = useState(false);
   const [playerOpen, setPlayerOpen] = useState(false);
-  const [playerLoading, setPlayerLoading] = useState(false);
-  const [playerBuffering, setPlayerBuffering] = useState(false);
-  const [playerError, setPlayerError] = useState('');
-  const [playerReloadKey, setPlayerReloadKey] = useState(0);
 
   useEffect(() => {
     if (!sheetOpen && !playerOpen) {
@@ -767,113 +712,6 @@ const Videos = () => {
     };
   }, [playerOpen, sheetOpen]);
 
-
-  useEffect(() => {
-    if (!playerOpen || !featured.video) {
-      if (stallTimeoutRef.current) {
-        window.clearTimeout(stallTimeoutRef.current);
-        stallTimeoutRef.current = null;
-      }
-      setPlayerLoading(false);
-      setPlayerBuffering(false);
-      setPlayerError('');
-      return undefined;
-    }
-
-    const video = playerRef.current;
-    if (!video) {
-      return undefined;
-    }
-
-    const clearStallTimeout = () => {
-      if (stallTimeoutRef.current) {
-        window.clearTimeout(stallTimeoutRef.current);
-        stallTimeoutRef.current = null;
-      }
-    };
-
-    const safePlay = () => {
-      const playAttempt = video.play();
-      if (playAttempt && typeof playAttempt.catch === 'function') {
-        playAttempt.catch(() => {});
-      }
-    };
-
-    const scheduleRecovery = () => {
-      clearStallTimeout();
-      stallTimeoutRef.current = window.setTimeout(() => {
-        if (video.readyState < 3) {
-          setPlayerBuffering(true);
-        }
-      }, 1400);
-    };
-
-    const handleLoadedData = () => {
-      setPlayerLoading(false);
-    };
-
-    const handleCanPlay = () => {
-      clearStallTimeout();
-      setPlayerLoading(false);
-      setPlayerBuffering(false);
-      setPlayerError('');
-      safePlay();
-    };
-
-    const handlePlaying = () => {
-      clearStallTimeout();
-      setPlayerLoading(false);
-      setPlayerBuffering(false);
-      setPlayerError('');
-    };
-
-    const handleWaiting = () => {
-      if (!playerError) {
-        setPlayerBuffering(true);
-        scheduleRecovery();
-      }
-    };
-
-    const handleStalled = () => {
-      if (!playerError) {
-        setPlayerBuffering(true);
-        scheduleRecovery();
-      }
-    };
-
-    const handleError = () => {
-      clearStallTimeout();
-      setPlayerLoading(false);
-      setPlayerBuffering(false);
-      setPlayerError('The connection is slow right now. Press retry and the player will try again from the stream.');
-    };
-
-    setPlayerLoading(true);
-    setPlayerBuffering(false);
-    setPlayerError('');
-
-    video.addEventListener('loadeddata', handleLoadedData);
-    video.addEventListener('canplay', handleCanPlay);
-    video.addEventListener('playing', handlePlaying);
-    video.addEventListener('waiting', handleWaiting);
-    video.addEventListener('stalled', handleStalled);
-    video.addEventListener('error', handleError);
-
-    video.load();
-    safePlay();
-    scheduleRecovery();
-
-    return () => {
-      clearStallTimeout();
-      video.removeEventListener('loadeddata', handleLoadedData);
-      video.removeEventListener('canplay', handleCanPlay);
-      video.removeEventListener('playing', handlePlaying);
-      video.removeEventListener('waiting', handleWaiting);
-      video.removeEventListener('stalled', handleStalled);
-      video.removeEventListener('error', handleError);
-    };
-  }, [featured.video, playerError, playerOpen, playerReloadKey]);
-
   const openItem = (item, collection) => {
     setPlayerOpen(false);
     setFeatured({
@@ -889,17 +727,7 @@ const Videos = () => {
       return;
     }
 
-    setPlayerLoading(true);
-    setPlayerBuffering(false);
-    setPlayerError('');
     setPlayerOpen(true);
-  };
-
-  const retryPlayer = () => {
-    setPlayerError('');
-    setPlayerLoading(true);
-    setPlayerBuffering(false);
-    setPlayerReloadKey((current) => current + 1);
   };
 
   return (
@@ -1055,22 +883,7 @@ const Videos = () => {
                 <PlayerClose type="button" onClick={() => setPlayerOpen(false)}>Close Video</PlayerClose>
               </PlayerTop>
               <PlayerFrame>
-                <PlayerVideo key={`${featured.video}-${playerReloadKey}`} ref={playerRef} src={featured.video} poster={featured.image} controls autoPlay playsInline preload="metadata" controlsList="nodownload noplaybackrate" disablePictureInPicture disableRemotePlayback onContextMenu={(event) => event.preventDefault()} onDragStart={(event) => event.preventDefault()} />
-                {(playerLoading || playerBuffering || playerError) ? (
-                  <PlayerStatus $error={Boolean(playerError)} $interactive={Boolean(playerError)}>
-                    <PlayerStatusCard>
-                      <PlayerStatusTitle>{playerError ? 'Playback Problem' : (playerBuffering ? 'Buffering Video' : 'Loading Video')}</PlayerStatusTitle>
-                      <PlayerStatusText>
-                        {playerError
-                          ? playerError
-                          : 'The player is pulling video in. Slow Wi-Fi can take a moment before playback settles.'}
-                      </PlayerStatusText>
-                      {playerError ? (
-                        <PlayerRetryButton type="button" onClick={retryPlayer}>Retry Video</PlayerRetryButton>
-                      ) : null}
-                    </PlayerStatusCard>
-                  </PlayerStatus>
-                ) : null}
+                <video ref={playerRef} src={featured.video} controls autoPlay playsInline preload="none" controlsList="nodownload noplaybackrate" disablePictureInPicture disableRemotePlayback onContextMenu={(event) => event.preventDefault()} onDragStart={(event) => event.preventDefault()} />
               </PlayerFrame>
             </PlayerPanel>
           </PlayerBackdrop>

@@ -58,12 +58,12 @@ const Hint = styled.p`
   color: rgba(255, 255, 255, 0.62);
 `;
 
-const VaultPage = () => {
+const WriteUpsPage = () => {
   const location = useLocation();
-  const allowVault = Boolean(location.state?.unlisted === 'vault' && location.state?.allowUnlisted === true);
+  const allowWriteUps = Boolean(location.state?.unlisted === 'write-ups' && location.state?.allowUnlisted === true);
 
   // Keep the page unlisted: direct URL navigation redirects to Home.
-  if (!allowVault) {
+  if (!allowWriteUps) {
     return <Navigate to="/" replace />;
   }
 
@@ -78,12 +78,12 @@ const VaultPage = () => {
             transition={{ duration: 0.42, ease: 'easeOut' }}
           >
             <Kicker>Unlisted</Kicker>
-            <Title>Vault</Title>
+            <Title>Write Ups</Title>
             <Text>
-              You found the hidden page. It is not linked anywhere in the navigation.
-              The only supported entrypoints are the navbar search and the Site Helper.
+              Short write-ups, notes, and behind-the-scenes details. This page is intentionally not
+              linked in the navigation.
             </Text>
-            <Hint>Tip: Search for “vault” or ask “open the vault”.</Hint>
+            <Hint>Tip: Search for “write ups” or ask “open write ups”.</Hint>
           </Card>
         </Wrap>
       </PageMain>
@@ -91,5 +91,4 @@ const VaultPage = () => {
   );
 };
 
-export default VaultPage;
-
+export default WriteUpsPage;

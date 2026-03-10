@@ -426,11 +426,11 @@ const lookupTargets = [
   { keywords: ['gallery', 'photo', 'photos', 'image', 'images', 'shop'], action: { type: 'scroll', target: '#shop' } },
   { keywords: ['contact', 'email'], action: { type: 'scroll', target: '#contact' } },
   {
-    keywords: ['vault', 'secret', 'hidden', 'unlisted'],
+    keywords: ['write ups', 'write up', 'write-ups', 'writeup', 'writeups', 'notes', 'blog', 'secret', 'hidden', 'unlisted'],
     action: {
       type: 'route',
-      path: '/vault',
-      state: { allowUnlisted: true, unlisted: 'vault', via: 'search' },
+      path: '/write-ups',
+      state: { allowUnlisted: true, unlisted: 'write-ups', via: 'search' },
     },
   },
 ];

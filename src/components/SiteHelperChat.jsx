@@ -339,17 +339,17 @@ const siteIntents = [
     guidance: 'Use 3D Art for CGI, renders, and future 3D work.',
   },
   {
-    id: 'vault',
-    label: 'Vault',
-    action: { type: 'route', path: '/vault', state: { allowUnlisted: true, unlisted: 'vault', via: 'assistant' } },
-    keywords: ['vault', 'secret', 'hidden', 'unlisted'],
-    phrases: ['vault page', 'open vault', 'open the vault', 'secret page', 'hidden page', 'unlisted page'],
+    id: 'writeups',
+    label: 'Write Ups',
+    action: { type: 'route', path: '/write-ups', state: { allowUnlisted: true, unlisted: 'write-ups', via: 'assistant' } },
+    keywords: ['write', 'writeup', 'writeups', 'write up', 'write ups', 'write-ups', 'notes', 'blog', 'secret', 'hidden', 'unlisted'],
+    phrases: ['write ups', 'write up', 'write ups page', 'open write ups', 'open writeups', 'open the write ups', 'notes page', 'blog page', 'secret page', 'hidden page', 'unlisted page'],
     responses: [
-      'Opening the vault page.',
-      'Taking you to the hidden vault.',
-      'Got it. Jumping to Vault.',
+      'Opening the Write Ups page.',
+      'Taking you to the hidden Write Ups page.',
+      'Got it. Jumping to Write Ups.',
     ],
-    guidance: 'Vault is an unlisted page only reachable via lookup or the Site Helper.',
+    guidance: 'Write Ups is an unlisted page only reachable via lookup or the Site Helper.',
   },
   {
     id: 'contact',
@@ -582,8 +582,8 @@ const pageLabelByPath = (pathname) => {
     return '3D Art';
   }
 
-  if (pathname === '/vault') {
-    return 'Vault';
+  if (pathname === '/write-ups') {
+    return 'Write Ups';
   }
 
   return 'Home';

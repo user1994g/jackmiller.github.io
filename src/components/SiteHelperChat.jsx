@@ -339,6 +339,19 @@ const siteIntents = [
     guidance: 'Use 3D Art for CGI, renders, and future 3D work.',
   },
   {
+    id: 'vault',
+    label: 'Vault',
+    action: { type: 'route', path: '/vault', state: { allowUnlisted: true, unlisted: 'vault', via: 'assistant' } },
+    keywords: ['vault', 'secret', 'hidden', 'unlisted'],
+    phrases: ['vault page', 'open vault', 'open the vault', 'secret page', 'hidden page', 'unlisted page'],
+    responses: [
+      'Opening the vault page.',
+      'Taking you to the hidden vault.',
+      'Got it. Jumping to Vault.',
+    ],
+    guidance: 'Vault is an unlisted page only reachable via lookup or the Site Helper.',
+  },
+  {
     id: 'contact',
     label: 'Contact',
     action: { type: 'scroll', target: '#contact' },
@@ -569,6 +582,10 @@ const pageLabelByPath = (pathname) => {
     return '3D Art';
   }
 
+  if (pathname === '/vault') {
+    return 'Vault';
+  }
+
   return 'Home';
 };
 
@@ -598,7 +615,11 @@ const SiteHelperChat = () => {
 
     if (action.type === 'route') {
       if (location.pathname !== action.path) {
-        navigate(action.path);
+        if (action.state) {
+          navigate(action.path, { state: action.state });
+        } else {
+          navigate(action.path);
+        }
       }
       return;
     }

@@ -425,6 +425,14 @@ const lookupTargets = [
   { keywords: ['3d', '3dart', 'art', '3d art', 'three d', 'three d art'], action: { type: 'route', path: '/3d-art' } },
   { keywords: ['gallery', 'photo', 'photos', 'image', 'images', 'shop'], action: { type: 'scroll', target: '#shop' } },
   { keywords: ['contact', 'email'], action: { type: 'scroll', target: '#contact' } },
+  {
+    keywords: ['vault', 'secret', 'hidden', 'unlisted'],
+    action: {
+      type: 'route',
+      path: '/vault',
+      state: { allowUnlisted: true, unlisted: 'vault', via: 'search' },
+    },
+  },
 ];
 
 const mobilePanelVariants = {
@@ -505,7 +513,11 @@ const Navbar = () => {
       }
 
       if (location.pathname !== item.path) {
-        navigate(item.path);
+        if (item.state) {
+          navigate(item.path, { state: item.state });
+        } else {
+          navigate(item.path);
+        }
       }
       setOpen(false);
       return;

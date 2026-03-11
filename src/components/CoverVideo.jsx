@@ -269,8 +269,8 @@ const CoverVideo = () => {
           <h1 className="hero-name">Jack Miller</h1>
           <h2 className="hero-subtitle">Film, Photography, and Visual Storytelling</h2>
           <p className="hero-body">
-            A dark cinematic body of work exploring atmosphere, shadow, and narrative composition
-            through motion and still imagery.
+            A creative portfolio exploring atmosphere, shadow, and narrative composition across
+            film, photography, and videography.
           </p>
         </TitleContent>
       </Title>

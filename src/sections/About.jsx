@@ -115,8 +115,8 @@ const About = () => {
           immersive and intentional on both still and moving formats.
         </p>
         <p>
-          This collection reflects my development as a creative media student and my goal to produce
-          distinctive visuals that stay memorable across screens of every size.
+          This creative portfolio reflects my development as a creative media student and my goal to
+          produce distinctive visuals that stay memorable across screens of every size.
         </p>
       </Copy>
 

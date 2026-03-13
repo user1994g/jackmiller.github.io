@@ -6,7 +6,6 @@ import HeroButtons from '../sections/HeroButtons';
 import Home from '../sections/Home';
 import Marquee from '../sections/Marquee';
 import Shop from '../sections/Shop';
-import useLocoScroll from '../components/useLocoScroll';
 
 const HomePage = () => {
 

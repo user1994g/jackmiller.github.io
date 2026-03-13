@@ -309,7 +309,7 @@ const HeroButtons = () => {
     }, sectionElement);
 
     return () => ctx.revert();
-  }, []);
+  }, [scroll?.el]);
 
   return (
     <Section ref={sectionRef} id="explore">

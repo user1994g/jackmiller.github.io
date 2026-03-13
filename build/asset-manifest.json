@@ -1,7 +1,9 @@
 {
   "files": {
-    "main.css": "/static/css/main.5ff3ba9e.css",
-    "main.js": "/static/js/main.cd6284eb.js",
+    "main.css": "/static/css/main.f24650de.css",
+    "main.js": "/static/js/main.6269243b.js",
+    "static/js/90.7aed1706.chunk.js": "/static/js/90.7aed1706.chunk.js",
+    "static/js/435.92c61afc.chunk.js": "/static/js/435.92c61afc.chunk.js",
     "static/media/Walking Girl.mp4": "/static/media/Walking Girl.dca083e23d7a563ff57e.mp4",
     "static/media/10.webp": "/static/media/10.9d55ebaf49e2a1566285.webp",
     "static/media/4.webp": "/static/media/4.de6233805d060fa97921.webp",
@@ -36,7 +38,7 @@
     "index.html": "/index.html"
   },
   "entrypoints": [
-    "static/css/main.5ff3ba9e.css",
-    "static/js/main.cd6284eb.js"
+    "static/css/main.f24650de.css",
+    "static/js/main.6269243b.js"
   ]
 }

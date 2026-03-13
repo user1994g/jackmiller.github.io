@@ -1,6 +1,9 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
+import gsap from 'gsap';
+import ScrollTrigger from 'gsap/ScrollTrigger';
+import { useLocomotiveScroll } from 'react-locomotive-scroll';
 
 import ImageLightbox from '../components/ImageLightbox';
 import img1 from '../assets/Images/1.webp';
@@ -13,6 +16,8 @@ import img7 from '../assets/Images/7.webp';
 import img8 from '../assets/Images/8.webp';
 import img9 from '../assets/Images/9.webp';
 import img10 from '../assets/Images/10.webp';
+
+gsap.registerPlugin(ScrollTrigger);
 
 const Section = styled(motion.section)`
   width: min(1320px, 94vw);
@@ -37,6 +42,14 @@ const Header = styled.div`
     flex-direction: column;
     align-items: flex-start;
   }
+
+  /* Split text words for animation */
+  .title-word, .intro-line {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(40px) rotateX(-20deg);
+    transform-origin: 0% 100%;
+  }
 `;
 
 const Title = styled.h2`
@@ -57,6 +70,7 @@ const Grid = styled.div`
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: clamp(0.75rem, 1.2vw, 1rem);
+  perspective: 1200px; /* enables 3D space for child cards */
 
   @media (max-width: 80em) {
     grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -80,6 +94,12 @@ const Card = styled(motion.article)`
   overflow: hidden;
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.12);
+  
+  /* Initial state for 3D animation */
+  opacity: 0;
+  transform: translateY(120px) translateZ(-150px) rotateX(-25deg) rotateY(10deg) scale(0.85);
+  transform-style: preserve-3d;
+  will-change: transform, opacity;
 `;
 
 const ImageButton = styled.button`
@@ -144,20 +164,90 @@ const photos = [
 
 const Shop = () => {
   const [activeImage, setActiveImage] = useState(null);
+  const sectionRef = useRef(null);
+  
+  const locoContext = useLocomotiveScroll();
+  const scroll = locoContext?.scroll;
+
+  useEffect(() => {
+    const scrollerElement = scroll?.el || null;
+
+    const ctx = gsap.context(() => {
+      /* Title Animation */
+      gsap.to('.title-word', {
+        opacity: 1,
+        y: 0,
+        rotateX: 0,
+        duration: 0.8,
+        stagger: 0.1,
+        ease: 'back.out(1.4)',
+        scrollTrigger: {
+          trigger: '.shop-header',
+          ...(scrollerElement && { scroller: scrollerElement }),
+          start: 'top 85%',
+          toggleActions: 'play none none none',
+        },
+      });
+
+      /* Intro Text Animation */
+      gsap.to('.intro-line', {
+        opacity: 1,
+        y: 0,
+        rotateX: 0,
+        duration: 0.8,
+        delay: 0.2,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: '.shop-header',
+          ...(scrollerElement && { scroller: scrollerElement }),
+          start: 'top 85%',
+          toggleActions: 'play none none none',
+        },
+      });
+
+      /* 3D Cards Stagger */
+      gsap.to('.photo-item', {
+        opacity: 1,
+        y: 0,
+        z: 0,
+        rotateX: 0,
+        rotateY: 0,
+        scale: 1,
+        duration: 1.2,
+        stagger: 0.12,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: '.photo-grid',
+          ...(scrollerElement && { scroller: scrollerElement }),
+          start: 'top 80%',
+          toggleActions: 'play none none none',
+        },
+      });
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, [scroll]);
 
   return (
-    <Section id="shop" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ duration: 0.7 }}>
-      <Header>
-        <Title data-scroll data-scroll-speed="-1">my photos</Title>
+    <Section id="shop" ref={sectionRef}>
+      <Header className="shop-header">
+        <Title data-scroll data-scroll-speed="-1">
+          {'Visual Narratives'.split(' ').map((word, i) => (
+            <span className="title-word" key={i}>
+              {word}&nbsp;
+            </span>
+          ))}
+        </Title>
         <Intro>
-          A selection from my latest portfolio development cycle. Each frame is designed for impact
-          on large displays while preserving detail and rhythm on smaller screens.
+          <span className="intro-line">A selection from my latest portfolio development cycle. </span>
+          <span className="intro-line">Each frame is designed for impact on large displays </span>
+          <span className="intro-line">while preserving detail and rhythm on smaller screens.</span>
         </Intro>
       </Header>
 
-      <Grid>
+      <Grid className="photo-grid">
         {photos.map((photo) => (
-          <Card key={photo.title} whileHover={{ y: -4 }} transition={{ duration: 0.2 }}>
+          <Card key={photo.title} className="photo-item" whileHover={{ y: -4 }} transition={{ duration: 0.2 }}>
             <ImageButton
               type="button"
               aria-label={`Open ${photo.title}`}

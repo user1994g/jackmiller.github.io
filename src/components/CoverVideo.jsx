@@ -1,13 +1,25 @@
 import anime from 'animejs/lib/anime.es.js';
 import gsap from 'gsap';
 import ScrollTrigger from 'gsap/ScrollTrigger';
-import React, { useEffect, useLayoutEffect, useRef } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useCallback } from 'react';
 import { useLocomotiveScroll } from 'react-locomotive-scroll';
-import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
+import styled, { css, keyframes } from 'styled-components';
 
 import MainVideo from '../assets/Walking Girl.mp4';
 
 gsap.registerPlugin(ScrollTrigger);
+
+/* ── shimmer keyframe for CTA buttons ── */
+const shimmer = keyframes`
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+`;
+
+const glowPulse = keyframes`
+  0%, 100% { box-shadow: 0 0 18px rgba(240, 216, 173, 0.12), inset 0 0 0 1px rgba(240, 216, 173, 0.22); }
+  50% { box-shadow: 0 0 28px rgba(240, 216, 173, 0.22), inset 0 0 0 1px rgba(240, 216, 173, 0.36); }
+`;
 
 const VideoContainer = styled.section.attrs({ className: 'container' })`
   width: 100%;
@@ -17,6 +29,19 @@ const VideoContainer = styled.section.attrs({ className: 'container' })`
   overflow: hidden;
 `;
 
+/* Parallax background that reveals behind shrinking video */
+const ParallaxBg = styled.div`
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse at 50% 30%, rgba(240, 216, 173, 0.06) 0%, transparent 55%),
+    radial-gradient(ellipse at 20% 80%, rgba(100, 120, 180, 0.05) 0%, transparent 50%),
+    linear-gradient(180deg, #0a0b0e 0%, #141620 50%, #0c0d10 100%);
+  opacity: 0;
+  will-change: opacity;
+`;
+
 const ScaleFrame = styled.div`
   width: 120vw;
   height: 120vh;
@@ -24,6 +49,7 @@ const ScaleFrame = styled.div`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  z-index: 1;
 
   @media (max-width: 48em) {
     width: 128vw;
@@ -56,9 +82,9 @@ const ScaleMotionLayer = styled.div`
 const DarkOverlay = styled.div`
   position: absolute;
   inset: 0;
-  z-index: 1;
+  z-index: 2;
   background:
-    linear-gradient(180deg, rgba(8, 8, 10, 0.25) 0%, rgba(8, 8, 10, 0.85) 100%),
+    linear-gradient(180deg, rgba(8, 8, 10, 0.20) 0%, rgba(8, 8, 10, 0.88) 100%),
     radial-gradient(circle at 20% 10%, rgba(255, 255, 255, 0.14), transparent 40%);
 `;
 
@@ -82,7 +108,8 @@ const TitleContent = styled.div`
   .hero-kicker,
   .hero-name,
   .hero-subtitle,
-  .hero-body {
+  .hero-body,
+  .hero-cta-row {
     opacity: 0;
     transform: translateY(32px);
   }
@@ -120,15 +147,106 @@ const TitleContent = styled.div`
   }
 `;
 
+const CtaRow = styled.div`
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.8rem;
+  flex-wrap: wrap;
+
+  @media (max-width: 30em) {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+`;
+
+const CtaButton = styled.button`
+  position: relative;
+  padding: 0.85rem 2rem;
+  border-radius: 999px;
+  font-size: clamp(0.78rem, 1vw, 0.92rem);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+
+  ${({ $primary }) =>
+    $primary
+      ? css`
+    border: 1px solid rgba(240, 216, 173, 0.5);
+    background: linear-gradient(135deg, rgba(240, 216, 173, 0.15) 0%, rgba(240, 216, 173, 0.04) 100%);
+    color: rgba(255, 248, 230, 0.98);
+    animation: ${glowPulse} 3s ease-in-out infinite;
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(240, 216, 173, 0.18) 50%,
+        transparent 100%
+      );
+      background-size: 200% auto;
+      animation: ${shimmer} 3.5s linear infinite;
+      pointer-events: none;
+    }
+  `
+      : css`
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    background: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(6px);
+  `}
+
+  &:hover {
+    transform: translateY(-3px) scale(1.04);
+    border-color: rgba(240, 216, 173, 0.7);
+    box-shadow: 0 12px 36px rgba(240, 216, 173, 0.18), 0 0 0 1px rgba(240, 216, 173, 0.3);
+  }
+
+  &:active {
+    transform: translateY(-1px) scale(1.01);
+  }
+
+  &:focus-visible {
+    outline: 2px solid rgba(240, 216, 173, 0.8);
+    outline-offset: 3px;
+  }
+`;
+
 const CoverVideo = () => {
   const containerRef = useRef(null);
   const scaleLayerRef = useRef(null);
   const titleContentRef = useRef(null);
   const videoRef = useRef(null);
+  const parallaxBgRef = useRef(null);
 
   const locoContext = useLocomotiveScroll();
   const scroll = locoContext?.scroll;
+  const navigate = useNavigate();
 
+  const scrollToTarget = useCallback(
+    (target) => {
+      const element = document.querySelector(target);
+      if (!element) return;
+
+      if (scroll) {
+        scroll.scrollTo(element, {
+          offset: -88,
+          duration: 1100,
+          easing: [0.25, 0.0, 0.35, 1.0],
+        });
+        return;
+      }
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    },
+    [scroll],
+  );
+
+  /* ── text entrance animation ── */
   useEffect(() => {
     const titleElement = titleContentRef.current;
 
@@ -138,7 +256,9 @@ const CoverVideo = () => {
 
     const reduceMotion =
       typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const targets = titleElement.querySelectorAll('.hero-kicker, .hero-name, .hero-subtitle, .hero-body');
+    const targets = titleElement.querySelectorAll(
+      '.hero-kicker, .hero-name, .hero-subtitle, .hero-body, .hero-cta-row',
+    );
 
     if (reduceMotion) {
       gsap.set(targets, { opacity: 1, y: 0, clearProps: 'transform' });
@@ -176,17 +296,18 @@ const CoverVideo = () => {
     };
   }, []);
 
+  /* ── scroll-triggered shrink + parallax ── */
   useLayoutEffect(() => {
     const containerElement = containerRef.current;
     const scaleElement = scaleLayerRef.current;
     const titleElement = titleContentRef.current;
+    const bgElement = parallaxBgRef.current;
 
     if (!containerElement || !scaleElement || !titleElement) {
       return undefined;
     }
 
-    const scrollerFallback = document.querySelector('[data-scroll-container]');
-    const scrollerElement = scroll?.el || scrollerFallback;
+    const scrollerElement = scroll?.el || null;
 
     ScrollTrigger.getById('hero-video-scale')?.kill();
 
@@ -201,9 +322,14 @@ const CoverVideo = () => {
     gsap.set(titleElement, {
       scale: 1,
       y: 0,
+      opacity: 1,
       force3D: true,
       transformOrigin: '0% 100%',
     });
+
+    if (bgElement) {
+      gsap.set(bgElement, { opacity: 0 });
+    }
 
     const timeline = gsap.timeline({
       scrollTrigger: {
@@ -219,26 +345,41 @@ const CoverVideo = () => {
       },
     });
 
+    /* video shrinks with rounded corners & deep shadow */
     timeline.to(
       scaleElement,
       {
-        scale: 0.6667,
-        borderRadius: 28,
-        boxShadow: '0 26px 60px rgba(0, 0, 0, 0.42)',
+        scale: 0.55,
+        borderRadius: 32,
+        boxShadow: '0 40px 100px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.06)',
         ease: 'none',
       },
       0,
     );
 
+    /* title fades out and slides down */
     timeline.to(
       titleElement,
       {
-        scale: 0.6667,
-        y: -120,
+        scale: 0.75,
+        y: 80,
+        opacity: 0,
         ease: 'none',
       },
       0,
     );
+
+    /* parallax background fades in behind the shrinking video */
+    if (bgElement) {
+      timeline.to(
+        bgElement,
+        {
+          opacity: 1,
+          ease: 'none',
+        },
+        0.15,
+      );
+    }
 
     const refreshTrigger = () => ScrollTrigger.refresh();
     const videoElement = videoRef.current;
@@ -261,6 +402,8 @@ const CoverVideo = () => {
   return (
     <VideoContainer ref={containerRef}>
 
+      <ParallaxBg ref={parallaxBgRef} />
+
       <DarkOverlay />
 
       <Title>
@@ -272,6 +415,21 @@ const CoverVideo = () => {
             A creative portfolio exploring atmosphere, shadow, and narrative composition across
             film, photography, and videography.
           </p>
+          <CtaRow className="hero-cta-row">
+            <CtaButton
+              $primary
+              type="button"
+              onClick={() => scrollToTarget('#shop')}
+            >
+              View My Work
+            </CtaButton>
+            <CtaButton
+              type="button"
+              onClick={() => navigate('/videos')}
+            >
+              Watch Showreel
+            </CtaButton>
+          </CtaRow>
         </TitleContent>
       </Title>
 

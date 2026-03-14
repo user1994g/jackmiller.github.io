@@ -95,15 +95,19 @@ const Title = styled.div`
 
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
-  align-items: flex-start;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
   padding: clamp(5rem, 10vw, 9rem) clamp(1.1rem, 4vw, 4rem);
   color: ${(props) => props.theme.text};
 `;
 
 const TitleContent = styled.div`
-  transform-origin: 0% 100%;
+  transform-origin: 50% 50%;
   will-change: transform;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 
   .hero-kicker,
   .hero-name,
@@ -115,35 +119,33 @@ const TitleContent = styled.div`
   }
 
   .hero-kicker {
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    font-size: clamp(0.7rem, 0.9vw, 0.9rem);
-    color: rgba(255, 255, 255, 0.82);
+    letter-spacing: 0.08em;
+    font-size: clamp(0.8rem, 1.1vw, 1.1rem);
+    color: rgba(255, 255, 255, 0.92);
     margin-bottom: 0.85rem;
   }
 
   .hero-name {
-    font-size: clamp(3.2rem, 8vw, 7rem);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    text-shadow: 1px 1px 1px ${(props) => props.theme.body};
-    line-height: 1;
-    margin-bottom: 0.4rem;
+    font-family: 'Kaushan Script';
+    font-size: clamp(4.5rem, 10vw, 8.5rem);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    line-height: 1.1;
+    margin-bottom: 0.2rem;
   }
 
   .hero-subtitle {
     margin-top: 0.65rem;
-    font-size: clamp(0.95rem, 1.9vw, 1.6rem);
-    font-weight: 500;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
+    font-size: clamp(1.1rem, 2.2vw, 1.8rem);
+    font-weight: 400;
+    letter-spacing: 0.02em;
   }
 
   .hero-body {
-    margin-top: 1rem;
+    margin-top: 1.2rem;
     width: min(52ch, 92%);
     color: rgba(255, 255, 255, 0.84);
-    font-size: clamp(0.82rem, 1.25vw, 1.05rem);
+    font-size: clamp(0.9rem, 1.35vw, 1.15rem);
+    line-height: 1.6;
   }
 `;
 
@@ -152,20 +154,22 @@ const CtaRow = styled.div`
   gap: 1rem;
   margin-top: 1.8rem;
   flex-wrap: wrap;
+  justify-content: center;
 
   @media (max-width: 30em) {
     flex-direction: column;
     gap: 0.75rem;
+    align-items: center;
   }
 `;
 
 const CtaButton = styled.button`
   position: relative;
-  padding: 0.85rem 2rem;
+  padding: 0.9rem 2.2rem;
   border-radius: 999px;
-  font-size: clamp(0.78rem, 1vw, 0.92rem);
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
+  font-size: clamp(0.85rem, 1.1vw, 1rem);
+  font-weight: 500;
+  letter-spacing: 0.05em;
   cursor: pointer;
   overflow: hidden;
   transition: all 0.28s cubic-bezier(0.22, 1, 0.36, 1);
@@ -202,13 +206,13 @@ const CtaButton = styled.button`
   `}
 
   &:hover {
-    transform: translateY(-3px) scale(1.04);
+    transform: translateY(-4px) scale(1.06);
     border-color: rgba(240, 216, 173, 0.7);
-    box-shadow: 0 12px 36px rgba(240, 216, 173, 0.18), 0 0 0 1px rgba(240, 216, 173, 0.3);
+    box-shadow: 0 16px 40px rgba(240, 216, 173, 0.22), 0 0 0 1px rgba(240, 216, 173, 0.3);
   }
 
   &:active {
-    transform: translateY(-1px) scale(1.01);
+    transform: translateY(1px) scale(0.96);
   }
 
   &:focus-visible {
@@ -324,7 +328,7 @@ const CoverVideo = () => {
       y: 0,
       opacity: 1,
       force3D: true,
-      transformOrigin: '0% 100%',
+      transformOrigin: '50% 50%',
     });
 
     if (bgElement) {
@@ -350,7 +354,7 @@ const CoverVideo = () => {
       scaleElement,
       {
         scale: 0.55,
-        borderRadius: 32,
+        borderRadius: 64,
         boxShadow: '0 40px 100px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.06)',
         ease: 'none',
       },

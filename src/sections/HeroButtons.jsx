@@ -14,8 +14,8 @@ const borderGlow = keyframes`
 `;
 
 const floatIcon = keyframes`
-  0%, 100% { transform: translateY(0) scale(1); }
-  50% { transform: translateY(-6px) scale(1.08); }
+  0%, 100% { transform: translateY(0) scale(1) rotate(0deg); }
+  50% { transform: translateY(-8px) scale(1.15) rotate(5deg); }
 `;
 
 /* ── styled components ── */
@@ -70,7 +70,7 @@ const Card = styled.button`
   position: relative;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 22px;
+  border-radius: 36px;
   background:
     linear-gradient(165deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.015) 100%),
     rgba(14, 15, 20, 0.7);
@@ -118,10 +118,10 @@ const Card = styled.button`
   &:hover {
     border-color: rgba(240, 216, 173, 0.4);
     box-shadow:
-      0 22px 56px rgba(0, 0, 0, 0.4),
-      0 0 40px rgba(240, 216, 173, 0.08),
+      0 32px 64px rgba(0, 0, 0, 0.4),
+      0 0 50px rgba(240, 216, 173, 0.12),
       inset 0 1px 0 rgba(255, 255, 255, 0.1);
-    transform: translateY(-8px) scale(1.03) rotate(0deg);
+    transform: translateY(-12px) scale(1.05) rotate(1.5deg);
     background:
       linear-gradient(165deg, rgba(255, 255, 255, 0.09) 0%, rgba(255, 255, 255, 0.025) 100%),
       rgba(18, 19, 26, 0.8);

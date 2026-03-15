@@ -31,6 +31,7 @@ const grids = [
     images: makeSet(24, 15),
     title: 'Cinematic shadow play',
     titleClass: 'content__title--left',
+    hint: 'Keep scrolling',
   },
   {
     id: 'grid-4',
@@ -357,7 +358,13 @@ const NewHome = () => {
         </section>
 
         {grids.map((grid) => (
-          <section key={grid.id} className={`content${grid.spacing ? ' content--spacing' : ''}`}>
+          <React.Fragment key={grid.id}>
+            {grid.hint ? (
+              <div className="scroll-hint">
+                <span>{grid.hint}</span>
+              </div>
+            ) : null}
+            <section className={`content${grid.spacing ? ' content--spacing' : ''}`}>
             <div className={grid.className}>
               <div className="grid-wrap">
                 {grid.images.map((imgId, index) => (
@@ -372,6 +379,7 @@ const NewHome = () => {
             </div>
             <h3 className={`content__title ${grid.titleClass}`}>{grid.title}</h3>
           </section>
+          </React.Fragment>
         ))}
 
         <section className="outro">

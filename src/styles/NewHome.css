@@ -142,6 +142,16 @@
   margin-bottom: 100vh;
 }
 
+.new-home .scroll-hint {
+  height: clamp(14vh, 18vh, 24vh);
+  display: grid;
+  place-items: center;
+  text-transform: uppercase;
+  letter-spacing: 0.24em;
+  font-size: clamp(0.7rem, 2vw, 1rem);
+  color: rgba(255, 255, 255, 0.6);
+}
+
 .new-home .content__title {
   position: absolute;
   height: 100vh;

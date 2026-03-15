@@ -143,13 +143,25 @@
 }
 
 .new-home .scroll-hint {
-  height: clamp(14vh, 18vh, 24vh);
+  height: clamp(8vh, 12vh, 16vh);
   display: grid;
   place-items: center;
   text-transform: uppercase;
   letter-spacing: 0.24em;
   font-size: clamp(0.7rem, 2vw, 1rem);
   color: rgba(255, 255, 255, 0.6);
+}
+
+.new-home .content--spacing-mid {
+  margin-bottom: 60vh;
+}
+
+.new-home .content--spacing-breath {
+  margin-bottom: 30vh;
+}
+
+.new-home .content--gap-tight {
+  margin-bottom: 12vh;
 }
 
 .new-home .content__title {

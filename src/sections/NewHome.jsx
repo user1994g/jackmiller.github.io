@@ -24,6 +24,7 @@ const grids = [
     title: 'Fragments of movement',
     titleClass: 'content__title--right',
     spacing: true,
+    spacingClass: 'content--spacing-mid',
   },
   {
     id: 'grid-3',
@@ -32,6 +33,7 @@ const grids = [
     title: 'Cinematic shadow play',
     titleClass: 'content__title--left',
     hint: 'Keep scrolling',
+    gapClass: 'content--gap-tight',
   },
   {
     id: 'grid-4',
@@ -40,6 +42,7 @@ const grids = [
     title: 'Frames that breathe',
     titleClass: 'content__title--right',
     spacing: true,
+    spacingClass: 'content--spacing-breath',
   },
   {
     id: 'grid-5',
@@ -364,7 +367,11 @@ const NewHome = () => {
                 <span>{grid.hint}</span>
               </div>
             ) : null}
-            <section className={`content${grid.spacing ? ' content--spacing' : ''}`}>
+            <section
+              className={`content${grid.spacing ? ' content--spacing' : ''}${grid.spacingClass ? ` ${grid.spacingClass}` : ''}${
+                grid.gapClass ? ` ${grid.gapClass}` : ''
+              }`}
+            >
             <div className={grid.className}>
               <div className="grid-wrap">
                 {grid.images.map((imgId, index) => (

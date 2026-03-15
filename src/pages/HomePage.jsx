@@ -1,14 +1,9 @@
 import React, { useEffect } from 'react';
 
 import Navbar from '../components/Navbar';
-import About from '../sections/About';
-import HeroButtons from '../sections/HeroButtons';
-import Home from '../sections/Home';
-import Marquee from '../sections/Marquee';
-import Shop from '../sections/Shop';
+import NewHome from '../sections/NewHome';
 
 const HomePage = () => {
-
   useEffect(() => {
     if (typeof window === 'undefined') {
       return;
@@ -20,13 +15,8 @@ const HomePage = () => {
   return (
     <>
       <Navbar />
-
-      <main id="main-content" className="App" role="main" data-scroll-container>
-        <Home />
-        <HeroButtons />
-        <About />
-        <Shop />
-        <Marquee />
+      <main id="main-content" className="App" role="main">
+        <NewHome />
       </main>
     </>
   );

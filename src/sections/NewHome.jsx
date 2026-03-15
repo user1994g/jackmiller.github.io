@@ -1,0 +1,385 @@
+import React, { useEffect, useRef } from 'react';
+import gsap from 'gsap';
+import ScrollTrigger from 'gsap/ScrollTrigger';
+
+import '../styles/NewHome.css';
+
+gsap.registerPlugin(ScrollTrigger);
+
+const imageIds = Array.from({ length: 46 }, (_, i) => i + 1);
+const makeSet = (count, offset) => Array.from({ length: count }, (_, i) => imageIds[(i + offset) % imageIds.length]);
+
+const grids = [
+  {
+    id: 'grid-1',
+    className: 'grid grid--1',
+    images: makeSet(24, 0),
+    title: 'Stories carved in light',
+    titleClass: 'content__title--left',
+  },
+  {
+    id: 'grid-2',
+    className: 'grid grid--2',
+    images: makeSet(30, 7),
+    title: 'Fragments of movement',
+    titleClass: 'content__title--right',
+    spacing: true,
+  },
+  {
+    id: 'grid-3',
+    className: 'grid grid--3',
+    images: makeSet(24, 15),
+    title: 'Cinematic shadow play',
+    titleClass: 'content__title--left',
+  },
+  {
+    id: 'grid-4',
+    className: 'grid grid--4',
+    images: makeSet(18, 23),
+    title: 'Frames that breathe',
+    titleClass: 'content__title--right',
+    spacing: true,
+  },
+  {
+    id: 'grid-5',
+    className: 'grid grid--5',
+    images: makeSet(32, 31),
+    title: 'Textures in motion',
+    titleClass: 'content__title--left',
+  },
+  {
+    id: 'grid-6',
+    className: 'grid grid--6',
+    images: makeSet(20, 39),
+    title: 'A quiet afterglow',
+    titleClass: 'content__title--right',
+    spacing: true,
+  },
+];
+
+const backgroundUrl = (id) => `${process.env.PUBLIC_URL}/new-home/img/${id}.jpg`;
+
+const preloadImages = (elements) => {
+  const items = Array.from(elements || []);
+  const sources = items
+    .map((el) => {
+      const bg = el.style.backgroundImage || '';
+      const match = bg.match(/url\(["']?(.*?)["']?\)/);
+      return match ? match[1] : null;
+    })
+    .filter(Boolean);
+
+  return Promise.all(
+    sources.map(
+      (src) =>
+        new Promise((resolve) => {
+          const img = new Image();
+          img.onload = resolve;
+          img.onerror = resolve;
+          img.src = src;
+        }),
+    ),
+  );
+};
+
+const getGrid = (elements) => {
+  const items = gsap.utils.toArray(elements);
+  let bounds = [];
+
+  const getSubset = (axis, dimension, alternating, merge) => {
+    let list = [];
+    const subsets = {};
+    const onlyEven = alternating === 'even';
+
+    bounds.forEach((b, i) => {
+      const position = Math.round(b[axis] + b[dimension] / 2);
+      const subset = subsets[position] || [];
+      subset.push(items[i]);
+      subsets[position] = subset;
+    });
+
+    Object.keys(subsets).forEach((key) => list.push(subsets[key]));
+
+    if (onlyEven || alternating === 'odd') {
+      list = list.filter((_, i) => !(i % 2) === onlyEven);
+    }
+
+    if (merge) {
+      const merged = [];
+      list.forEach((subset) => merged.push(...subset));
+      return merged;
+    }
+
+    return list;
+  };
+
+  const refresh = () => {
+    bounds = items.map((el) => el.getBoundingClientRect());
+  };
+
+  items.refresh = refresh;
+  items.columns = (alternating, merge) => getSubset('left', 'width', alternating, merge);
+  items.rows = (alternating, merge) => getSubset('top', 'height', alternating, merge);
+  items.refresh();
+
+  return items;
+};
+
+const applyAnimation = (grid, animationType) => {
+  const gridWrap = grid.querySelector('.grid-wrap');
+  const gridItems = grid.querySelectorAll('.grid__item');
+  const gridItemsInner = [...gridItems].map((item) => item.querySelector('.grid__item-inner'));
+
+  const timeline = gsap.timeline({
+    defaults: { ease: 'none' },
+    scrollTrigger: {
+      trigger: gridWrap,
+      start: 'top bottom+=5%',
+      end: 'bottom top-=5%',
+      scrub: true,
+    },
+  });
+
+  switch (animationType) {
+    case 'type1':
+      grid.style.setProperty('--perspective', '1000px');
+      grid.style.setProperty('--grid-inner-scale', '0.5');
+
+      timeline
+        .set(gridWrap, { rotationY: 25 })
+        .set(gridItems, { z: () => gsap.utils.random(-1600, 200) })
+        .fromTo(
+          gridItems,
+          { xPercent: () => gsap.utils.random(-1000, -500) },
+          { xPercent: () => gsap.utils.random(500, 1000) },
+          0,
+        )
+        .fromTo(gridItemsInner, { scale: 2 }, { scale: 0.5 }, 0);
+      break;
+
+    case 'type2':
+      grid.style.setProperty('--grid-width', '160%');
+      grid.style.setProperty('--perspective', '2000px');
+      grid.style.setProperty('--grid-inner-scale', '0.5');
+      grid.style.setProperty('--grid-item-ratio', '0.8');
+      grid.style.setProperty('--grid-columns', '6');
+      grid.style.setProperty('--grid-gap', '14vw');
+
+      timeline
+        .set(gridWrap, { rotationX: 20 })
+        .set(gridItems, { z: () => gsap.utils.random(-3000, -1000) })
+        .fromTo(
+          gridItems,
+          {
+            yPercent: () => gsap.utils.random(100, 1000),
+            rotationY: -45,
+            filter: 'brightness(200%)',
+          },
+          {
+            ease: 'power2',
+            yPercent: () => gsap.utils.random(-1000, -100),
+            rotationY: 45,
+            filter: 'brightness(0%)',
+          },
+          0,
+        )
+        .fromTo(gridWrap, { rotationZ: -5 }, { rotationX: -20, rotationZ: 10, scale: 1.2 }, 0)
+        .fromTo(gridItemsInner, { scale: 2 }, { scale: 0.5 }, 0);
+      break;
+
+    case 'type3':
+      grid.style.setProperty('--grid-width', '105%');
+      grid.style.setProperty('--grid-columns', '8');
+      grid.style.setProperty('--perspective', '1500px');
+      grid.style.setProperty('--grid-inner-scale', '0.5');
+
+      timeline
+        .set(gridItems, {
+          transformOrigin: '50% 0%',
+          z: () => gsap.utils.random(-5000, -2000),
+          rotationX: () => gsap.utils.random(-65, -25),
+          filter: 'brightness(0%)',
+        })
+        .to(
+          gridItems,
+          {
+            xPercent: () => gsap.utils.random(-150, 150),
+            yPercent: () => gsap.utils.random(-300, 300),
+            rotationX: 0,
+            filter: 'brightness(200%)',
+          },
+          0,
+        )
+        .to(gridWrap, { z: 6500 }, 0)
+        .fromTo(gridItemsInner, { scale: 2 }, { scale: 0.5 }, 0);
+      break;
+
+    case 'type4':
+      grid.style.setProperty('--grid-width', '50%');
+      grid.style.setProperty('--perspective', '3000px');
+      grid.style.setProperty('--grid-item-ratio', '0.8');
+      grid.style.setProperty('--grid-columns', '3');
+      grid.style.setProperty('--grid-gap', '1vw');
+
+      timeline
+        .set(gridWrap, {
+          transformOrigin: '0% 50%',
+          rotationY: 30,
+          xPercent: -75,
+        })
+        .set(gridItems, { transformOrigin: '50% 0%' })
+        .to(gridItems, { duration: 0.5, ease: 'power2', z: 500, stagger: 0.04 }, 0)
+        .to(gridItems, { duration: 0.5, ease: 'power2.in', z: 0, stagger: 0.04 }, 0.5)
+        .fromTo(
+          gridItems,
+          { rotationX: -70, filter: 'brightness(120%)' },
+          { duration: 1, rotationX: 70, filter: 'brightness(0%)', stagger: 0.04 },
+          0,
+        );
+      break;
+
+    case 'type5': {
+      grid.style.setProperty('--grid-width', '120%');
+      grid.style.setProperty('--grid-columns', '8');
+      grid.style.setProperty('--grid-gap', '0');
+
+      const gridObj = getGrid(gridItems);
+
+      timeline
+        .set(gridWrap, { rotationX: 50 })
+        .to(gridWrap, { rotationX: 30 })
+        .fromTo(gridItems, { filter: 'brightness(0%)' }, { filter: 'brightness(100%)' }, 0)
+        .to(gridObj.rows('even'), { xPercent: -100, ease: 'power1' }, 0)
+        .to(gridObj.rows('odd'), { xPercent: 100, ease: 'power1' }, 0)
+        .addLabel('rowsEnd', '>-=0.15')
+        .to(gridItems, { ease: 'power1', yPercent: () => gsap.utils.random(-100, 200) }, 'rowsEnd');
+      break;
+    }
+
+    case 'type6':
+      grid.style.setProperty('--perspective', '2500px');
+      grid.style.setProperty('--grid-width', '100%');
+      grid.style.setProperty('--grid-gap', '6');
+      grid.style.setProperty('--grid-columns', '3');
+      grid.style.setProperty('--grid-item-ratio', '1');
+
+      timeline.fromTo(
+        gridItems,
+        {
+          transformOrigin: '50% 200%',
+          rotationX: 0,
+          yPercent: 400,
+        },
+        {
+          yPercent: 0,
+          rotationY: 360,
+          opacity: 0.2,
+          scale: 0.8,
+          stagger: 0.03,
+        },
+      );
+      break;
+
+    default:
+      break;
+  }
+};
+
+const NewHome = () => {
+  const rootRef = useRef(null);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return undefined;
+
+    const root = rootRef.current;
+    if (!root) return undefined;
+
+    let ctx;
+    let cancelled = false;
+    root.classList.add('is-loading');
+
+    const init = async () => {
+      await preloadImages(root.querySelectorAll('.grid__item-inner'));
+      if (cancelled) return;
+
+      ctx = gsap.context(() => {
+        const gridNodes = root.querySelectorAll('.grid');
+        gridNodes.forEach((grid, index) => {
+          let animationType;
+          switch (index % 6) {
+            case 0:
+              animationType = 'type1';
+              break;
+            case 1:
+              animationType = 'type2';
+              break;
+            case 2:
+              animationType = 'type3';
+              break;
+            case 3:
+              animationType = 'type4';
+              break;
+            case 4:
+              animationType = 'type5';
+              break;
+            case 5:
+              animationType = 'type6';
+              break;
+            default:
+              animationType = 'type1';
+          }
+          applyAnimation(grid, animationType);
+        });
+      }, root);
+
+      root.classList.remove('is-loading');
+      ScrollTrigger.refresh();
+    };
+
+    init();
+
+    return () => {
+      cancelled = true;
+      root.classList.remove('is-loading');
+      if (ctx) ctx.revert();
+    };
+  }, []);
+
+  return (
+    <div className="new-home" ref={rootRef}>
+      <div className="new-home__main">
+        <section className="intro">
+          <h1 className="intro__title">
+            <span className="intro__title-pre">Jack Miller Media</span>
+            <span className="intro__title-sub">Perspective-driven visual stories</span>
+          </h1>
+          <span className="intro__info">Scroll to explore the new home page concept</span>
+        </section>
+
+        {grids.map((grid) => (
+          <section key={grid.id} className={`content${grid.spacing ? ' content--spacing' : ''}`}>
+            <div className={grid.className}>
+              <div className="grid-wrap">
+                {grid.images.map((imgId, index) => (
+                  <div key={`${grid.id}-${index}`} className="grid__item">
+                    <div
+                      className="grid__item-inner"
+                      style={{ backgroundImage: `url(${backgroundUrl(imgId)})` }}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+            <h3 className={`content__title ${grid.titleClass}`}>{grid.title}</h3>
+          </section>
+        ))}
+
+        <section className="outro">
+          <span>More stories arriving soon.</span>
+        </section>
+      </div>
+    </div>
+  );
+};
+
+export default NewHome;

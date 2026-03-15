@@ -66,40 +66,83 @@ const Intro = styled.p`
   color: rgba(241, 241, 241, 0.82);
 `;
 
-const Grid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: clamp(0.75rem, 1.2vw, 1rem);
-  perspective: 1200px; /* enables 3D space for child cards */
+const GalleryShell = styled.div`
+  position: relative;
+  margin-top: clamp(2rem, 4vw, 3.5rem);
+`;
 
-  @media (max-width: 80em) {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
+const GalleryViewport = styled.div`
+  position: relative;
+  height: min(78vh, 720px);
+  min-height: 520px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  border-radius: 0;
+  border: 1px solid transparent;
+  background: transparent;
+  perspective: 1400px;
 
   @media (max-width: 64em) {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    height: auto;
+    min-height: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    scroll-padding: 1.2rem;
+    border-radius: 0;
+    border: none;
+    background: transparent;
   }
+`;
 
-  @media (max-width: 48em) {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+const GalleryTrack = styled.div`
+  display: flex;
+  gap: clamp(1rem, 2vw, 2.2rem);
+  padding: 0 clamp(1.2rem, 4vw, 3rem);
+  transform-style: preserve-3d;
+  transform-origin: 50% 50%;
+  will-change: transform;
+  position: relative;
+  height: 100%;
 
-  @media (max-width: 30em) {
-    grid-template-columns: 1fr;
+  @media (max-width: 64em) {
+    height: auto;
+    padding: 1.2rem;
   }
 `;
 
 const Card = styled(motion.article)`
-  border-radius: 14px;
+  flex: 0 0 clamp(220px, 24vw, 320px);
+  border-radius: 18px;
   overflow: hidden;
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.12);
-  
-  /* Initial state for 3D animation */
-  opacity: 0;
-  transform: translateY(120px) translateZ(-150px) rotateX(-25deg) rotateY(10deg) scale(0.85);
-  transform-style: preserve-3d;
-  will-change: transform, opacity;
+
+  transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+  scroll-snap-align: center;
+
+  ${Section}.is-3d & {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: clamp(90px, 8vw, 130px);
+    height: clamp(90px, 8vw, 130px);
+    border-radius: 12px;
+    background: transparent;
+    border: none;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.45);
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    transform-style: preserve-3d;
+    will-change: transform, opacity;
+  }
+
+  &:hover {
+    border-color: rgba(240, 216, 173, 0.35);
+    box-shadow: 0 24px 50px rgba(0, 0, 0, 0.45);
+  }
 `;
 
 const ImageButton = styled.button`
@@ -120,6 +163,20 @@ const ImageButton = styled.button`
     height: 100%;
     object-fit: cover;
     transition: transform 0.35s ease;
+  }
+
+  ${Section}.is-3d & {
+    cursor: pointer;
+
+    figure {
+      width: 100%;
+      height: 100%;
+      aspect-ratio: 1 / 1;
+    }
+
+    img {
+      border-radius: 12px;
+    }
   }
 
   &:hover img {
@@ -147,6 +204,10 @@ const Meta = styled.div`
     font-size: 0.75rem;
     color: rgba(255, 255, 255, 0.62);
   }
+
+  ${Section}.is-3d & {
+    display: none;
+  }
 `;
 
 const photos = [
@@ -165,14 +226,25 @@ const photos = [
 const Shop = () => {
   const [activeImage, setActiveImage] = useState(null);
   const sectionRef = useRef(null);
+  const shellRef = useRef(null);
+  const trackRef = useRef(null);
+  const stripItems = Array.from({ length: 72 }, (_, index) => photos[index % photos.length]);
   
   const locoContext = useLocomotiveScroll();
   const scroll = locoContext?.scroll;
 
   useEffect(() => {
+    const sectionElement = sectionRef.current;
+    const shellElement = shellRef.current;
+    const trackElement = trackRef.current;
+    const tiles = trackElement ? gsap.utils.toArray('.photo-item', trackElement) : [];
     const scrollerElement = scroll?.el || null;
 
     const ctx = gsap.context(() => {
+      if (!sectionElement || !shellElement || !trackElement || !tiles.length) {
+        return;
+      }
+
       /* Title Animation */
       gsap.to('.title-word', {
         opacity: 1,
@@ -205,28 +277,86 @@ const Shop = () => {
         },
       });
 
-      /* 3D Cards Stagger */
-      gsap.to('.photo-item', {
-        opacity: 1,
-        y: 0,
-        z: 0,
-        rotateX: 0,
-        rotateY: 0,
-        scale: 1,
-        duration: 1.2,
-        stagger: 0.12,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: '.photo-grid',
-          ...(scrollerElement && { scroller: scrollerElement }),
-          start: 'top 80%',
-          toggleActions: 'play none none none',
-        },
+      const isDesktop = window.matchMedia('(min-width: 900px)').matches;
+      if (!isDesktop) {
+        sectionElement.classList.remove('is-3d');
+        ScrollTrigger.getById('shop-helix')?.kill();
+        gsap.set(trackElement, { clearProps: 'all' });
+        gsap.set(tiles, { clearProps: 'all' });
+        return;
+      }
+
+      sectionElement.classList.add('is-3d');
+
+      const radius = 200;
+      const ySpacing = 20;
+      const angleStep = 36;
+      const turns = Math.max(1, Math.round(tiles.length / 12));
+
+      tiles.forEach((tile, index) => {
+        const y = (index - (tiles.length - 1) / 2) * ySpacing;
+        const angle = index * angleStep;
+        gsap.set(tile, {
+          y,
+          rotationY: angle,
+          rotationZ: 2,
+          opacity: 0.15,
+          transformOrigin: `50% 50% -${radius}px`,
+        });
       });
+
+      const updateOpacity = (rotation) => {
+        tiles.forEach((tile, index) => {
+          const angle = index * angleStep + rotation;
+          const normalized = ((angle % 360) + 360) % 360;
+          const fade = Math.max(0.12, Math.abs(180 - normalized) / 180);
+          gsap.set(tile, { opacity: fade });
+        });
+      };
+
+      let scrollTween;
+      const setupStrip = () => {
+        ScrollTrigger.getById('shop-helix')?.kill();
+        if (scrollTween) {
+          scrollTween.kill();
+          scrollTween = null;
+        }
+
+        const scrollDistance = tiles.length * 120;
+        scrollTween = gsap.to(trackElement, {
+          rotationY: -360 * turns,
+          ease: 'none',
+          scrollTrigger: {
+            id: 'shop-helix',
+            trigger: shellElement,
+            start: 'top top',
+            end: () => `+=${scrollDistance}`,
+            scrub: 1,
+            pin: true,
+            anticipatePin: 1,
+            invalidateOnRefresh: true,
+            ...(scrollerElement && { scroller: scrollerElement }),
+            onUpdate: (self) => {
+              const rotation = -360 * turns * self.progress;
+              updateOpacity(rotation);
+            },
+          },
+        });
+      };
+
+      setupStrip();
+      updateOpacity(0);
+      ScrollTrigger.addEventListener('refreshInit', setupStrip);
+      return () => {
+        ScrollTrigger.removeEventListener('refreshInit', setupStrip);
+      };
     }, sectionRef);
 
-    return () => ctx.revert();
-  }, [scroll]);
+    return () => {
+      sectionElement?.classList.remove('is-3d');
+      ctx.revert();
+    };
+  }, [scroll?.el, stripItems.length]);
 
   return (
     <Section id="shop" ref={sectionRef}>
@@ -245,32 +375,36 @@ const Shop = () => {
         </Intro>
       </Header>
 
-      <Grid className="photo-grid">
-        {photos.map((photo) => (
-          <Card key={photo.title} className="photo-item" whileHover={{ y: -4 }} transition={{ duration: 0.2 }}>
-            <ImageButton
-              type="button"
-              aria-label={`Open ${photo.title}`}
-              onClick={() => setActiveImage({ src: photo.img, alt: photo.title })}
-            >
-              <figure>
-                <img
-                  width="800"
-                  height="1000"
-                  src={photo.img}
-                  alt={photo.title}
-                  loading="lazy"
-                  decoding="async"
-                />
-              </figure>
-              <Meta>
-                <h2>{photo.title}</h2>
-                <p>{photo.note}</p>
-              </Meta>
-            </ImageButton>
-          </Card>
-        ))}
-      </Grid>
+      <GalleryShell ref={shellRef}>
+        <GalleryViewport>
+          <GalleryTrack ref={trackRef} className="photo-track">
+            {stripItems.map((photo, index) => (
+              <Card key={`${photo.title}-${index}`} className="photo-item">
+                <ImageButton
+                  type="button"
+                  aria-label={`Open ${photo.title}`}
+                  onClick={() => setActiveImage({ src: photo.img, alt: photo.title })}
+                >
+                  <figure>
+                    <img
+                      width="800"
+                      height="1000"
+                      src={photo.img}
+                      alt={photo.title}
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </figure>
+                  <Meta>
+                    <h2>{photo.title}</h2>
+                    <p>{photo.note}</p>
+                  </Meta>
+                </ImageButton>
+              </Card>
+            ))}
+          </GalleryTrack>
+        </GalleryViewport>
+      </GalleryShell>
 
       <AnimatePresence>
         {activeImage && <ImageLightbox image={activeImage} onClose={() => setActiveImage(null)} />}

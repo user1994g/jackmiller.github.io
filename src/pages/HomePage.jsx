@@ -16,7 +16,7 @@ const HomePage = () => {
       return;
     }
 
-    const mediaQuery = window.matchMedia('(min-width: 768px)');
+    const mediaQuery = window.matchMedia('(min-width: 820px)');
 
     const updateLayout = () => setUseNewHome(mediaQuery.matches);
 

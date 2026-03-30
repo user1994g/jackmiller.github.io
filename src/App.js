@@ -8,6 +8,7 @@ import HomePage from './pages/HomePage';
 import WriteUpsPage from './pages/WriteUpsPage';
 import VideosPage from './pages/VideosPage';
 import ThreeDArtPage from './pages/ThreeDArtPage';
+import FinalLessonPage from './pages/FinalLessonPage';
 import GlobalStyles from './styles/GlobalStyles';
 import { dark } from './styles/Themes';
 
@@ -50,6 +51,7 @@ function App() {
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/write-ups" element={<WriteUpsPage />} />
+            <Route path="/final-lesson" element={<FinalLessonPage />} />
             <Route path="/videos" element={<VideosPage />} />
             <Route path="/3d-art" element={<ThreeDArtPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />

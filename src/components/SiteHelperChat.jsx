@@ -352,6 +352,19 @@ const siteIntents = [
     guidance: 'Write Ups is an unlisted page only reachable via lookup or the Site Helper.',
   },
   {
+    id: 'finallesson',
+    label: 'Final Lesson',
+    action: { type: 'route', path: '/final-lesson', state: { allowUnlisted: true, unlisted: 'final-lesson', via: 'assistant' } },
+    keywords: ['fmp 3', 'fmp3', 'final lesson', 'the final lesson'],
+    phrases: ['open fmp 3', 'show fmp 3', 'open final lesson', 'open the final lesson', 'take me to final lesson'],
+    responses: [
+      'Opening The Final Lesson.',
+      'Taking you to the hidden Final Lesson page.',
+      'Got it. Jumping to The Final Lesson.',
+    ],
+    guidance: 'The Final Lesson is an unlisted page only reachable via lookup or the Site Helper.',
+  },
+  {
     id: 'contact',
     label: 'Contact',
     action: { type: 'scroll', target: '#contact' },
@@ -584,6 +597,10 @@ const pageLabelByPath = (pathname) => {
 
   if (pathname === '/write-ups') {
     return 'Write Ups';
+  }
+
+  if (pathname === '/final-lesson') {
+    return 'Final Lesson';
   }
 
   return 'Home';

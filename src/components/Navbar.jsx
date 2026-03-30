@@ -29,6 +29,7 @@ const NavRoot = styled.nav`
 const NavFrame = styled.div`
   position: relative;
   width: min(var(--content-max), 100%);
+  overflow: visible;
   pointer-events: none;
 `;
 
@@ -42,7 +43,7 @@ const NavBar = styled(motion.div)`
   min-height: 3.6rem;
   padding: 0.55rem 0.7rem 0.55rem 1rem;
   position: relative;
-  overflow: hidden;
+  overflow: visible;
 
   border-radius: 14px;
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -125,6 +126,13 @@ const DesktopMenu = styled.ul`
   }
 `;
 
+const DesktopMenuItem = styled.li`
+  position: relative;
+  list-style: none;
+  padding-bottom: 0.45rem;
+  margin-bottom: -0.45rem;
+`;
+
 const MenuButton = styled.button`
   position: relative;
   overflow: hidden;
@@ -164,6 +172,68 @@ const MenuButton = styled.button`
     &::after {
       transform: scaleX(1);
     }
+  }
+`;
+
+const DropdownToggle = styled(MenuButton)`
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+`;
+
+const DropdownCaret = styled.span`
+  display: inline-block;
+  width: 0.45rem;
+  height: 0.45rem;
+  border-right: 1px solid currentColor;
+  border-bottom: 1px solid currentColor;
+  transform: rotate(${({ $open }) => ($open ? '-135deg' : '45deg')}) translateY(${({ $open }) => ($open ? '1px' : '-1px')});
+  transition: transform 0.2s ease;
+`;
+
+const DropdownPanel = styled(motion.div)`
+  position: absolute;
+  top: calc(100% + 0.14rem);
+  left: 50%;
+  z-index: 110;
+  min-width: 13rem;
+  padding: 0.5rem;
+  display: grid;
+  gap: 0.3rem;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 12px;
+  background:
+    linear-gradient(180deg, rgba(8, 9, 12, 0.97) 0%, rgba(6, 7, 10, 0.985) 100%),
+    radial-gradient(circle at 50% -45%, rgba(255, 255, 255, 0.08), transparent 56%);
+  box-shadow:
+    0 22px 52px rgba(0, 0, 0, 0.58),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  transform: translateX(-50%);
+`;
+
+const DropdownItem = styled.button`
+  width: 100%;
+  border: 1px solid ${({ $disabled }) => ($disabled ? 'rgba(255, 255, 255, 0.08)' : 'transparent')};
+  border-radius: 10px;
+  padding: 0.72rem 0.8rem;
+  background: ${({ $disabled }) => ($disabled ? 'rgba(255, 255, 255, 0.02)' : 'rgba(255, 255, 255, 0.03)')};
+  color: ${({ $disabled }) => ($disabled ? 'rgba(255, 255, 255, 0.4)' : 'rgba(245, 247, 250, 0.94)')};
+  text-align: left;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  font-size: 0.72rem;
+  cursor: ${({ $disabled }) => ($disabled ? 'default' : 'pointer')};
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+
+  &:hover,
+  &:focus-visible {
+    ${({ $disabled }) => ($disabled ? '' : `
+      border-color: rgba(255, 255, 255, 0.26);
+      background: rgba(255, 255, 255, 0.12);
+      transform: translateY(-1px);
+      outline: none;
+    `)}
   }
 `;
 
@@ -397,6 +467,43 @@ const MobileItem = styled.button`
   }
 `;
 
+const MobileSubmenu = styled.div`
+  display: grid;
+  gap: 0.32rem;
+  margin-top: 0.36rem;
+  padding-left: 0.6rem;
+`;
+
+const MobileSubItem = styled(MobileItem)`
+  padding: 0.64rem 0.72rem;
+  font-size: 0.73rem;
+  background: ${({ $disabled, $active }) => (
+    $disabled
+      ? 'rgba(255, 255, 255, 0.02)'
+      : $active
+        ? 'rgba(255, 255, 255, 0.12)'
+        : 'rgba(255, 255, 255, 0.04)'
+  )};
+  color: ${({ $disabled, $active }) => (
+    $disabled
+      ? 'rgba(233, 236, 241, 0.42)'
+      : $active
+        ? 'rgba(255, 255, 255, 0.99)'
+        : 'rgba(233, 236, 241, 0.88)'
+  )};
+  cursor: ${({ $disabled }) => ($disabled ? 'default' : 'pointer')};
+
+  &:hover,
+  &:focus-visible {
+    ${({ $disabled }) => ($disabled ? '' : `
+      border-color: rgba(255, 255, 255, 0.32);
+      background: rgba(255, 255, 255, 0.14);
+      color: #ffffff;
+      outline: none;
+    `)}
+  }
+`;
+
 const Backdrop = styled(motion.button)`
   position: fixed;
   inset: 0;
@@ -410,11 +517,23 @@ const Backdrop = styled(motion.button)`
   }
 `;
 
+const fmpItems = [
+  { label: 'Level 2', type: 'disabled' },
+  {
+    label: 'Level 3 Year 1',
+    type: 'route',
+    path: '/final-lesson',
+    state: { allowUnlisted: true, unlisted: 'final-lesson', via: 'menu' },
+  },
+  { label: 'Level 3 Year 2', type: 'disabled' },
+];
+
 const menuItems = [
   { label: 'Home', type: 'route', path: '/' },
   { label: 'Videos', type: 'route', path: '/videos' },
   { label: '3D Art', type: 'route', path: '/3d-art' },
   { label: 'Gallery', type: 'scroll', target: '#shop' },
+  { label: 'FMP', type: 'dropdown', items: fmpItems },
 ];
 
 const lookupTargets = [
@@ -429,6 +548,22 @@ const lookupTargets = [
       type: 'route',
       path: '/write-ups',
       state: { allowUnlisted: true, unlisted: 'write-ups', via: 'search' },
+    },
+  },
+  {
+    keywords: ['fmp 3', 'fmp3', 'final lesson', 'the final lesson'],
+    action: {
+      type: 'route',
+      path: '/final-lesson',
+      state: { allowUnlisted: true, unlisted: 'final-lesson', via: 'search' },
+    },
+  },
+  {
+    keywords: ['level 3 year 1', 'fmp level 3', 'fmp year 1'],
+    action: {
+      type: 'route',
+      path: '/final-lesson',
+      state: { allowUnlisted: true, unlisted: 'final-lesson', via: 'search' },
     },
   },
 ];
@@ -478,6 +613,8 @@ const mobileItemVariants = {
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
+  const [desktopFmpOpen, setDesktopFmpOpen] = useState(false);
+  const [mobileFmpOpen, setMobileFmpOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const locoContext = useLocomotiveScroll();
   const scroll = locoContext?.scroll;
@@ -503,10 +640,16 @@ const Navbar = () => {
   }, [scroll]);
 
   const handleMenuSelect = (item) => {
+    if (!item || item.type === 'disabled' || item.type === 'dropdown') {
+      return;
+    }
+
     if (item.type === 'route') {
       if (item.path === '/' && location.pathname === '/') {
         scrollToTarget('#home');
         setOpen(false);
+        setDesktopFmpOpen(false);
+        setMobileFmpOpen(false);
         return;
       }
 
@@ -518,17 +661,23 @@ const Navbar = () => {
         }
       }
       setOpen(false);
+      setDesktopFmpOpen(false);
+      setMobileFmpOpen(false);
       return;
     }
 
     if (location.pathname !== '/') {
       navigate('/', { state: { scrollTarget: item.target } });
       setOpen(false);
+      setDesktopFmpOpen(false);
+      setMobileFmpOpen(false);
       return;
     }
 
     scrollToTarget(item.target);
     setOpen(false);
+    setDesktopFmpOpen(false);
+    setMobileFmpOpen(false);
   };
 
   const handleSearchSubmit = (event) => {
@@ -546,6 +695,8 @@ const Navbar = () => {
     if (match) {
       handleMenuSelect(match.action);
       setSearchQuery('');
+      setDesktopFmpOpen(false);
+      setMobileFmpOpen(false);
     }
   };
 
@@ -553,14 +704,22 @@ const Navbar = () => {
     if (location.pathname !== '/') {
       navigate('/');
       setOpen(false);
+      setDesktopFmpOpen(false);
+      setMobileFmpOpen(false);
       return;
     }
 
     scrollToTarget('#home');
     setOpen(false);
+    setDesktopFmpOpen(false);
+    setMobileFmpOpen(false);
   };
 
   const isActiveItem = (item) => {
+    if (item.type === 'dropdown') {
+      return item.items?.some((child) => isActiveItem(child));
+    }
+
     if (item.type === 'route') {
       return item.path === location.pathname;
     }
@@ -572,6 +731,8 @@ const Navbar = () => {
     const handleEscape = (event) => {
       if (event.key === 'Escape') {
         setOpen(false);
+        setDesktopFmpOpen(false);
+        setMobileFmpOpen(false);
       }
     };
 
@@ -581,6 +742,8 @@ const Navbar = () => {
 
   useEffect(() => {
     setOpen(false);
+    setDesktopFmpOpen(false);
+    setMobileFmpOpen(false);
   }, [location.pathname]);
 
   useEffect(() => {
@@ -627,6 +790,7 @@ const Navbar = () => {
     const handleMediaChange = (event) => {
       if (event.matches) {
         setOpen(false);
+        setDesktopFmpOpen(false);
       }
     };
 
@@ -666,15 +830,68 @@ const Navbar = () => {
             <RightControls>
               <DesktopMenu>
                 {menuItems.map((item) => (
-                  <li key={item.label}>
-                    <MenuButton
-                      type="button"
-                      onClick={() => handleMenuSelect(item)}
-                      $active={isActiveItem(item)}
-                    >
-                      {item.label}
-                    </MenuButton>
-                  </li>
+                  <DesktopMenuItem
+                    key={item.label}
+                    onMouseEnter={() => {
+                      if (item.type === 'dropdown') {
+                        setDesktopFmpOpen(true);
+                      }
+                    }}
+                    onMouseLeave={() => {
+                      if (item.type === 'dropdown') {
+                        setDesktopFmpOpen(false);
+                      }
+                    }}
+                  >
+                    {item.type === 'dropdown' ? (
+                      <>
+                        <DropdownToggle
+                          type="button"
+                          onClick={() => setDesktopFmpOpen((prev) => !prev)}
+                          $active={isActiveItem(item)}
+                          aria-expanded={desktopFmpOpen}
+                          aria-haspopup="menu"
+                        >
+                          {item.label}
+                          <DropdownCaret $open={desktopFmpOpen} />
+                        </DropdownToggle>
+
+                        <AnimatePresence>
+                          {desktopFmpOpen && (
+                            <DropdownPanel
+                              initial={{ opacity: 0, y: -8, scale: 0.98 }}
+                              animate={{ opacity: 1, y: 0, scale: 1 }}
+                              exit={{ opacity: 0, y: -6, scale: 0.985 }}
+                              transition={{ duration: 0.18, ease: 'easeOut' }}
+                              role="menu"
+                              aria-label="FMP pages"
+                            >
+                              {item.items.map((child) => (
+                                <DropdownItem
+                                  key={child.label}
+                                  type="button"
+                                  onClick={() => handleMenuSelect(child)}
+                                  $disabled={child.type === 'disabled'}
+                                  disabled={child.type === 'disabled'}
+                                  role="menuitem"
+                                >
+                                  {child.label}
+                                </DropdownItem>
+                              ))}
+                            </DropdownPanel>
+                          )}
+                        </AnimatePresence>
+                      </>
+                    ) : (
+                      <MenuButton
+                        type="button"
+                        onClick={() => handleMenuSelect(item)}
+                        $active={isActiveItem(item)}
+                      >
+                        {item.label}
+                      </MenuButton>
+                    )}
+                  </DesktopMenuItem>
                 ))}
               </DesktopMenu>
 
@@ -725,13 +942,53 @@ const Navbar = () => {
 
                 {menuItems.map((item) => (
                   <MobileListItem key={item.label} variants={mobileItemVariants}>
-                    <MobileItem
-                      type="button"
-                      onClick={() => handleMenuSelect(item)}
-                      $active={isActiveItem(item)}
-                    >
-                      {item.label}
-                    </MobileItem>
+                    {item.type === 'dropdown' ? (
+                      <>
+                        <MobileItem
+                          type="button"
+                          onClick={() => setMobileFmpOpen((prev) => !prev)}
+                          $active={isActiveItem(item)}
+                          aria-expanded={mobileFmpOpen}
+                          aria-controls="mobile-fmp-submenu"
+                        >
+                          {item.label}
+                        </MobileItem>
+                        <AnimatePresence initial={false}>
+                          {mobileFmpOpen && (
+                            <motion.div
+                              id="mobile-fmp-submenu"
+                              initial={{ opacity: 0, height: 0 }}
+                              animate={{ opacity: 1, height: 'auto' }}
+                              exit={{ opacity: 0, height: 0 }}
+                              transition={{ duration: 0.2, ease: 'easeOut' }}
+                            >
+                              <MobileSubmenu>
+                                {item.items.map((child) => (
+                                  <MobileSubItem
+                                    key={child.label}
+                                    type="button"
+                                    onClick={() => handleMenuSelect(child)}
+                                    $active={isActiveItem(child)}
+                                    $disabled={child.type === 'disabled'}
+                                    disabled={child.type === 'disabled'}
+                                  >
+                                    {child.label}
+                                  </MobileSubItem>
+                                ))}
+                              </MobileSubmenu>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </>
+                    ) : (
+                      <MobileItem
+                        type="button"
+                        onClick={() => handleMenuSelect(item)}
+                        $active={isActiveItem(item)}
+                      >
+                        {item.label}
+                      </MobileItem>
+                    )}
                   </MobileListItem>
                 ))}
               </MobilePanel>

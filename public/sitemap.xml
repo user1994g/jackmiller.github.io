@@ -6,14 +6,34 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://jackmillermedia.com/#/videos</loc>
+    <loc>https://jackmillermedia.com/videos/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://jackmillermedia.com/#/3d-art</loc>
+    <loc>https://jackmillermedia.com/3d-art/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://jackmillermedia.com/about/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://jackmillermedia.com/photos/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://jackmillermedia.com/contact/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://jackmillermedia.com/the-final-lesson/</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
   </url>
   <url>
     <loc>https://jackmillermedia.com/site-links.html</loc>

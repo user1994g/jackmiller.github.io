@@ -533,6 +533,7 @@ const menuItems = [
   { label: 'Videos', type: 'route', path: '/videos' },
   { label: '3D Art', type: 'route', path: '/3d-art' },
   { label: 'Gallery', type: 'scroll', target: '#shop' },
+  { label: 'Write Ups', type: 'route', path: '/write-ups' },
   { label: 'FMP', type: 'dropdown', items: fmpItems },
 ];
 
@@ -543,11 +544,10 @@ const lookupTargets = [
   { keywords: ['gallery', 'photo', 'photos', 'image', 'images', 'shop'], action: { type: 'scroll', target: '#shop' } },
   { keywords: ['contact', 'email'], action: { type: 'scroll', target: '#contact' } },
   {
-    keywords: ['write ups', 'write up', 'write-ups', 'writeup', 'writeups', 'notes', 'blog', 'secret', 'hidden', 'unlisted'],
+    keywords: ['write ups', 'write up', 'write-ups', 'writeup', 'writeups', 'notes', 'blog'],
     action: {
       type: 'route',
       path: '/write-ups',
-      state: { allowUnlisted: true, unlisted: 'write-ups', via: 'search' },
     },
   },
   {

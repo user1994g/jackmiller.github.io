@@ -35,6 +35,9 @@ const FinalLessonPage = () => {
         <LessonFrame
           title="The Final Lesson"
           src={`${process.env.PUBLIC_URL}/the-final-lesson.html`}
+          loading="lazy"
+          referrerPolicy="strict-origin-when-cross-origin"
+          sandbox="allow-scripts"
         />
       </PageShell>
     </>

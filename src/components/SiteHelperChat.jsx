@@ -341,15 +341,15 @@ const siteIntents = [
   {
     id: 'writeups',
     label: 'Write Ups',
-    action: { type: 'route', path: '/write-ups', state: { allowUnlisted: true, unlisted: 'write-ups', via: 'assistant' } },
-    keywords: ['write', 'writeup', 'writeups', 'write up', 'write ups', 'write-ups', 'notes', 'blog', 'secret', 'hidden', 'unlisted'],
-    phrases: ['write ups', 'write up', 'write ups page', 'open write ups', 'open writeups', 'open the write ups', 'notes page', 'blog page', 'secret page', 'hidden page', 'unlisted page'],
+    action: { type: 'route', path: '/write-ups' },
+    keywords: ['write', 'writeup', 'writeups', 'write up', 'write ups', 'write-ups', 'notes', 'blog'],
+    phrases: ['write ups', 'write up', 'write ups page', 'open write ups', 'open writeups', 'open the write ups', 'notes page', 'blog page'],
     responses: [
       'Opening the Write Ups page.',
-      'Taking you to the hidden Write Ups page.',
+      'Taking you to the Write Ups page.',
       'Got it. Jumping to Write Ups.',
     ],
-    guidance: 'Write Ups is an unlisted page only reachable via lookup or the Site Helper.',
+    guidance: 'Write Ups is the blog-style page for process notes and work write ups.',
   },
   {
     id: 'finallesson',

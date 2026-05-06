@@ -383,7 +383,10 @@ const ThreeDArtPage = () => {
                     title="mclaren_p1__www_vecarz_com"
                     src={SKETCHFAB_EMBED_URL}
                     allow="autoplay; fullscreen; xr-spatial-tracking"
+                    loading="lazy"
                     allowFullScreen
+                    referrerPolicy="strict-origin-when-cross-origin"
+                    sandbox="allow-scripts allow-same-origin allow-presentation"
                   />
                   <EmbedOverlay />
                 </EmbedShell>

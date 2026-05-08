@@ -2,13 +2,13 @@ import { AnimatePresence } from 'framer-motion';
 import React, { useState } from 'react';
 import styled from 'styled-components';
 
-import img1 from '../assets/Images/1.webp';
+import pfp from '../assets/Images/pfp.webp';
 import ImageLightbox from '../components/ImageLightbox';
 
 const Section = styled.section`
   width: min(var(--content-max), 92vw);
   margin: var(--section-gap) auto;
-  padding-top: clamp(2rem, 4vw, 4rem);
+  padding-top: clamp(1rem, 3vw, 2rem);
   position: relative;
 
   display: grid;
@@ -21,26 +21,29 @@ const Section = styled.section`
   }
 `;
 
+const Header = styled.div`
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 0.85rem;
+  max-width: min(44rem, 100%);
+`;
+
 const Title = styled.h2`
-  position: absolute;
-  top: -0.7rem;
-  left: 0;
-  z-index: 4;
-
   font-family: 'Kaushan Script';
-  font-size: clamp(2.6rem, 7vw, 5.5rem);
+  font-size: clamp(2.5rem, 6vw, 4.8rem);
   font-weight: 300;
+  line-height: 0.96;
   color: rgba(255, 255, 255, 0.93);
+  text-wrap: balance;
+`;
 
-  @media (max-width: 64em) {
-    position: relative;
-    top: 0;
-    margin-bottom: 0.5rem;
-  }
+const Intro = styled.p`
+  font-size: clamp(0.95rem, 1.3vw, 1.08rem);
+  line-height: 1.74;
+  color: rgba(233, 236, 242, 0.78);
 `;
 
 const Copy = styled.div`
-  margin-top: clamp(4rem, 8vw, 6rem);
   padding: clamp(1.25rem, 2.6vw, 2rem);
   border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 20px;
@@ -56,16 +59,12 @@ const Copy = styled.div`
   p + p {
     margin-top: 1rem;
   }
-
-  @media (max-width: 64em) {
-    margin-top: 0;
-  }
 `;
 
 const GalleryWrap = styled.div`
   position: relative;
   width: 100%;
-  margin-top: clamp(2.5rem, 6vw, 4.25rem);
+  align-self: start;
 
   @media (max-width: 64em) {
     margin-top: 0;
@@ -94,14 +93,23 @@ const PortraitButton = styled.button`
   }
 `;
 
-const aboutPhoto = { src: img1, alt: 'Portrait of Jack Miller' };
+const aboutPhoto = {
+  src: pfp,
+  alt: 'Portrait of Jack Miller',
+};
 
 const About = () => {
   const [activeImage, setActiveImage] = useState(null);
 
   return (
     <Section id="about" className="about">
-      <Title>about me</Title>
+      <Header>
+        <Title>about me</Title>
+        <Intro>
+          Build visual stories through film and photography, with mood, tension, and cinematic
+          composition leading the frame.
+        </Intro>
+      </Header>
 
       <Copy>
         <p>

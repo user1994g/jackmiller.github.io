@@ -6,21 +6,22 @@ import '../styles/NewHome.css';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const imageIds = Array.from({ length: 46 }, (_, i) => i + 1);
+const imageIds = Array.from({ length: 49 }, (_, i) => i + 1);
 const makeSet = (count, offset) => Array.from({ length: count }, (_, i) => imageIds[(i + offset) % imageIds.length]);
+const galleryVersion = '20260517c';
 
 const grids = [
   {
     id: 'grid-1',
     className: 'grid grid--1',
-    images: makeSet(24, 0),
+    images: makeSet(18, 0),
     title: 'Stories carved in light',
     titleClass: 'content__title--left',
   },
   {
     id: 'grid-2',
     className: 'grid grid--2',
-    images: makeSet(30, 7),
+    images: makeSet(20, 7),
     title: 'Fragments of movement',
     titleClass: 'content__title--right',
     spacing: true,
@@ -29,7 +30,7 @@ const grids = [
   {
     id: 'grid-3',
     className: 'grid grid--3',
-    images: makeSet(24, 15),
+    images: makeSet(16, 15),
     title: 'Cinematic shadow play',
     titleClass: 'content__title--left',
     hint: 'Keep scrolling',
@@ -38,7 +39,7 @@ const grids = [
   {
     id: 'grid-4',
     className: 'grid grid--4',
-    images: makeSet(18, 23),
+    images: makeSet(12, 23),
     title: 'Frames that breathe',
     titleClass: 'content__title--right',
     spacing: true,
@@ -47,44 +48,21 @@ const grids = [
   {
     id: 'grid-5',
     className: 'grid grid--5',
-    images: makeSet(32, 31),
+    images: makeSet(20, 31),
     title: 'Textures in motion',
     titleClass: 'content__title--left',
   },
   {
     id: 'grid-6',
     className: 'grid grid--6',
-    images: makeSet(20, 39),
+    images: makeSet(14, 39),
     title: 'A quiet afterglow',
     titleClass: 'content__title--right',
     spacing: true,
   },
 ];
 
-const backgroundUrl = (id) => `${process.env.PUBLIC_URL}/new-home/img/${id}.jpg`;
-
-const preloadImages = (elements) => {
-  const items = Array.from(elements || []);
-  const sources = items
-    .map((el) => {
-      const bg = el.style.backgroundImage || '';
-      const match = bg.match(/url\(["']?(.*?)["']?\)/);
-      return match ? match[1] : null;
-    })
-    .filter(Boolean);
-
-  return Promise.all(
-    sources.map(
-      (src) =>
-        new Promise((resolve) => {
-          const img = new Image();
-          img.onload = resolve;
-          img.onerror = resolve;
-          img.src = src;
-        }),
-    ),
-  );
-};
+const backgroundUrl = (id) => `${process.env.PUBLIC_URL}/new-home/img/${id}.jpg?v=${galleryVersion}`;
 
 const getGrid = (elements) => {
   const items = gsap.utils.toArray(elements);
@@ -175,15 +153,15 @@ const applyAnimation = (grid, animationType) => {
         .fromTo(
           gridItems,
           {
-            yPercent: () => gsap.utils.random(100, 1000),
-            rotationY: -45,
-            filter: 'brightness(200%)',
+            yPercent: () => gsap.utils.random(80, 700),
+            rotationY: -25,
+            opacity: 0.45,
           },
           {
             ease: 'power2',
-            yPercent: () => gsap.utils.random(-1000, -100),
-            rotationY: 45,
-            filter: 'brightness(0%)',
+            yPercent: () => gsap.utils.random(-700, -80),
+            rotationY: 25,
+            opacity: 1,
           },
           0,
         )
@@ -200,21 +178,21 @@ const applyAnimation = (grid, animationType) => {
       timeline
         .set(gridItems, {
           transformOrigin: '50% 0%',
-          z: () => gsap.utils.random(-5000, -2000),
-          rotationX: () => gsap.utils.random(-65, -25),
-          filter: 'brightness(0%)',
+          z: () => gsap.utils.random(-3600, -1600),
+          rotationX: () => gsap.utils.random(-55, -20),
+          opacity: 0.2,
         })
         .to(
           gridItems,
           {
-            xPercent: () => gsap.utils.random(-150, 150),
-            yPercent: () => gsap.utils.random(-300, 300),
+            xPercent: () => gsap.utils.random(-100, 100),
+            yPercent: () => gsap.utils.random(-220, 220),
             rotationX: 0,
-            filter: 'brightness(200%)',
+            opacity: 1,
           },
           0,
         )
-        .to(gridWrap, { z: 6500 }, 0)
+        .to(gridWrap, { z: 5200 }, 0)
         .fromTo(gridItemsInner, { scale: 2 }, { scale: 0.5 }, 0);
       break;
 
@@ -236,8 +214,8 @@ const applyAnimation = (grid, animationType) => {
         .to(gridItems, { duration: 0.5, ease: 'power2.in', z: 0, stagger: 0.04 }, 0.5)
         .fromTo(
           gridItems,
-          { rotationX: -70, filter: 'brightness(120%)' },
-          { duration: 1, rotationX: 70, filter: 'brightness(0%)', stagger: 0.04 },
+          { rotationX: -55, opacity: 1 },
+          { duration: 1, rotationX: 55, opacity: 0.35, stagger: 0.04 },
           0,
         );
       break;
@@ -252,7 +230,7 @@ const applyAnimation = (grid, animationType) => {
       timeline
         .set(gridWrap, { rotationX: 50 })
         .to(gridWrap, { rotationX: 30 })
-        .fromTo(gridItems, { filter: 'brightness(0%)' }, { filter: 'brightness(100%)' }, 0)
+        .fromTo(gridItems, { opacity: 0.3 }, { opacity: 1 }, 0)
         .to(gridObj.rows('even'), { xPercent: -100, ease: 'power1' }, 0)
         .to(gridObj.rows('odd'), { xPercent: 100, ease: 'power1' }, 0)
         .addLabel('rowsEnd', '>-=0.15')
@@ -260,29 +238,79 @@ const applyAnimation = (grid, animationType) => {
       break;
     }
 
-    case 'type6':
-      grid.style.setProperty('--perspective', '2500px');
-      grid.style.setProperty('--grid-width', '100%');
-      grid.style.setProperty('--grid-gap', '6');
-      grid.style.setProperty('--grid-columns', '3');
-      grid.style.setProperty('--grid-item-ratio', '1');
+    case 'type6': {
+      grid.style.setProperty('--perspective', '2200px');
+      grid.style.setProperty('--grid-width', '92%');
+      grid.style.setProperty('--grid-gap', '1.6vw');
+      grid.style.setProperty('--grid-columns', '4');
+      grid.style.setProperty('--grid-item-ratio', '0.92');
 
-      timeline.fromTo(
-        gridItems,
-        {
-          transformOrigin: '50% 200%',
-          rotationX: 0,
-          yPercent: 400,
-        },
-        {
-          yPercent: 0,
-          rotationY: 360,
-          opacity: 0.2,
-          scale: 0.8,
-          stagger: 0.03,
-        },
-      );
+      const gridObj = getGrid(gridItems);
+
+      timeline
+        .set(gridWrap, {
+          transformOrigin: '50% 50%',
+          rotationX: 18,
+          rotationY: -12,
+          z: -220,
+        })
+        .set(gridItems, {
+          transformOrigin: (index) => (index % 2 ? '50% 100%' : '50% 0%'),
+          rotationX: (index) => (index % 2 ? 72 : -72),
+          yPercent: (index) => (index % 2 ? 18 : -18),
+          z: () => gsap.utils.random(-520, -140),
+          opacity: 0.82,
+        })
+        .set(gridItemsInner, { scale: 1.14 })
+        .to(
+          gridObj.columns('even', true),
+          {
+            rotationX: 0,
+            yPercent: 0,
+            z: 60,
+            opacity: 1,
+            stagger: 0.035,
+          },
+          0,
+        )
+        .to(
+          gridObj.columns('odd', true),
+          {
+            rotationX: 0,
+            yPercent: 0,
+            z: 60,
+            opacity: 1,
+            stagger: 0.035,
+          },
+          0.08,
+        )
+        .to(
+          gridWrap,
+          {
+            rotationX: -6,
+            rotationY: 10,
+            z: 260,
+          },
+          0,
+        )
+        .to(
+          gridItemsInner,
+          {
+            scale: 1,
+            stagger: 0.02,
+          },
+          0,
+        )
+        .to(
+          gridItems,
+          {
+            rotationZ: () => gsap.utils.random(-3, 3),
+            xPercent: () => gsap.utils.random(-6, 6),
+          },
+          0.45,
+        );
       break;
+    }
 
     default:
       break;
@@ -299,52 +327,40 @@ const NewHome = () => {
     if (!root) return undefined;
 
     let ctx;
-    let cancelled = false;
-    root.classList.add('is-loading');
+    ctx = gsap.context(() => {
+      const gridNodes = root.querySelectorAll('.grid');
+      gridNodes.forEach((grid, index) => {
+        let animationType;
+        switch (index % 6) {
+          case 0:
+            animationType = 'type1';
+            break;
+          case 1:
+            animationType = 'type2';
+            break;
+          case 2:
+            animationType = 'type3';
+            break;
+          case 3:
+            animationType = 'type4';
+            break;
+          case 4:
+            animationType = 'type5';
+            break;
+          case 5:
+            animationType = 'type6';
+            break;
+          default:
+            animationType = 'type1';
+        }
+        applyAnimation(grid, animationType);
+      });
+    }, root);
 
-    const init = async () => {
-      await preloadImages(root.querySelectorAll('.grid__item-inner'));
-      if (cancelled) return;
-
-      ctx = gsap.context(() => {
-        const gridNodes = root.querySelectorAll('.grid');
-        gridNodes.forEach((grid, index) => {
-          let animationType;
-          switch (index % 6) {
-            case 0:
-              animationType = 'type1';
-              break;
-            case 1:
-              animationType = 'type2';
-              break;
-            case 2:
-              animationType = 'type3';
-              break;
-            case 3:
-              animationType = 'type4';
-              break;
-            case 4:
-              animationType = 'type5';
-              break;
-            case 5:
-              animationType = 'type6';
-              break;
-            default:
-              animationType = 'type1';
-          }
-          applyAnimation(grid, animationType);
-        });
-      }, root);
-
-      root.classList.remove('is-loading');
-      ScrollTrigger.refresh();
-    };
-
-    init();
+    const refreshId = window.requestAnimationFrame(() => ScrollTrigger.refresh());
 
     return () => {
-      cancelled = true;
-      root.classList.remove('is-loading');
+      window.cancelAnimationFrame(refreshId);
       if (ctx) ctx.revert();
     };
   }, []);
@@ -376,10 +392,16 @@ const NewHome = () => {
               <div className="grid-wrap">
                 {grid.images.map((imgId, index) => (
                   <div key={`${grid.id}-${index}`} className="grid__item">
-                    <div
-                      className="grid__item-inner"
-                      style={{ backgroundImage: `url(${backgroundUrl(imgId)})` }}
-                    />
+                    <div className="grid__item-inner">
+                      <img
+                        className="grid__item-image"
+                        src={backgroundUrl(imgId)}
+                        alt=""
+                        loading="lazy"
+                        decoding="async"
+                        fetchPriority={grid.id === 'grid-1' && index < 4 ? 'high' : 'low'}
+                      />
+                    </div>
                   </div>
                 ))}
               </div>

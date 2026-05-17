@@ -31,40 +31,6 @@
   box-sizing: border-box;
 }
 
-.new-home.is-loading::before,
-.new-home.is-loading::after {
-  content: '';
-  position: fixed;
-  z-index: 1000;
-}
-
-.new-home.is-loading::before {
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: var(--color-bg);
-}
-
-.new-home.is-loading::after {
-  top: 50%;
-  left: 50%;
-  width: 60px;
-  height: 60px;
-  margin: -30px 0 0 -30px;
-  border-radius: 50%;
-  opacity: 0.4;
-  background: var(--color-link);
-  animation: newHomeLoader 0.7s linear infinite alternate forwards;
-}
-
-@keyframes newHomeLoader {
-  to {
-    opacity: 1;
-    transform: scale3d(0.5, 0.5, 1);
-  }
-}
-
 .new-home a {
   text-decoration: none;
   color: var(--color-link);
@@ -224,14 +190,28 @@
   border-radius: 8px;
   display: grid;
   place-items: center;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
 }
 
 .new-home .grid__item-inner {
   position: relative;
   width: calc(1 / var(--grid-inner-scale) * 100%);
   height: calc(1 / var(--grid-inner-scale) * 100%);
-  background-size: cover;
-  background-position: 50% 50%;
+  overflow: hidden;
+  transform: translateZ(0);
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+.new-home .grid__item-image {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: 50% 50%;
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 
 .new-home .outro {

@@ -3,6 +3,7 @@ import { Navigate, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
 import Navbar from '../components/Navbar';
+import usePageSeo from '../hooks/usePageSeo';
 
 const PageShell = styled.main`
   min-height: 100vh;
@@ -23,6 +24,13 @@ const FinalLessonPage = () => {
   const allowFinalLesson = Boolean(
     location.state?.unlisted === 'final-lesson' && location.state?.allowUnlisted === true,
   );
+
+  usePageSeo({
+    title: 'The Final Lesson (Short Film) | Jack Miller',
+    description:
+      'The Final Lesson is an independently produced short film by Jack Miller. Explore the film page and behind-the-scenes details.',
+    url: 'https://jackmillermedia.com/the-final-lesson/',
+  });
 
   if (!allowFinalLesson) {
     return <Navigate to="/" replace />;

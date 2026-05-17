@@ -568,6 +568,21 @@ const lookupTargets = [
   },
 ];
 
+const routeSeoPaths = {
+  '/': '/',
+  '/videos': '/videos/',
+  '/3d-art': '/3d-art/',
+  '/write-ups': '/write-ups/',
+  '/final-lesson': '/the-final-lesson/',
+};
+
+const scrollSeoPaths = {
+  '#home': '/',
+  '#shop': '/photos/',
+  '#contact': '/contact/',
+  '#about': '/about/',
+};
+
 const mobilePanelVariants = {
   hidden: {
     opacity: 0,
@@ -622,6 +637,20 @@ const Navbar = () => {
   const navigate = useNavigate();
 
   const panelId = useMemo(() => 'mobile-navigation-panel', []);
+
+  const getSeoHref = useCallback((item) => {
+    if (!item) return '/';
+
+    if (item.type === 'route') {
+      return routeSeoPaths[item.path] || '/';
+    }
+
+    if (item.type === 'scroll') {
+      return scrollSeoPaths[item.target] || '/';
+    }
+
+    return '/';
+  }, []);
 
   const scrollToTarget = useCallback((target) => {
     const element = document.querySelector(target);
@@ -713,6 +742,16 @@ const Navbar = () => {
     setOpen(false);
     setDesktopFmpOpen(false);
     setMobileFmpOpen(false);
+  };
+
+  const handleAnchorSelect = (event, item) => {
+    event.preventDefault();
+    handleMenuSelect(item);
+  };
+
+  const handleBrandAnchor = (event) => {
+    event.preventDefault();
+    handleBrandClick();
   };
 
   const isActiveItem = (item) => {
@@ -823,7 +862,7 @@ const Navbar = () => {
             animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
             transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
           >
-            <BrandButton type="button" onClick={handleBrandClick}>
+            <BrandButton as="a" href="/" onClick={handleBrandAnchor}>
               Jack Miller
             </BrandButton>
 
@@ -869,11 +908,14 @@ const Navbar = () => {
                               {item.items.map((child) => (
                                 <DropdownItem
                                   key={child.label}
-                                  type="button"
-                                  onClick={() => handleMenuSelect(child)}
+                                  as={child.type === 'disabled' ? 'button' : 'a'}
+                                  href={child.type === 'disabled' ? undefined : getSeoHref(child)}
+                                  type={child.type === 'disabled' ? 'button' : undefined}
+                                  onClick={child.type === 'disabled' ? undefined : (event) => handleAnchorSelect(event, child)}
                                   $disabled={child.type === 'disabled'}
                                   disabled={child.type === 'disabled'}
                                   role="menuitem"
+                                  aria-current={isActiveItem(child) ? 'page' : undefined}
                                 >
                                   {child.label}
                                 </DropdownItem>
@@ -884,9 +926,11 @@ const Navbar = () => {
                       </>
                     ) : (
                       <MenuButton
-                        type="button"
-                        onClick={() => handleMenuSelect(item)}
+                        as="a"
+                        href={getSeoHref(item)}
+                        onClick={(event) => handleAnchorSelect(event, item)}
                         $active={isActiveItem(item)}
+                        aria-current={isActiveItem(item) ? 'page' : undefined}
                       >
                         {item.label}
                       </MenuButton>
@@ -966,11 +1010,14 @@ const Navbar = () => {
                                 {item.items.map((child) => (
                                   <MobileSubItem
                                     key={child.label}
-                                    type="button"
-                                    onClick={() => handleMenuSelect(child)}
+                                    as={child.type === 'disabled' ? 'button' : 'a'}
+                                    href={child.type === 'disabled' ? undefined : getSeoHref(child)}
+                                    type={child.type === 'disabled' ? 'button' : undefined}
+                                    onClick={child.type === 'disabled' ? undefined : (event) => handleAnchorSelect(event, child)}
                                     $active={isActiveItem(child)}
                                     $disabled={child.type === 'disabled'}
                                     disabled={child.type === 'disabled'}
+                                    aria-current={isActiveItem(child) ? 'page' : undefined}
                                   >
                                     {child.label}
                                   </MobileSubItem>
@@ -982,9 +1029,11 @@ const Navbar = () => {
                       </>
                     ) : (
                       <MobileItem
-                        type="button"
-                        onClick={() => handleMenuSelect(item)}
+                        as="a"
+                        href={getSeoHref(item)}
+                        onClick={(event) => handleAnchorSelect(event, item)}
                         $active={isActiveItem(item)}
+                        aria-current={isActiveItem(item) ? 'page' : undefined}
                       >
                         {item.label}
                       </MobileItem>

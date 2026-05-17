@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
 
+import usePageSeo from '../hooks/usePageSeo';
 import Navbar from '../components/Navbar';
 import Videos from '../sections/Videos';
 
@@ -9,6 +10,13 @@ const PageMain = styled.main`
 `;
 
 const VideosPage = () => {
+  usePageSeo({
+    title: 'Videography and Film Portfolio | Jack Miller Media',
+    description:
+      'Watch film, videography, and creative video portfolio work from Jack Miller Media, including cinematic projects and selected media pieces.',
+    url: 'https://jackmillermedia.com/videos/',
+  });
+
   return (
     <>
       <Navbar />

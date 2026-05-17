@@ -3,6 +3,7 @@ import ScrollTrigger from 'gsap/ScrollTrigger';
 import React, { useLayoutEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
+import usePageSeo from '../hooks/usePageSeo';
 import Navbar from '../components/Navbar';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -246,6 +247,13 @@ const EmbedOverlay = styled.div`
 `;
 
 const ThreeDArtPage = () => {
+  usePageSeo({
+    title: '3D Art and CGI Work | Jack Miller Media',
+    description:
+      'Explore 3D art, CGI experiments, and digital visual work from Jack Miller Media, including rendered imagery and motion-led creative studies.',
+    url: 'https://jackmillermedia.com/3d-art/',
+  });
+
   const introRef = useRef(null);
   const modelContentRef = useRef(null);
   const [modelOpen, setModelOpen] = useState(false);

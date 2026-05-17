@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import Navbar from '../components/Navbar';
+import usePageSeo from '../hooks/usePageSeo';
 import About from '../sections/About';
 import HeroButtons from '../sections/HeroButtons';
 import Home from '../sections/Home';
@@ -10,6 +11,13 @@ import Shop from '../sections/Shop';
 
 const HomePage = () => {
   const [useNewHome, setUseNewHome] = useState(true);
+
+  usePageSeo({
+    title: 'Jack Miller Media | Creative Media Portfolio',
+    description:
+      'Creative media portfolio by Jack Miller featuring film, photography, videography, 3D art, write ups, and cinematic visual storytelling.',
+    url: 'https://jackmillermedia.com/',
+  });
 
   useEffect(() => {
     if (typeof window === 'undefined') {

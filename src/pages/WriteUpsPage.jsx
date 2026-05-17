@@ -3,6 +3,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import Navbar from '../components/Navbar';
+import usePageSeo from '../hooks/usePageSeo';
 
 const newsroomLanes = [
   {
@@ -355,16 +356,24 @@ const ClosingText = styled.p`
   color: rgba(228, 231, 236, 0.76);
 `;
 
-const WriteUpsPage = () => (
-  <>
-    <Navbar />
-    <PageMain id="main-content" className="App" role="main" aria-label="Write ups page">
-      <Wrap>
-        <Hero
-          initial={{ opacity: 0, y: 18 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: 'easeOut' }}
-        >
+const WriteUpsPage = () => {
+  usePageSeo({
+    title: 'Write Ups | Jack Miller Media Blog and Production Notes',
+    description:
+      'Write ups, production notes, and creative media reflections from Jack Miller Media. This page will collect blogs about film, photography, videography, and visual storytelling work.',
+    url: 'https://jackmillermedia.com/write-ups/',
+  });
+
+  return (
+    <>
+      <Navbar />
+      <PageMain id="main-content" className="App" role="main" aria-label="Write ups page">
+        <Wrap>
+          <Hero
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: 'easeOut' }}
+          >
           <HeroInner>
             <Masthead>
               <Kicker>Jack Miller Media Desk</Kicker>
@@ -464,10 +473,11 @@ const WriteUpsPage = () => (
               are ready to write them.
             </ClosingText>
           </ClosingCard>
-        </SectionStack>
-      </Wrap>
-    </PageMain>
-  </>
-);
+          </SectionStack>
+        </Wrap>
+      </PageMain>
+    </>
+  );
+};
 
 export default WriteUpsPage;

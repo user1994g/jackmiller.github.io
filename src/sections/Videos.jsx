@@ -513,7 +513,7 @@ const collections = [
         tools: 'Premiere + Lumetri',
         logline: 'A narrative short film presented through cinematic visual storytelling and editorial pacing.',
         aspect: '16 / 9',
-        video: 'https://cnszcstsixqnqnoacbmq.supabase.co/functions/v1/stream-video?key=afe49107-42f9-47c8-8fe1-ab8e28988a97',
+        video: 'https://cnszcstsixqnqnoacbmq.supabase.co/functions/v1/stream-video?key=6687dfef-1f2e-49a9-a1e2-9697b4886e49',
       },
       {
         image: img4,

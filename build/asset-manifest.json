@@ -1,11 +1,12 @@
 {
   "files": {
-    "main.css": "/static/css/main.52bfd91f.css",
-    "main.js": "/static/js/main.c0ef27b8.js",
-    "static/js/90.7aed1706.chunk.js": "/static/js/90.7aed1706.chunk.js",
+    "main.css": "/static/css/main.1c3dd246.css",
+    "main.js": "/static/js/main.38e98721.js",
+    "static/js/90.8888688e.chunk.js": "/static/js/90.8888688e.chunk.js",
     "static/js/435.92c61afc.chunk.js": "/static/js/435.92c61afc.chunk.js",
     "static/media/Walking Girl.mp4": "/static/media/Walking Girl.dca083e23d7a563ff57e.mp4",
     "static/media/10.webp": "/static/media/10.9d55ebaf49e2a1566285.webp",
+    "static/media/pfp.webp": "/static/media/pfp.3a64d2595996c1de5117.webp",
     "static/media/4.webp": "/static/media/4.de6233805d060fa97921.webp",
     "static/media/2.webp": "/static/media/2.574104ad442c095a5bbe.webp",
     "static/media/4-hero.jpg": "/static/media/4-hero.fc16cf90e8e8a7adcc5a.jpg",
@@ -33,12 +34,12 @@
     "static/media/kaushan-script-latin-ext-400-normal.woff2": "/static/media/kaushan-script-latin-ext-400-normal.5a05e21384fe4b1b9db7.woff2",
     "static/media/4-thumb.jpg": "/static/media/4-thumb.80c736680092f7df4f1e.jpg",
     "static/media/6-thumb.jpg": "/static/media/6-thumb.9f594f14b5bd7f1de446.jpg",
+    "index.html": "/index.html",
     "static/media/5-thumb.jpg": "/static/media/5-thumb.9c08c278b507a3add2f9.jpg",
-    "static/media/13-thumb.jpg": "/static/media/13-thumb.5b5787fc6f294c20ca35.jpg",
-    "index.html": "/index.html"
+    "static/media/13-thumb.jpg": "/static/media/13-thumb.5b5787fc6f294c20ca35.jpg"
   },
   "entrypoints": [
-    "static/css/main.52bfd91f.css",
-    "static/js/main.c0ef27b8.js"
+    "static/css/main.1c3dd246.css",
+    "static/js/main.38e98721.js"
   ]
 }

@@ -459,6 +459,7 @@ body:has(.video-card:hover) #cursor-ring { opacity: 0; }
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+  flex-wrap: wrap;
 }
 .film-player-title {
   color: rgba(248,250,252,.96);
@@ -478,6 +479,43 @@ body:has(.video-card:hover) #cursor-ring { opacity: 0; }
   letter-spacing: .08em;
   text-transform: uppercase;
   cursor: pointer;
+}
+.film-player-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.quality-label {
+  color: rgba(226,231,239,.68);
+  font-family: 'Barlow Condensed', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: .16em;
+  font-size: .68rem;
+}
+.quality-toggle {
+  display: inline-flex;
+  gap: 8px;
+  padding: 5px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.12);
+}
+.quality-btn {
+  border: none;
+  border-radius: 999px;
+  padding: .48rem .78rem;
+  background: transparent;
+  color: rgba(248,249,252,.82);
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.quality-btn.is-active {
+  background: rgba(255,255,255,.18);
+  color: rgba(255,255,255,.98);
 }
 .film-player-frame {
   border-radius: 16px;
@@ -507,6 +545,10 @@ body:has(.video-card:hover) #cursor-ring { opacity: 0; }
   .film-player-top {
     padding: .9rem .8rem .7rem;
     background: rgba(0,0,0,.92);
+  }
+  .film-player-controls {
+    width: 100%;
+    justify-content: space-between;
   }
   .film-player-frame {
     border: none;
@@ -723,12 +765,19 @@ footer {
   <div class="film-player-panel" role="dialog" aria-modal="true" aria-labelledby="filmPlayerTitle">
     <div class="film-player-top">
       <strong class="film-player-title" id="filmPlayerTitle">The Final Lesson</strong>
-      <button class="film-player-close" id="filmPlayerClose" type="button">Close Video</button>
+      <div class="film-player-controls">
+        <span class="quality-label">Quality</span>
+        <div class="quality-toggle" role="group" aria-label="Video quality">
+          <button class="quality-btn is-active" id="quality1080" type="button">1080p</button>
+          <button class="quality-btn" id="quality480" type="button">480p</button>
+        </div>
+        <button class="film-player-close" id="filmPlayerClose" type="button">Close Video</button>
+      </div>
     </div>
     <div class="film-player-frame">
       <video
         id="filmPlayerVideo"
-        src="https://cnszcstsixqnqnoacbmq.supabase.co/functions/v1/stream-video?key=afe49107-42f9-47c8-8fe1-ab8e28988a97"
+        src="https://cnszcstsixqnqnoacbmq.supabase.co/functions/v1/stream-video?key=6687dfef-1f2e-49a9-a1e2-9697b4886e49"
         controls
         playsinline
         preload="none"
@@ -863,11 +912,60 @@ const filmPlayer = document.getElementById('filmPlayer');
 const filmPlayerVideo = document.getElementById('filmPlayerVideo');
 const filmPlayerClose = document.getElementById('filmPlayerClose');
 const shortFilmCard = document.getElementById('vc1');
+const quality1080 = document.getElementById('quality1080');
+const quality480 = document.getElementById('quality480');
+const QUALITY_SOURCES = {
+  '1080': 'https://cnszcstsixqnqnoacbmq.supabase.co/functions/v1/stream-video?key=6687dfef-1f2e-49a9-a1e2-9697b4886e49',
+  '480': 'https://cnszcstsixqnqnoacbmq.supabase.co/functions/v1/stream-video?key=afe49107-42f9-47c8-8fe1-ab8e28988a97'
+};
+let currentQuality = '1080';
+
+function updateQualityButtons() {
+  quality1080.classList.toggle('is-active', currentQuality === '1080');
+  quality480.classList.toggle('is-active', currentQuality === '480');
+}
+
+function setQuality(nextQuality) {
+  if (!QUALITY_SOURCES[nextQuality] || nextQuality === currentQuality) {
+    updateQualityButtons();
+    return;
+  }
+
+  const wasPlaying = !filmPlayerVideo.paused && !filmPlayerVideo.ended;
+  const currentTime = filmPlayerVideo.currentTime || 0;
+  currentQuality = nextQuality;
+  updateQualityButtons();
+  filmPlayerVideo.src = QUALITY_SOURCES[nextQuality];
+  filmPlayerVideo.load();
+
+  const restorePlayback = () => {
+    try {
+      if (currentTime > 0) {
+        filmPlayerVideo.currentTime = currentTime;
+      }
+    } catch (error) {}
+
+    if (wasPlaying || filmPlayer.classList.contains('is-open')) {
+      const playAttempt = filmPlayerVideo.play();
+      if (playAttempt && typeof playAttempt.catch === 'function') {
+        playAttempt.catch(() => {});
+      }
+    }
+
+    filmPlayerVideo.removeEventListener('loadedmetadata', restorePlayback);
+  };
+
+  filmPlayerVideo.addEventListener('loadedmetadata', restorePlayback);
+}
 
 function openFilmPlayer() {
   filmPlayer.classList.add('is-open');
   filmPlayer.setAttribute('aria-hidden', 'false');
   document.body.style.overflow = 'hidden';
+  if (filmPlayerVideo.src !== QUALITY_SOURCES[currentQuality]) {
+    filmPlayerVideo.src = QUALITY_SOURCES[currentQuality];
+    filmPlayerVideo.load();
+  }
   const playAttempt = filmPlayerVideo.play();
   if (playAttempt && typeof playAttempt.catch === 'function') {
     playAttempt.catch(() => {});
@@ -890,6 +988,10 @@ shortFilmCard.addEventListener('keydown', (event) => {
     openFilmPlayer();
   }
 });
+
+quality1080.addEventListener('click', () => setQuality('1080'));
+quality480.addEventListener('click', () => setQuality('480'));
+updateQualityButtons();
 
 filmPlayerClose.addEventListener('click', closeFilmPlayer);
 filmPlayer.addEventListener('click', (event) => {

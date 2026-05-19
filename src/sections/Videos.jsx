@@ -502,18 +502,18 @@ const PlayerFrame = styled.div`
 const collections = [
   {
     title: 'Narrative Shorts',
-    note: 'A story about someone discovering that their mum has died.',
+    note: 'Narrative short films and story-led visual work.',
     items: [
       {
         image: img11,
-        title: "The dark echo's of 1939",
-        category: 'Drama short',
+        title: 'The Final Lesson',
+        category: 'Short film video',
         duration: '04:12',
         year: '2026',
         tools: 'Premiere + Lumetri',
-        logline: 'A young person begins to piece together the truth after finding out their mum has died.',
+        logline: 'A narrative short film presented through cinematic visual storytelling and editorial pacing.',
         aspect: '16 / 9',
-        video: 'https://cnszcstsixqnqnoacbmq.supabase.co/functions/v1/stream-video?key=934e5a6a-d612-406a-b894-a09841909fe5',
+        video: 'https://cnszcstsixqnqnoacbmq.supabase.co/functions/v1/stream-video?key=afe49107-42f9-47c8-8fe1-ab8e28988a97',
       },
       {
         image: img4,

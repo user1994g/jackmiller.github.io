@@ -399,6 +399,10 @@ body:has(.video-card:hover) #cursor-ring { opacity: 0; }
   position:relative; overflow:hidden; aspect-ratio:3/4;
   cursor:none; background:#0a0a0a;
 }
+.video-card:focus-visible {
+  outline: 2px solid rgba(255,255,255,.72);
+  outline-offset: 4px;
+}
 .video-card-img {
   width:100%; height:100%; object-fit:cover; object-position:center top;
   filter:saturate(.35) contrast(1.2);
@@ -432,6 +436,87 @@ body:has(.video-card:hover) #cursor-ring { opacity: 0; }
 }
 .play-ring svg { margin-left:4px; }
 .video-card:hover .play-ring { opacity:1; transform:translate(-50%,-50%) scale(1); }
+
+.film-player {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(12px, 2.5vw, 24px);
+  background: rgba(0,0,0,.94);
+  backdrop-filter: blur(10px);
+}
+.film-player.is-open { display: flex; }
+.film-player-panel {
+  width: min(1200px, 100%);
+  display: grid;
+  gap: 12px;
+}
+.film-player-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.film-player-title {
+  color: rgba(248,250,252,.96);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: .9rem;
+}
+.film-player-close {
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.24);
+  padding: .68rem .96rem;
+  background: rgba(255,255,255,.08);
+  color: rgba(248,249,252,.96);
+  font-size: .74rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.film-player-frame {
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.14);
+  background: #000;
+  box-shadow: 0 36px 90px rgba(0,0,0,.56);
+}
+.film-player-frame video {
+  width: 100%;
+  max-height: min(80vh, 860px);
+  display: block;
+  background: #000;
+}
+@media(max-width:48em){
+  .film-player {
+    padding: 0;
+    backdrop-filter: none;
+    align-items: start;
+  }
+  .film-player-panel {
+    width: 100%;
+    min-height: 100svh;
+    gap: 0;
+    background: #000;
+  }
+  .film-player-top {
+    padding: .9rem .8rem .7rem;
+    background: rgba(0,0,0,.92);
+  }
+  .film-player-frame {
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .film-player-frame video {
+    max-height: none;
+  }
+}
 
 .vc-bottom {
   position:absolute; bottom:0; left:0; right:0;
@@ -634,6 +719,27 @@ footer {
   </div>
 </section>
 
+<div class="film-player" id="filmPlayer" aria-hidden="true">
+  <div class="film-player-panel" role="dialog" aria-modal="true" aria-labelledby="filmPlayerTitle">
+    <div class="film-player-top">
+      <strong class="film-player-title" id="filmPlayerTitle">The Final Lesson</strong>
+      <button class="film-player-close" id="filmPlayerClose" type="button">Close Video</button>
+    </div>
+    <div class="film-player-frame">
+      <video
+        id="filmPlayerVideo"
+        src="https://cnszcstsixqnqnoacbmq.supabase.co/functions/v1/stream-video?key=afe49107-42f9-47c8-8fe1-ab8e28988a97"
+        controls
+        playsinline
+        preload="none"
+        controlsList="nodownload noplaybackrate"
+        disablePictureInPicture
+        disableRemotePlayback
+      ></video>
+    </div>
+  </div>
+</div>
+
 <!-- FOOTER -->
 <footer>
   <div class="footer-top">
@@ -751,6 +857,51 @@ gsap.from('#vCount',{x:20});
     scrollTrigger:{trigger:el,start:'top 90%'}});
   gsap.to(el.querySelector('.video-card-img'),{scale:1,
     scrollTrigger:{trigger:el,start:'top bottom',end:'bottom top',scrub:1.5}});
+});
+
+const filmPlayer = document.getElementById('filmPlayer');
+const filmPlayerVideo = document.getElementById('filmPlayerVideo');
+const filmPlayerClose = document.getElementById('filmPlayerClose');
+const shortFilmCard = document.getElementById('vc1');
+
+function openFilmPlayer() {
+  filmPlayer.classList.add('is-open');
+  filmPlayer.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+  const playAttempt = filmPlayerVideo.play();
+  if (playAttempt && typeof playAttempt.catch === 'function') {
+    playAttempt.catch(() => {});
+  }
+}
+
+function closeFilmPlayer() {
+  filmPlayer.classList.remove('is-open');
+  filmPlayer.setAttribute('aria-hidden', 'true');
+  document.body.style.overflow = '';
+  filmPlayerVideo.pause();
+}
+
+shortFilmCard.setAttribute('role', 'button');
+shortFilmCard.setAttribute('tabindex', '0');
+shortFilmCard.addEventListener('click', openFilmPlayer);
+shortFilmCard.addEventListener('keydown', (event) => {
+  if (event.key === 'Enter' || event.key === ' ') {
+    event.preventDefault();
+    openFilmPlayer();
+  }
+});
+
+filmPlayerClose.addEventListener('click', closeFilmPlayer);
+filmPlayer.addEventListener('click', (event) => {
+  if (event.target === filmPlayer) {
+    closeFilmPlayer();
+  }
+});
+
+window.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape' && filmPlayer.classList.contains('is-open')) {
+    closeFilmPlayer();
+  }
 });
 </script>
 </body>

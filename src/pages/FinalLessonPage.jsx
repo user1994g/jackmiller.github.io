@@ -45,7 +45,9 @@ const FinalLessonPage = () => {
           src={`${process.env.PUBLIC_URL}/the-final-lesson.html`}
           loading="lazy"
           referrerPolicy="strict-origin-when-cross-origin"
-          sandbox="allow-scripts"
+          sandbox="allow-scripts allow-same-origin"
+          allow="fullscreen"
+          allowFullScreen
         />
       </PageShell>
     </>

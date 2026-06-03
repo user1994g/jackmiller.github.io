@@ -153,6 +153,37 @@ const Rows = styled.div`
   gap: clamp(0.9rem, 1.8vw, 1.3rem);
 `;
 
+const PageAdWrap = styled.aside`
+  border-radius: 0.85rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.022)),
+    rgba(8, 9, 12, 0.78);
+  min-height: 112px;
+  padding: clamp(0.7rem, 1.8vw, 1rem);
+  display: grid;
+  align-items: center;
+  gap: 0.45rem;
+  overflow: hidden;
+`;
+
+const PageAdLabel = styled.span`
+  color: rgba(220, 226, 236, 0.56);
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 0.62rem;
+`;
+
+const PageAdSlot = styled.div`
+  width: 100%;
+  min-height: 90px;
+  display: grid;
+  place-items: center;
+  border-radius: 0.65rem;
+  background: rgba(255, 255, 255, 0.035);
+  overflow: hidden;
+`;
+
 const Row = styled(motion.section)`
   display: grid;
   gap: 0.5rem;
@@ -733,6 +764,38 @@ const thumbnailByImage = new Map([
 const getThumbnail = (source) => thumbnailByImage.get(source) || source;
 const AD_BREAK_SECONDS = 5;
 
+const AdsenseSlot = ({ className = '' }) => {
+  const pushedRef = useRef(false);
+
+  useEffect(() => {
+    if (pushedRef.current || !window.adsbygoogle) {
+      return;
+    }
+
+    try {
+      window.adsbygoogle.push({});
+      pushedRef.current = true;
+    } catch (error) {
+      pushedRef.current = true;
+    }
+  }, []);
+
+  return (
+    <PageAdWrap className={className} aria-label="Advertisement">
+      <PageAdLabel>Advertisement</PageAdLabel>
+      <PageAdSlot>
+        <ins
+          className="adsbygoogle"
+          style={{ display: 'block', width: '100%' }}
+          data-ad-client="ca-pub-8954463256155993"
+          data-ad-format="auto"
+          data-full-width-responsive="true"
+        />
+      </PageAdSlot>
+    </PageAdWrap>
+  );
+};
+
 const Videos = () => {
   const rowsRef = useRef(null);
   const playerRef = useRef(null);
@@ -895,48 +958,53 @@ const Videos = () => {
           </BillboardInner>
         </Billboard>
 
+        <AdsenseSlot />
+
         <Rows ref={rowsRef}>
           {collections.map((collection, rowIndex) => (
-            <Row
-              key={collection.title}
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.2 }}
-              transition={{ duration: 0.3, delay: rowIndex * 0.04 }}
-            >
-              <RowHead>
-                <RowTitle>{collection.title}</RowTitle>
-                <RowNote>{collection.note}</RowNote>
-              </RowHead>
-              <Rail>
-                {collection.items.map((item) => {
-                  const active = featured.title === item.title;
+            <React.Fragment key={collection.title}>
+              <Row
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{ duration: 0.3, delay: rowIndex * 0.04 }}
+              >
+                <RowHead>
+                  <RowTitle>{collection.title}</RowTitle>
+                  <RowNote>{collection.note}</RowNote>
+                </RowHead>
+                <Rail>
+                  {collection.items.map((item) => {
+                    const active = featured.title === item.title;
 
-                  return (
-                    <Card
-                      key={`${collection.title}-${item.title}`}
-                      type="button"
-                      $active={active}
-                      style={{ '--aspect': item.aspect }}
-                      onClick={() => openItem(item, collection)}
-                      whileHover={{ scale: 1.05, y: -4 }}
-                      transition={{ duration: 0.18 }}
-                      aria-label={`Open ${item.title}`}
-                    >
-                      <CardImage src={getThumbnail(item.image)} alt={item.title} loading="lazy" decoding="async" />
-                      <CardOverlay>
-                        <CardTitle>{item.title}</CardTitle>
-                        <CardMeta>
-                          {item.category} · {item.duration}
-                        </CardMeta>
-                      </CardOverlay>
-                    </Card>
-                  );
-                })}
-              </Rail>
-            </Row>
+                    return (
+                      <Card
+                        key={`${collection.title}-${item.title}`}
+                        type="button"
+                        $active={active}
+                        style={{ '--aspect': item.aspect }}
+                        onClick={() => openItem(item, collection)}
+                        whileHover={{ scale: 1.05, y: -4 }}
+                        transition={{ duration: 0.18 }}
+                        aria-label={`Open ${item.title}`}
+                      >
+                        <CardImage src={getThumbnail(item.image)} alt={item.title} loading="lazy" decoding="async" />
+                        <CardOverlay>
+                          <CardTitle>{item.title}</CardTitle>
+                          <CardMeta>
+                            {item.category} · {item.duration}
+                          </CardMeta>
+                        </CardOverlay>
+                      </Card>
+                    );
+                  })}
+                </Rail>
+              </Row>
+            </React.Fragment>
           ))}
         </Rows>
+
+        <AdsenseSlot />
       </Wrap>
 
       <AnimatePresence>

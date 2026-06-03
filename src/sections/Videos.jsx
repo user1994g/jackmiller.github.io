@@ -499,6 +499,81 @@ const PlayerFrame = styled.div`
   }
 `;
 
+const AdBreakCard = styled.div`
+  border-radius: 1rem;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background:
+    radial-gradient(circle at 18% 10%, rgba(255, 255, 255, 0.12), transparent 34%),
+    linear-gradient(135deg, #07080b 0%, #16181d 100%);
+  box-shadow: 0 36px 90px rgba(0, 0, 0, 0.56);
+  min-height: min(62vh, 520px);
+  display: grid;
+  place-items: center;
+  padding: clamp(1rem, 3vw, 2rem);
+`;
+
+const AdBreakInner = styled.div`
+  width: min(720px, 100%);
+  display: grid;
+  gap: 1rem;
+  justify-items: center;
+  text-align: center;
+`;
+
+const AdLabel = styled.span`
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 0.68rem;
+`;
+
+const AdTitle = styled.h2`
+  margin: 0;
+  color: rgba(248, 250, 252, 0.98);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: clamp(1.45rem, 4vw, 3.2rem);
+`;
+
+const AdText = styled.p`
+  margin: 0;
+  color: rgba(226, 232, 240, 0.78);
+  line-height: 1.6;
+  width: min(44ch, 100%);
+`;
+
+const AdSlot = styled.div`
+  width: min(100%, 728px);
+  min-height: 90px;
+  display: grid;
+  place-items: center;
+  border-radius: 0.72rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.045);
+  overflow: hidden;
+`;
+
+const AdCountdown = styled.div`
+  color: rgba(248, 250, 252, 0.92);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.72rem;
+`;
+
+const AdSkip = styled.button`
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  padding: 0.66rem 0.95rem;
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(248, 249, 252, 0.96);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+`;
+
 const collections = [
   {
     title: 'Narrative Shorts',
@@ -656,10 +731,12 @@ const thumbnailByImage = new Map([
 ]);
 
 const getThumbnail = (source) => thumbnailByImage.get(source) || source;
+const AD_BREAK_SECONDS = 5;
 
 const Videos = () => {
   const rowsRef = useRef(null);
   const playerRef = useRef(null);
+  const adPushedRef = useRef(false);
 
   const allItems = useMemo(
     () =>
@@ -676,9 +753,11 @@ const Videos = () => {
   const [featured, setFeatured] = useState(allItems[0]);
   const [sheetOpen, setSheetOpen] = useState(false);
   const [playerOpen, setPlayerOpen] = useState(false);
+  const [adOpen, setAdOpen] = useState(false);
+  const [adSeconds, setAdSeconds] = useState(AD_BREAK_SECONDS);
 
   useEffect(() => {
-    if (!sheetOpen && !playerOpen) {
+    if (!sheetOpen && !playerOpen && !adOpen) {
       return undefined;
     }
 
@@ -689,6 +768,11 @@ const Videos = () => {
       if (event.key === 'Escape') {
         if (playerOpen) {
           setPlayerOpen(false);
+          return;
+        }
+
+        if (adOpen) {
+          setAdOpen(false);
           return;
         }
 
@@ -710,10 +794,48 @@ const Videos = () => {
       window.removeEventListener('keydown', onEsc);
       window.removeEventListener('contextmenu', onContextMenu);
     };
-  }, [playerOpen, sheetOpen]);
+  }, [adOpen, playerOpen, sheetOpen]);
+
+  useEffect(() => {
+    if (!adOpen) {
+      return undefined;
+    }
+
+    setAdSeconds(AD_BREAK_SECONDS);
+    adPushedRef.current = false;
+
+    const adPushTimer = window.setTimeout(() => {
+      if (adPushedRef.current || !window.adsbygoogle) {
+        return;
+      }
+
+      try {
+        window.adsbygoogle.push({});
+        adPushedRef.current = true;
+      } catch (error) {
+        adPushedRef.current = true;
+      }
+    }, 150);
+
+    const countdownTimer = window.setInterval(() => {
+      setAdSeconds((seconds) => Math.max(seconds - 1, 0));
+    }, 1000);
+
+    const finishTimer = window.setTimeout(() => {
+      setAdOpen(false);
+      setPlayerOpen(true);
+    }, AD_BREAK_SECONDS * 1000);
+
+    return () => {
+      window.clearTimeout(adPushTimer);
+      window.clearInterval(countdownTimer);
+      window.clearTimeout(finishTimer);
+    };
+  }, [adOpen]);
 
   const openItem = (item, collection) => {
     setPlayerOpen(false);
+    setAdOpen(false);
     setFeatured({
       ...item,
       collectionTitle: collection.title,
@@ -727,7 +849,19 @@ const Videos = () => {
       return;
     }
 
-    setPlayerOpen(true);
+    setPlayerOpen(false);
+    setAdOpen(true);
+  };
+
+  const closeSheet = () => {
+    setPlayerOpen(false);
+    setAdOpen(false);
+    setSheetOpen(false);
+  };
+
+  const closePlayer = () => {
+    setPlayerOpen(false);
+    setAdOpen(false);
   };
 
   return (
@@ -811,7 +945,7 @@ const Videos = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={() => setSheetOpen(false)}
+            onClick={closeSheet}
           >
             <SheetPanel
               initial={{ opacity: 0, y: 14, scale: 0.99 }}
@@ -822,7 +956,7 @@ const Videos = () => {
             >
               <SheetTop>
                 <strong>{featured.title}</strong>
-                <SheetClose type="button" onClick={() => setSheetOpen(false)}>Close</SheetClose>
+                <SheetClose type="button" onClick={closeSheet}>Close</SheetClose>
               </SheetTop>
               <SheetBody>
                 <SheetVisual>
@@ -847,7 +981,7 @@ const Videos = () => {
                     <SheetPlayButton type="button" onClick={openPlayer} disabled={!featured.video}>
                       Play
                     </SheetPlayButton>
-                    <SheetGhostButton type="button" onClick={() => setSheetOpen(false)}>
+                    <SheetGhostButton type="button" onClick={closeSheet}>
                       Back to Library
                     </SheetGhostButton>
                   </SheetActions>
@@ -864,12 +998,12 @@ const Videos = () => {
       </AnimatePresence>
 
       <AnimatePresence>
-        {playerOpen && featured.video ? (
+        {(adOpen || playerOpen) && featured.video ? (
           <PlayerBackdrop
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={() => setPlayerOpen(false)}
+            onClick={closePlayer}
           >
             <PlayerPanel
               initial={{ opacity: 0, scale: 0.98, y: 12 }}
@@ -880,11 +1014,34 @@ const Videos = () => {
             >
               <PlayerTop>
                 <strong>{featured.title}</strong>
-                <PlayerClose type="button" onClick={() => setPlayerOpen(false)}>Close Video</PlayerClose>
+                <PlayerClose type="button" onClick={closePlayer}>Close Video</PlayerClose>
               </PlayerTop>
-              <PlayerFrame>
-                <video ref={playerRef} src={featured.video} controls autoPlay playsInline preload="none" controlsList="nodownload noplaybackrate" disablePictureInPicture disableRemotePlayback onContextMenu={(event) => event.preventDefault()} onDragStart={(event) => event.preventDefault()} />
-              </PlayerFrame>
+              {adOpen ? (
+                <AdBreakCard>
+                  <AdBreakInner>
+                    <AdLabel>Advertisement</AdLabel>
+                    <AdTitle>Your video starts soon</AdTitle>
+                    <AdText>A short ad break helps support the site before the film plays.</AdText>
+                    <AdSlot>
+                      <ins
+                        className="adsbygoogle"
+                        style={{ display: 'block', width: '100%' }}
+                        data-ad-client="ca-pub-8954463256155993"
+                        data-ad-format="auto"
+                        data-full-width-responsive="true"
+                      />
+                    </AdSlot>
+                    <AdCountdown>Playing in {adSeconds}s</AdCountdown>
+                    <AdSkip type="button" onClick={() => { setAdOpen(false); setPlayerOpen(true); }}>
+                      Skip Ad
+                    </AdSkip>
+                  </AdBreakInner>
+                </AdBreakCard>
+              ) : (
+                <PlayerFrame>
+                  <video ref={playerRef} src={featured.video} controls autoPlay playsInline preload="none" controlsList="nodownload noplaybackrate" disablePictureInPicture disableRemotePlayback onContextMenu={(event) => event.preventDefault()} onDragStart={(event) => event.preventDefault()} />
+                </PlayerFrame>
+              )}
             </PlayerPanel>
           </PlayerBackdrop>
         ) : null}

@@ -24,6 +24,10 @@ const NavRoot = styled.nav`
   display: flex;
   justify-content: center;
   padding: calc(clamp(0.7rem, 1.8vw, 1rem) + max(0px, env(safe-area-inset-top, 0px))) var(--gutter);
+
+  @media (max-width: 56em) {
+    padding: calc(0.65rem + max(0px, env(safe-area-inset-top, 0px))) 0.75rem;
+  }
 `;
 
 const NavFrame = styled.div`
@@ -75,6 +79,12 @@ const NavBar = styled(motion.div)`
     border: 1px solid rgba(255, 255, 255, 0.04);
     pointer-events: none;
   }
+
+  @media (max-width: 56em) {
+    min-height: 3.25rem;
+    padding: 0.48rem 0.55rem 0.48rem 0.75rem;
+    border-radius: 12px;
+  }
 `;
 
 const BrandButton = styled.button`
@@ -110,6 +120,14 @@ const BrandButton = styled.button`
     color: #ffffff;
     transform: translateY(-1px);
     outline: none;
+  }
+
+  @media (max-width: 23rem) {
+    max-width: 10.4rem;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    letter-spacing: 0.1em;
   }
 `;
 
@@ -352,6 +370,11 @@ const MobileToggle = styled.button`
     cursor: pointer;
     transition: all 0.22s ease;
 
+    @media (max-width: 23rem) {
+      padding: 0.42rem 0.65rem;
+      letter-spacing: 0.06em;
+    }
+
     &:hover,
     &:focus-visible {
       border-color: rgba(240, 216, 173, 0.58);
@@ -364,18 +387,21 @@ const MobileToggle = styled.button`
 
 const MobilePanel = styled(motion.ul)`
   pointer-events: auto;
-  position: absolute;
-  top: calc(100% + 0.58rem);
-  right: 0;
+  position: fixed;
+  top: calc(4.55rem + max(0px, env(safe-area-inset-top, 0px)));
+  left: 0.75rem;
+  right: 0.75rem;
+  max-height: calc(100dvh - 5.25rem - max(0px, env(safe-area-inset-top, 0px)));
   list-style: none;
-  width: min(21.5rem, calc(100vw - 2rem));
   margin: 0;
-  padding: 0.62rem;
+  padding: 0.7rem;
   display: grid;
   gap: 0.36rem;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 
   border: 1px solid rgba(255, 255, 255, 0.24);
-  border-radius: 12px;
+  border-radius: 14px;
   background:
     linear-gradient(180deg, rgba(8, 9, 12, 0.97) 0%, rgba(6, 7, 10, 0.98) 100%),
     radial-gradient(circle at 48% -35%, rgba(255, 255, 255, 0.07), transparent 55%);
@@ -402,6 +428,7 @@ const MobileSearchForm = styled.form`
   border-radius: 10px;
   background: rgba(255, 255, 255, 0.035);
   padding: 0.45rem 0.55rem;
+  min-height: 3rem;
 
   &:focus-within {
     border-color: rgba(240, 216, 173, 0.52);
@@ -435,6 +462,7 @@ const MobileItem = styled.button`
   background: ${({ $active }) => ($active ? 'rgba(255, 255, 255, 0.12)' : 'rgba(255, 255, 255, 0.02)')};
   color: ${({ $active }) => ($active ? 'rgba(255, 255, 255, 0.99)' : 'rgba(233, 236, 241, 0.92)')};
   padding: 0.72rem;
+  min-height: 3rem;
   font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 0.09em;
@@ -471,7 +499,7 @@ const MobileSubmenu = styled.div`
   display: grid;
   gap: 0.32rem;
   margin-top: 0.36rem;
-  padding-left: 0.6rem;
+  padding-left: 0;
 `;
 
 const MobileSubItem = styled(MobileItem)`
@@ -534,6 +562,8 @@ const menuItems = [
   { label: '3D Art', type: 'route', path: '/3d-art' },
   { label: 'Gallery', type: 'scroll', target: '#shop' },
   { label: 'Write Ups', type: 'route', path: '/write-ups' },
+  { label: 'Privacy', type: 'route', path: '/privacy', utility: true },
+  { label: 'Terms', type: 'route', path: '/terms', utility: true },
   { label: 'FMP', type: 'dropdown', items: fmpItems },
 ];
 
@@ -573,6 +603,8 @@ const routeSeoPaths = {
   '/videos': '/videos/',
   '/3d-art': '/3d-art/',
   '/write-ups': '/write-ups/',
+  '/privacy': '/privacy/',
+  '/terms': '/terms/',
   '/final-lesson': '/the-final-lesson/',
 };
 
@@ -871,6 +903,8 @@ const Navbar = () => {
                 {menuItems.map((item) => (
                   <DesktopMenuItem
                     key={item.label}
+                    aria-hidden={item.utility ? 'true' : undefined}
+                    style={item.utility ? { display: 'none' } : undefined}
                     onMouseEnter={() => {
                       if (item.type === 'dropdown') {
                         setDesktopFmpOpen(true);

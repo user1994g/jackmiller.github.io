@@ -5,24 +5,38 @@ import styled from 'styled-components';
 import Navbar from '../components/Navbar';
 import usePageSeo from '../hooks/usePageSeo';
 
-const newsroomLanes = [
+const articles = [
   {
-    label: 'Lead Story',
-    status: 'No write ups live yet',
+    label: 'Production Notes',
+    title: 'How I Build A Short Film From A Small Idea',
     text:
-      'Your newest project breakdown can sit here once you start publishing notes about a shoot, edit, or final piece.',
+      'Most of my video work starts with a feeling rather than a finished script. I collect references, sounds, lighting ideas, and locations first, then reduce them into one clear visual promise: what the viewer should feel in the first ten seconds. From there I plan only the shots that actually support that promise, because a smaller film with a strong point of view is usually better than a large one with no centre.',
+    detail:
+      'That approach keeps the edit honest. If a shot is pretty but does not move the project forward, it gets cut. The finished portfolio pieces on this site are shaped around that process: simple premises, direct visual rhythm, and careful attention to the way sound, colour, and pacing change the mood of a scene.',
   },
   {
-    label: 'Field Notes',
-    status: 'Waiting for first entry',
+    label: 'Editing',
+    title: 'What Makes A Portfolio Video Feel Finished',
     text:
-      'This area can hold smaller observations, behind-the-scenes thoughts, and quick reflections from ongoing work.',
+      'A finished edit is not just a timeline with all the gaps removed. I look for a beginning that gives the viewer a reason to stay, a middle that changes the visual energy, and an ending that feels intentional rather than simply stopping. Music and ambient sound are treated as structure, not decoration, because they decide where a cut feels natural.',
+    detail:
+      'When I review my own work, I check whether the strongest frame arrives early enough, whether repeated angles are earning their place, and whether the title, thumbnail, and description all tell the same story. Those details help each project stand on its own instead of feeling like a loose upload.',
   },
   {
-    label: 'Archive',
-    status: 'Empty for now',
+    label: 'Photography',
+    title: 'Choosing Images That Say More Than They Show',
     text:
-      'Older write ups can stack here over time so the page starts to feel like a real creative record of the work.',
+      'For photography, I am interested in images that hold a bit of tension: a subject half turned away, a texture that makes the scene feel physical, or a colour contrast that gives the frame a point of view. A gallery should not be a dump of every successful shot. It should feel like a sequence with rhythm.',
+    detail:
+      'That is why the photo work is grouped around mood, motion, and atmosphere instead of only subject matter. The goal is to make the page useful for someone trying to understand the style quickly, while still giving enough variety to show how the work changes between locations and projects.',
+  },
+  {
+    label: '3D And CGI',
+    title: 'Why I Treat 3D Work Like Camera Work',
+    text:
+      'The 3D page is built around the same questions I ask on a shoot: where is the viewer looking, what is the light doing, and what does the movement reveal? Modelling and rendering can become technical very quickly, but the final image still has to read like a composed shot.',
+    detail:
+      'I use 3D experiments to practise staging, material choices, atmosphere, and controlled motion. Even when a model is simple, the presentation matters: scale, shadow, camera distance, and pacing all decide whether it feels like a study or a finished visual idea.',
   },
 ];
 
@@ -52,44 +66,21 @@ const Wrap = styled.div`
 `;
 
 const Hero = styled(motion.section)`
-  position: relative;
-  overflow: hidden;
-  border-radius: 28px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(18rem, 0.72fr);
+  gap: clamp(1.25rem, 3vw, 2rem);
+  align-items: end;
+  padding: clamp(1.4rem, 4vw, 2.8rem);
+  border-radius: 18px;
   border: 1px solid rgba(255, 255, 255, 0.12);
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.015)),
     rgba(8, 10, 15, 0.8);
   box-shadow: 0 28px 90px rgba(0, 0, 0, 0.42);
-  backdrop-filter: blur(12px);
 
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background:
-      linear-gradient(transparent 95%, rgba(255, 255, 255, 0.05) 96%, transparent 97%),
-      linear-gradient(90deg, rgba(255, 255, 255, 0.03), transparent 16%);
-    background-size: 100% 2.9rem, 100% 100%;
-    opacity: 0.24;
-    pointer-events: none;
-  }
-`;
-
-const HeroInner = styled.div`
-  display: grid;
-  grid-template-columns: minmax(0, 1.4fr) minmax(18rem, 0.7fr);
-  gap: clamp(1rem, 2vw, 1.6rem);
-  padding: clamp(1.4rem, 4vw, 2.8rem);
-
-  @media (max-width: 60rem) {
+  @media (max-width: 58rem) {
     grid-template-columns: 1fr;
   }
-`;
-
-const Masthead = styled.div`
-  display: grid;
-  gap: 1rem;
-  align-content: start;
 `;
 
 const Kicker = styled.p`
@@ -101,211 +92,64 @@ const Kicker = styled.p`
 `;
 
 const Headline = styled.h1`
-  margin: 0;
+  margin: 0.7rem 0 0;
   font-family: 'Kaushan Script', cursive;
-  font-size: clamp(3.2rem, 7vw, 6.1rem);
+  font-size: clamp(3rem, 7vw, 6rem);
   line-height: 0.96;
   color: rgba(252, 252, 252, 0.98);
 `;
 
 const Dek = styled.p`
-  max-width: 56ch;
+  max-width: 66ch;
+  margin-top: 1rem;
   line-height: 1.78;
   font-size: clamp(1rem, 1.3vw, 1.08rem);
-  color: rgba(232, 236, 244, 0.8);
+  color: rgba(232, 236, 244, 0.82);
 `;
 
-const Ticker = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.65rem;
-`;
-
-const TickerItem = styled.span`
-  display: inline-flex;
-  align-items: center;
-  min-height: 2.1rem;
-  padding: 0.52rem 0.82rem;
-  border-radius: 999px;
+const SummaryPanel = styled.aside`
+  display: grid;
+  gap: 0.8rem;
+  padding: clamp(1.1rem, 3vw, 1.5rem);
+  border-radius: 14px;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.05);
-  font-size: 0.76rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: rgba(247, 248, 250, 0.88);
+  background: rgba(12, 13, 18, 0.78);
 `;
 
-const HeroNote = styled.div`
-  padding-top: 1.25rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-`;
-
-const NoteTitle = styled.p`
+const SummaryTitle = styled.h2`
   margin: 0;
-  font-size: clamp(1.2rem, 2vw, 1.65rem);
-  line-height: 1.25;
+  font-size: clamp(1.2rem, 2vw, 1.55rem);
   color: rgba(255, 255, 255, 0.95);
 `;
 
-const NoteText = styled.p`
-  margin-top: 0.8rem;
-  max-width: 46ch;
-  line-height: 1.72;
-  color: rgba(228, 231, 236, 0.74);
+const SummaryText = styled.p`
+  line-height: 1.7;
+  color: rgba(228, 231, 236, 0.76);
 `;
 
-const DeskPanel = styled.div`
+const ArticleGrid = styled.div`
   display: grid;
-  gap: 0.9rem;
-  align-content: start;
-  padding: clamp(1.2rem, 3vw, 1.6rem);
-  border-radius: 24px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background:
-    radial-gradient(circle at top right, rgba(240, 216, 173, 0.14), transparent 34%),
-    rgba(12, 13, 18, 0.78);
-`;
-
-const DeskLabel = styled.p`
-  margin: 0;
-  font-size: 0.78rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.62);
-`;
-
-const DeskTitle = styled.h2`
-  margin: 0;
-  font-size: clamp(1.3rem, 1.9vw, 1.78rem);
-  line-height: 1.1;
-  color: rgba(255, 255, 255, 0.96);
-`;
-
-const DeskText = styled.p`
-  line-height: 1.72;
-  color: rgba(228, 231, 236, 0.75);
-`;
-
-const DeskMeta = styled.div`
-  display: grid;
-  gap: 0.7rem;
-  margin-top: 0.25rem;
-`;
-
-const MetaRow = styled.div`
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  padding-top: 0.7rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  font-size: 0.8rem;
-
-  span:first-child {
-    color: rgba(255, 255, 255, 0.58);
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-  }
-
-  span:last-child {
-    color: rgba(250, 250, 251, 0.92);
-    text-align: right;
-  }
-`;
-
-const SectionStack = styled.div`
-  display: grid;
-  gap: clamp(1rem, 2vw, 1.4rem);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(1rem, 2vw, 1.35rem);
   margin-top: clamp(1rem, 2.2vw, 1.6rem);
-`;
 
-const Bulletin = styled(motion.section)`
-  display: grid;
-  gap: 1rem;
-  padding: clamp(1.35rem, 3vw, 2rem);
-  border-radius: 28px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.012)),
-    rgba(9, 10, 14, 0.78);
-  box-shadow: 0 24px 72px rgba(0, 0, 0, 0.34);
-`;
-
-const BulletinBar = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 0.85rem;
-  align-items: center;
-`;
-
-const BulletinLabel = styled.p`
-  margin: 0;
-  font-size: 0.8rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: rgba(240, 216, 173, 0.88);
-`;
-
-const BulletinStamp = styled.span`
-  display: inline-flex;
-  align-items: center;
-  padding: 0.55rem 0.78rem;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.05);
-  font-size: 0.76rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.72);
-`;
-
-const BulletinTitle = styled.h2`
-  margin: 0;
-  font-size: clamp(1.5rem, 2.6vw, 2.4rem);
-  color: rgba(255, 255, 255, 0.96);
-`;
-
-const BulletinText = styled.p`
-  max-width: 60ch;
-  line-height: 1.74;
-  color: rgba(230, 234, 240, 0.76);
-`;
-
-const NewsGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(1rem, 2vw, 1.3rem);
-
-  @media (max-width: 68rem) {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  @media (max-width: 44rem) {
+  @media (max-width: 48rem) {
     grid-template-columns: 1fr;
   }
 `;
 
-const NewsCard = styled(motion.article)`
+const Article = styled(motion.article)`
   display: grid;
   gap: 0.95rem;
-  min-height: 100%;
-  padding: 1.35rem;
-  border-radius: 24px;
+  padding: clamp(1.25rem, 3vw, 1.8rem);
+  border-radius: 16px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   background:
     radial-gradient(circle at top right, rgba(255, 255, 255, 0.06), transparent 34%),
     rgba(12, 14, 18, 0.76);
-
-  &:nth-child(2) {
-    transform: translateY(1rem);
-
-    @media (max-width: 44rem) {
-      transform: none;
-    }
-  }
 `;
 
-const CardLabel = styled.p`
+const ArticleLabel = styled.p`
   margin: 0;
   font-size: 0.74rem;
   letter-spacing: 0.18em;
@@ -313,34 +157,24 @@ const CardLabel = styled.p`
   color: rgba(240, 216, 173, 0.88);
 `;
 
-const CardStatus = styled.h3`
+const ArticleTitle = styled.h2`
   margin: 0;
-  font-size: clamp(1.08rem, 1.9vw, 1.38rem);
+  font-size: clamp(1.25rem, 2.2vw, 1.75rem);
   line-height: 1.18;
   color: rgba(250, 250, 251, 0.95);
 `;
 
-const CardText = styled.p`
-  line-height: 1.72;
-  color: rgba(226, 229, 235, 0.74);
+const ArticleText = styled.p`
+  line-height: 1.76;
+  color: rgba(226, 229, 235, 0.76);
 `;
 
-const PlaceholderBars = styled.div`
-  display: grid;
-  gap: 0.55rem;
-  margin-top: auto;
-`;
-
-const Bar = styled.span`
-  display: block;
-  height: ${({ $small }) => ($small ? '0.54rem' : '0.72rem')};
-  width: ${({ $width }) => $width};
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.08);
-`;
-
-const ClosingCard = styled(Bulletin)`
-  text-align: center;
+const Closing = styled(motion.section)`
+  margin-top: clamp(1rem, 2.2vw, 1.6rem);
+  padding: clamp(1.35rem, 3vw, 2rem);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(9, 10, 14, 0.78);
 `;
 
 const ClosingTitle = styled.h2`
@@ -350,17 +184,17 @@ const ClosingTitle = styled.h2`
 `;
 
 const ClosingText = styled.p`
-  width: min(52ch, 100%);
-  margin: 0 auto;
+  max-width: 76ch;
+  margin-top: 0.9rem;
   line-height: 1.72;
   color: rgba(228, 231, 236, 0.76);
 `;
 
 const WriteUpsPage = () => {
   usePageSeo({
-    title: 'Write Ups | Jack Miller Media Blog and Production Notes',
+    title: 'Write Ups | Jack Miller Media Production Notes',
     description:
-      'Write ups, production notes, and creative media reflections from Jack Miller Media. This page will collect blogs about film, photography, videography, and visual storytelling work.',
+      'Original production notes and creative media write ups from Jack Miller covering film, editing, photography, 3D art, and visual storytelling decisions.',
     url: 'https://jackmillermedia.com/write-ups/',
   });
 
@@ -374,106 +208,55 @@ const WriteUpsPage = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: 'easeOut' }}
           >
-          <HeroInner>
-            <Masthead>
-              <Kicker>Jack Miller Media Desk</Kicker>
+            <div>
+              <Kicker>Jack Miller Media Notes</Kicker>
               <Headline>Write Ups</Headline>
               <Dek>
-                A newsroom-style space for the thoughts behind the portfolio. No entries are live yet,
-                but this page is ready to become the place where you talk about process, direction,
-                editing, and the story behind the finished work.
+                Original notes from the work behind this portfolio: how I plan short films, choose
+                images, shape edits, and use 3D experiments to practise visual storytelling. This page
+                is here to add context to the finished pieces, not to repeat captions from the gallery.
               </Dek>
-              <NoteText as="strong" style={{ color: 'rgba(255, 255, 255, 0.96)', fontWeight: 700 }}>
-                This page does not have any posts yet.
-              </NoteText>
-              <Ticker>
-                <TickerItem>Creative Journal</TickerItem>
-                <TickerItem>Project Notes</TickerItem>
-                <TickerItem>Behind The Scenes</TickerItem>
-              </Ticker>
-              <HeroNote>
-                <NoteTitle>The page is empty for now, but it already feels like a publication.</NoteTitle>
-                <NoteText>
-                  When you are ready, each post can live here like a feature story rather than a plain
-                  blog entry, so the writing matches the atmosphere of the rest of the site.
-                </NoteText>
-              </HeroNote>
-            </Masthead>
+            </div>
 
-            <DeskPanel>
-              <DeskLabel>Editorial Status</DeskLabel>
-              <DeskTitle>Ready for your first write up</DeskTitle>
-              <DeskText>
-                This layout keeps the page alive without filling it with fake articles. It reads like a
-                news page now, while still waiting for real posts from your work.
-              </DeskText>
-              <DeskMeta>
-                <MetaRow>
-                  <span>Latest</span>
-                  <span>No story published yet</span>
-                </MetaRow>
-                <MetaRow>
-                  <span>Format</span>
-                  <span>Creative news desk</span>
-                </MetaRow>
-                <MetaRow>
-                  <span>Focus</span>
-                  <span>Work, process, reflection</span>
-                </MetaRow>
-              </DeskMeta>
-            </DeskPanel>
-          </HeroInner>
-        </Hero>
+            <SummaryPanel>
+              <SummaryTitle>Why this page exists</SummaryTitle>
+              <SummaryText>
+                AdSense reviewers and real visitors should be able to see what the site is about
+                without guessing. These write ups explain the decisions behind the videos, photos, and
+                digital art so the portfolio has useful text as well as visuals.
+              </SummaryText>
+            </SummaryPanel>
+          </Hero>
 
-        <SectionStack>
-          <Bulletin
-            initial={{ opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.45, delay: 0.08, ease: 'easeOut' }}
-          >
-            <BulletinBar>
-              <BulletinLabel>News Bulletin</BulletinLabel>
-              <BulletinStamp>Waiting for first publication</BulletinStamp>
-            </BulletinBar>
-            <BulletinTitle>No posts yet, but the structure is in place</BulletinTitle>
-            <BulletinText>
-              As soon as you start writing about a project, the page can carry lead stories, smaller
-              notes, and older entries in a way that feels organised and editorial instead of empty.
-            </BulletinText>
-          </Bulletin>
-
-          <NewsGrid>
-            {newsroomLanes.map((lane, index) => (
-              <NewsCard
-                key={lane.label}
+          <ArticleGrid>
+            {articles.map((article, index) => (
+              <Article
+                key={article.title}
                 initial={{ opacity: 0, y: 24 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.42, delay: 0.16 + index * 0.08, ease: 'easeOut' }}
+                transition={{ duration: 0.42, delay: 0.1 + index * 0.06, ease: 'easeOut' }}
               >
-                <CardLabel>{lane.label}</CardLabel>
-                <CardStatus>{lane.status}</CardStatus>
-                <CardText>{lane.text}</CardText>
-                <PlaceholderBars>
-                  <Bar $width="100%" />
-                  <Bar $width="88%" $small />
-                  <Bar $width="64%" $small />
-                </PlaceholderBars>
-              </NewsCard>
+                <ArticleLabel>{article.label}</ArticleLabel>
+                <ArticleTitle>{article.title}</ArticleTitle>
+                <ArticleText>{article.text}</ArticleText>
+                <ArticleText>{article.detail}</ArticleText>
+              </Article>
             ))}
-          </NewsGrid>
+          </ArticleGrid>
 
-          <ClosingCard
+          <Closing
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.42, delay: 0.34, ease: 'easeOut' }}
+            transition={{ duration: 0.42, delay: 0.3, ease: 'easeOut' }}
           >
-            <ClosingTitle>This page now looks active without pretending it already has stories</ClosingTitle>
+            <ClosingTitle>Editorial approach</ClosingTitle>
             <ClosingText>
-              It keeps the mood of a creative publication, but leaves the actual articles for when you
-              are ready to write them.
+              I keep the writing connected to work I have made or am developing. When a project is
+              updated, the note should explain something specific: a production choice, a technical
+              problem, a visual reference, or what I would change next time. That gives the site
+              original context and makes it more useful than a thin portfolio page with images alone.
             </ClosingText>
-          </ClosingCard>
-          </SectionStack>
+          </Closing>
         </Wrap>
       </PageMain>
     </>

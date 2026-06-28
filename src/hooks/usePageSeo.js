@@ -47,6 +47,14 @@ const usePageSeo = ({
     if (url) {
       upsertMetaByProperty('og:url', url);
       upsertMetaByName('twitter:url', url);
+
+      let canonical = document.head.querySelector('link[rel="canonical"]');
+      if (!canonical) {
+        canonical = document.createElement('link');
+        canonical.setAttribute('rel', 'canonical');
+        document.head.appendChild(canonical);
+      }
+      canonical.setAttribute('href', url);
     }
   }, [description, title, url]);
 };

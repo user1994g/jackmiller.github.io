@@ -4,8 +4,10 @@ import { ThemeProvider } from 'styled-components';
 
 import ClarityTracker from './components/ClarityTracker';
 import GeoBlockGate from './components/GeoBlockGate';
+import Footer from './sections/Footer';
 import HomePage from './pages/HomePage';
 import WriteUpsPage from './pages/WriteUpsPage';
+import PolicyPage from './pages/PolicyPage';
 import VideosPage from './pages/VideosPage';
 import ThreeDArtPage from './pages/ThreeDArtPage';
 import FinalLessonPage from './pages/FinalLessonPage';
@@ -51,11 +53,14 @@ function App() {
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/write-ups" element={<WriteUpsPage />} />
+            <Route path="/privacy" element={<PolicyPage variant="privacy" />} />
+            <Route path="/terms" element={<PolicyPage variant="terms" />} />
             <Route path="/final-lesson" element={<FinalLessonPage />} />
             <Route path="/videos" element={<VideosPage />} />
             <Route path="/3d-art" element={<ThreeDArtPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
+          <Footer />
 
           <Suspense fallback={null}>
             {deferredUiReady ? <SiteHelperChat /> : null}

@@ -20,7 +20,7 @@ const NavRoot = styled.nav`
   top: 0;
   left: 0;
   right: 0;
-  z-index: 90;
+  z-index: ${({ $menuOpen }) => ($menuOpen ? 130 : 90)};
   display: flex;
   justify-content: center;
   padding: calc(clamp(0.7rem, 1.8vw, 1rem) + max(0px, env(safe-area-inset-top, 0px))) var(--gutter);
@@ -359,6 +359,8 @@ const MobileToggle = styled.button`
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    min-width: 2.75rem;
+    min-height: 2.75rem;
     border: 1px solid rgba(255, 255, 255, 0.28);
     border-radius: 999px;
     background: rgba(10, 11, 14, 0.9);
@@ -368,6 +370,8 @@ const MobileToggle = styled.button`
     letter-spacing: 0.09em;
     font-size: 0.72rem;
     cursor: pointer;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
     transition: all 0.22s ease;
 
     @media (max-width: 23rem) {
@@ -388,27 +392,31 @@ const MobileToggle = styled.button`
 const MobilePanel = styled(motion.ul)`
   pointer-events: auto;
   position: fixed;
-  top: calc(4.55rem + max(0px, env(safe-area-inset-top, 0px)));
-  left: 0.75rem;
-  right: 0.75rem;
-  max-height: calc(100dvh - 5.25rem - max(0px, env(safe-area-inset-top, 0px)));
+  top: calc(4.2rem + max(0px, env(safe-area-inset-top, 0px)));
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 131;
   list-style: none;
   margin: 0;
-  padding: 0.7rem;
+  padding: 0.85rem 0.75rem calc(1.2rem + max(0px, env(safe-area-inset-bottom, 0px)));
   display: grid;
-  gap: 0.36rem;
+  align-content: start;
+  gap: 0.42rem;
   overflow-y: auto;
+  overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
 
-  border: 1px solid rgba(255, 255, 255, 0.24);
-  border-radius: 14px;
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 18px 18px 0 0;
   background:
-    linear-gradient(180deg, rgba(8, 9, 12, 0.97) 0%, rgba(6, 7, 10, 0.98) 100%),
+    linear-gradient(180deg, rgba(8, 9, 12, 0.98) 0%, rgba(6, 7, 10, 0.99) 100%),
     radial-gradient(circle at 48% -35%, rgba(255, 255, 255, 0.07), transparent 55%);
   box-shadow:
-    0 22px 52px rgba(0, 0, 0, 0.56),
+    0 -8px 42px rgba(0, 0, 0, 0.42),
     inset 0 1px 0 rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(12px);
 
   @media (min-width: 56.01em) {
     display: none;
@@ -461,12 +469,14 @@ const MobileItem = styled.button`
   text-align: left;
   background: ${({ $active }) => ($active ? 'rgba(255, 255, 255, 0.12)' : 'rgba(255, 255, 255, 0.02)')};
   color: ${({ $active }) => ($active ? 'rgba(255, 255, 255, 0.99)' : 'rgba(233, 236, 241, 0.92)')};
-  padding: 0.72rem;
-  min-height: 3rem;
-  font-size: 0.8rem;
+  padding: 0.85rem 0.78rem;
+  min-height: 3.1rem;
+  font-size: 0.84rem;
   text-transform: uppercase;
   letter-spacing: 0.09em;
   cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
   transition: all 0.22s ease;
 
   &::after {
@@ -535,10 +545,12 @@ const MobileSubItem = styled(MobileItem)`
 const Backdrop = styled(motion.button)`
   position: fixed;
   inset: 0;
-  z-index: 50;
+  z-index: 125;
   border: none;
-  background: linear-gradient(180deg, rgba(4, 4, 7, 0.42), rgba(4, 4, 7, 0.62));
-  backdrop-filter: blur(2px);
+  background: linear-gradient(180deg, rgba(4, 4, 7, 0.52), rgba(4, 4, 7, 0.72));
+  backdrop-filter: blur(3px);
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 
   @media (min-width: 56.01em) {
     display: none;
@@ -875,19 +887,33 @@ const Navbar = () => {
   }, []);
 
   useEffect(() => {
-    const previousOverflow = document.body.style.overflow;
-    if (open) {
-      document.body.style.overflow = 'hidden';
+    if (!open) {
+      return undefined;
     }
+
+    const scrollY = window.scrollY;
+    const previousOverflow = document.body.style.overflow;
+    const previousPosition = document.body.style.position;
+    const previousTop = document.body.style.top;
+    const previousWidth = document.body.style.width;
+
+    document.body.style.overflow = 'hidden';
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.width = '100%';
 
     return () => {
       document.body.style.overflow = previousOverflow;
+      document.body.style.position = previousPosition;
+      document.body.style.top = previousTop;
+      document.body.style.width = previousWidth;
+      window.scrollTo(0, scrollY);
     };
   }, [open]);
 
   return (
     <>
-      <NavRoot aria-label="Primary">
+      <NavRoot aria-label="Primary" $menuOpen={open}>
         <NavFrame>
           <NavBar
             initial={{ opacity: 0, y: -18, scale: 0.985, filter: 'blur(4px)' }}
@@ -1018,7 +1044,7 @@ const Navbar = () => {
                   </MobileSearchForm>
                 </MobileListItem>
 
-                {menuItems.map((item) => (
+                {menuItems.filter((item) => !item.utility).map((item) => (
                   <MobileListItem key={item.label} variants={mobileItemVariants}>
                     {item.type === 'dropdown' ? (
                       <>

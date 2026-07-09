@@ -9,7 +9,6 @@ import img7 from '../assets/VideoHeroes/7-hero.jpg';
 import img8 from '../assets/VideoHeroes/8-hero.jpg';
 import img9 from '../assets/VideoHeroes/9-hero.jpg';
 import img10 from '../assets/VideoHeroes/10-hero.jpg';
-import img11 from '../assets/VideoHeroes/11-hero.jpg';
 import img12 from '../assets/VideoHeroes/12-hero.jpg';
 import img13 from '../assets/VideoHeroes/13-hero.jpg';
 import img14 from '../assets/VideoHeroes/14-hero.jpg';
@@ -21,10 +20,11 @@ import thumb7 from '../assets/VideoThumbs/7-thumb.jpg';
 import thumb8 from '../assets/VideoThumbs/8-thumb.jpg';
 import thumb9 from '../assets/VideoThumbs/9-thumb.jpg';
 import thumb10 from '../assets/VideoThumbs/10-thumb.jpg';
-import thumb11 from '../assets/VideoThumbs/11-thumb.jpg';
 import thumb12 from '../assets/VideoThumbs/12-thumb.jpg';
 import thumb13 from '../assets/VideoThumbs/13-thumb.jpg';
 import thumb14 from '../assets/VideoThumbs/14-thumb.jpg';
+
+const finalLessonImage = `${process.env.PUBLIC_URL}/new-home/img/44.jpg`;
 
 const Section = styled.section`
   position: relative;
@@ -151,37 +151,6 @@ const Secondary = styled.button`
 const Rows = styled.div`
   display: grid;
   gap: clamp(0.9rem, 1.8vw, 1.3rem);
-`;
-
-const PageAdWrap = styled.aside`
-  border-radius: 0.85rem;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.022)),
-    rgba(8, 9, 12, 0.78);
-  min-height: 112px;
-  padding: clamp(0.7rem, 1.8vw, 1rem);
-  display: grid;
-  align-items: center;
-  gap: 0.45rem;
-  overflow: hidden;
-`;
-
-const PageAdLabel = styled.span`
-  color: rgba(220, 226, 236, 0.56);
-  text-transform: uppercase;
-  letter-spacing: 0.16em;
-  font-size: 0.62rem;
-`;
-
-const PageAdSlot = styled.div`
-  width: 100%;
-  min-height: 90px;
-  display: grid;
-  place-items: center;
-  border-radius: 0.65rem;
-  background: rgba(255, 255, 255, 0.035);
-  overflow: hidden;
 `;
 
 const Row = styled(motion.section)`
@@ -536,7 +505,7 @@ const collections = [
     note: 'Narrative short films and story-led visual work.',
     items: [
       {
-        image: img11,
+        image: finalLessonImage,
         title: 'The Final Lesson',
         category: 'Short film video',
         duration: '04:12',
@@ -544,7 +513,7 @@ const collections = [
         tools: 'Premiere + Lumetri',
         logline: 'A narrative short film presented through cinematic visual storytelling and editorial pacing.',
         aspect: '16 / 9',
-        video: 'https://cnszcstsixqnqnoacbmq.supabase.co/functions/v1/stream-video?key=6687dfef-1f2e-49a9-a1e2-9697b4886e49',
+        video: 'https://clip-kingdom-play.lovable.app/api/public/stream/878b4496-ab7a-47fe-8e0f-0b489311241c',
       },
       {
         image: img4,
@@ -680,45 +649,12 @@ const thumbnailByImage = new Map([
   [img8, thumb8],
   [img9, thumb9],
   [img10, thumb10],
-  [img11, thumb11],
   [img12, thumb12],
   [img13, thumb13],
   [img14, thumb14],
 ]);
 
 const getThumbnail = (source) => thumbnailByImage.get(source) || source;
-
-const AdsenseSlot = ({ className = '' }) => {
-  const pushedRef = useRef(false);
-
-  useEffect(() => {
-    if (pushedRef.current || !window.adsbygoogle) {
-      return;
-    }
-
-    try {
-      window.adsbygoogle.push({});
-      pushedRef.current = true;
-    } catch (error) {
-      pushedRef.current = true;
-    }
-  }, []);
-
-  return (
-    <PageAdWrap className={className} aria-label="Advertisement">
-      <PageAdLabel>Advertisement</PageAdLabel>
-      <PageAdSlot>
-        <ins
-          className="adsbygoogle"
-          style={{ display: 'block', width: '100%' }}
-          data-ad-client="ca-pub-8954463256155993"
-          data-ad-format="auto"
-          data-full-width-responsive="true"
-        />
-      </PageAdSlot>
-    </PageAdWrap>
-  );
-};
 
 const Videos = () => {
   const rowsRef = useRef(null);
@@ -833,8 +769,6 @@ const Videos = () => {
           </BillboardInner>
         </Billboard>
 
-        <AdsenseSlot />
-
         <Rows ref={rowsRef}>
           {collections.map((collection, rowIndex) => (
             <React.Fragment key={collection.title}>
@@ -878,8 +812,6 @@ const Videos = () => {
             </React.Fragment>
           ))}
         </Rows>
-
-        <AdsenseSlot />
       </Wrap>
 
       <AnimatePresence>

@@ -221,9 +221,9 @@ const WriteUpsPage = () => {
             <SummaryPanel>
               <SummaryTitle>Why this page exists</SummaryTitle>
               <SummaryText>
-                AdSense reviewers and real visitors should be able to see what the site is about
-                without guessing. These write ups explain the decisions behind the videos, photos, and
-                digital art so the portfolio has useful text as well as visuals.
+                Visitors should be able to understand the site without guessing from images alone.
+                These write ups explain the decisions behind the videos, photos, and digital art so
+                the portfolio has useful text as well as visuals.
               </SummaryText>
             </SummaryPanel>
           </Hero>

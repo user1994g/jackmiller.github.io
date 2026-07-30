@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/static/css/main.4e5bb844.css",
-    "main.js": "/static/js/main.b6e3209e.js",
-    "static/js/83.671aa777.chunk.js": "/static/js/83.671aa777.chunk.js",
+    "main.js": "/static/js/main.0eaf7305.js",
+    "static/js/83.9982be91.chunk.js": "/static/js/83.9982be91.chunk.js",
     "static/js/839.cae73bbd.chunk.js": "/static/js/839.cae73bbd.chunk.js",
     "static/media/Walking Girl.mp4": "/static/media/Walking Girl.dca083e23d7a563ff57e.mp4",
     "static/media/10.webp": "/static/media/10.9d55ebaf49e2a1566285.webp",
@@ -38,12 +38,12 @@
     "static/media/5-thumb.jpg": "/static/media/5-thumb.9c08c278b507a3add2f9.jpg",
     "static/media/13-thumb.jpg": "/static/media/13-thumb.5b5787fc6f294c20ca35.jpg",
     "main.4e5bb844.css.map": "/static/css/main.4e5bb844.css.map",
-    "main.b6e3209e.js.map": "/static/js/main.b6e3209e.js.map",
-    "83.671aa777.chunk.js.map": "/static/js/83.671aa777.chunk.js.map",
+    "main.0eaf7305.js.map": "/static/js/main.0eaf7305.js.map",
+    "83.9982be91.chunk.js.map": "/static/js/83.9982be91.chunk.js.map",
     "839.cae73bbd.chunk.js.map": "/static/js/839.cae73bbd.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.4e5bb844.css",
-    "static/js/main.b6e3209e.js"
+    "static/js/main.0eaf7305.js"
   ]
 }

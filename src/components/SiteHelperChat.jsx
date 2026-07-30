@@ -245,7 +245,7 @@ const Send = styled.button`
   }
 `;
 
-const quickPrompts = ['Home', 'About me', 'Photos', 'Videos', '3D Art'];
+const quickPrompts = ['Home', 'Photos', 'Videos', 'Level 2', 'NetVista Studio'];
 
 const actionCues = new Set([
   'go',
@@ -337,6 +337,32 @@ const siteIntents = [
       'Got it. Jumping to the 3D Art page.',
     ],
     guidance: 'Use 3D Art for CGI, renders, and future 3D work.',
+  },
+  {
+    id: 'level2',
+    label: 'Level 2',
+    action: { type: 'route', path: '/fmp-level-2' },
+    keywords: ['level 2', 'level two', 'dark echoes', '1939', 'mum', 'mother', 'grief', 'loss'],
+    phrases: ['open level 2', 'show level 2', 'dark echoes', 'dark echoes of 1939', 'the film about mum'],
+    responses: [
+      'Opening Level 2: The Dark Echoes of 1939.',
+      'Taking you to The Dark Echoes of 1939 now.',
+      'Got it. Opening the Level 2 short film page.',
+    ],
+    guidance: 'Level 2 is The Dark Echoes of 1939, a short film about losing a mum and living with grief.',
+  },
+  {
+    id: 'netvista',
+    label: 'NetVista Studio',
+    action: { type: 'external', url: 'https://netvistastudio.com/' },
+    keywords: ['netvista', 'studio', 'net vista', 'netvistastudio'],
+    phrases: ['netvista studio', 'open netvista', 'visit netvista', 'netvista website'],
+    responses: [
+      'NetVista Studio is the linked studio site. Opening it in a new tab.',
+      'Got it. I will open NetVista Studio for you.',
+      'Taking you to NetVista Studio now.',
+    ],
+    guidance: 'Ask for NetVista Studio whenever you want to open https://netvistastudio.com/.',
   },
   {
     id: 'writeups',
@@ -539,6 +565,10 @@ const analyzeMessage = (rawValue, pendingIntent) => {
     return { type: 'page-status' };
   }
 
+  if (normalized.includes('netvistastudio com') || normalized.includes('netvista studio')) {
+    return { type: 'intent', intent: siteIntents.find((intent) => intent.id === 'netvista') };
+  }
+
   if (normalized.includes('best place') || normalized.includes('where should i go') || normalized.includes('what should i look at')) {
     return { type: 'recommend' };
   }
@@ -592,7 +622,7 @@ const pageLabelByPath = (pathname) => {
   }
 
   if (pathname === '/3d-art') {
-    return '3D Art';
+    return '3D Art (under development)';
   }
 
   if (pathname === '/write-ups') {
@@ -601,6 +631,10 @@ const pageLabelByPath = (pathname) => {
 
   if (pathname === '/final-lesson') {
     return 'Final Lesson';
+  }
+
+  if (pathname === '/fmp-level-2') {
+    return 'Level 2: The Dark Echoes of 1939';
   }
 
   return 'Home';
@@ -638,6 +672,11 @@ const SiteHelperChat = () => {
           navigate(action.path);
         }
       }
+      return;
+    }
+
+    if (action.type === 'external') {
+      window.open(action.url, '_blank', 'noopener,noreferrer');
       return;
     }
 
@@ -724,7 +763,7 @@ const SiteHelperChat = () => {
 
     if (result.type === 'help') {
       setPendingIntent(null);
-      appendMessage('bot', 'I can guide you to Home, About, Photos, Videos, and 3D Art. You can ask naturally, like "take me to the videos" or "where is the photo gallery".');
+      appendMessage('bot', 'I can guide you to Home, About, Photos, Videos, Level 2, and the 3D Art page under development. I can also open NetVista Studio. Ask naturally, like "show me Level 2" or "open NetVista Studio".');
       return;
     }
 
@@ -735,7 +774,7 @@ const SiteHelperChat = () => {
     }
 
     setPendingIntent(null);
-    appendMessage('bot', 'I can help you find Home, About, Photos, Videos, or 3D Art. Try asking in a full sentence and I will work it out.');
+    appendMessage('bot', 'I can help with Home, About, Photos, Videos, Level 2, 3D Art, or NetVista Studio. Try asking what you want in a full sentence.');
   };
 
   const handleSubmit = (event) => {

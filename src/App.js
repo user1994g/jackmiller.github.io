@@ -9,8 +9,9 @@ import HomePage from './pages/HomePage';
 import WriteUpsPage from './pages/WriteUpsPage';
 import PolicyPage from './pages/PolicyPage';
 import VideosPage from './pages/VideosPage';
-import ThreeDArtPage from './pages/ThreeDArtPage';
+import UnderDevelopmentPage from './pages/UnderDevelopmentPage';
 import FinalLessonPage from './pages/FinalLessonPage';
+import FmpLevelTwoPage from './pages/FmpLevelTwoPage';
 import GlobalStyles from './styles/GlobalStyles';
 import { dark } from './styles/Themes';
 
@@ -56,8 +57,9 @@ function App() {
             <Route path="/privacy" element={<PolicyPage variant="privacy" />} />
             <Route path="/terms" element={<PolicyPage variant="terms" />} />
             <Route path="/final-lesson" element={<FinalLessonPage />} />
+            <Route path="/fmp-level-2" element={<FmpLevelTwoPage />} />
             <Route path="/videos" element={<VideosPage />} />
-            <Route path="/3d-art" element={<ThreeDArtPage />} />
+            <Route path="/3d-art" element={<UnderDevelopmentPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
           <Footer />

@@ -392,29 +392,29 @@ const MobileToggle = styled.button`
 const MobilePanel = styled(motion.ul)`
   pointer-events: auto;
   position: fixed;
-  top: calc(4.2rem + max(0px, env(safe-area-inset-top, 0px)));
-  left: 0;
-  right: 0;
-  bottom: 0;
+  top: calc(4.7rem + max(0px, env(safe-area-inset-top, 0px)));
+  left: 0.75rem;
+  right: 0.75rem;
+  bottom: auto;
+  max-height: calc(100dvh - 5.45rem - max(0px, env(safe-area-inset-top, 0px)));
   z-index: 131;
   list-style: none;
   margin: 0;
-  padding: 0.85rem 0.75rem calc(1.2rem + max(0px, env(safe-area-inset-bottom, 0px)));
+  padding: 0.55rem;
   display: grid;
   align-content: start;
-  gap: 0.42rem;
+  gap: 0.22rem;
   overflow-y: auto;
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
 
-  border: none;
-  border-top: 1px solid rgba(255, 255, 255, 0.18);
-  border-radius: 18px 18px 0 0;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 14px;
   background:
     linear-gradient(180deg, rgba(8, 9, 12, 0.98) 0%, rgba(6, 7, 10, 0.99) 100%),
     radial-gradient(circle at 48% -35%, rgba(255, 255, 255, 0.07), transparent 55%);
   box-shadow:
-    0 -8px 42px rgba(0, 0, 0, 0.42),
+    0 20px 42px rgba(0, 0, 0, 0.48),
     inset 0 1px 0 rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(12px);
 
@@ -427,50 +427,19 @@ const MobileListItem = styled(motion.li)`
   list-style: none;
 `;
 
-const MobileSearchForm = styled.form`
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.035);
-  padding: 0.45rem 0.55rem;
-  min-height: 3rem;
-
-  &:focus-within {
-    border-color: rgba(240, 216, 173, 0.52);
-  }
-`;
-
-const MobileSearchInput = styled.input`
-  width: 100%;
-  border: none;
-  background: transparent;
-  color: rgba(242, 244, 247, 0.95);
-  font-size: 16px;
-  line-height: 1.2;
-
-  &::placeholder {
-    color: rgba(204, 210, 218, 0.58);
-  }
-
-  &:focus {
-    outline: none;
-  }
-`;
-
 const MobileItem = styled.button`
   position: relative;
+  display: flex;
+  align-items: center;
   overflow: hidden;
   width: 100%;
-  border: 1px solid ${({ $active }) => ($active ? 'rgba(255, 255, 255, 0.28)' : 'transparent')};
-  border-radius: 10px;
+  border: 1px solid ${({ $active }) => ($active ? 'rgba(255, 255, 255, 0.24)' : 'transparent')};
+  border-radius: 8px;
   text-align: left;
   background: ${({ $active }) => ($active ? 'rgba(255, 255, 255, 0.12)' : 'rgba(255, 255, 255, 0.02)')};
   color: ${({ $active }) => ($active ? 'rgba(255, 255, 255, 0.99)' : 'rgba(233, 236, 241, 0.92)')};
-  padding: 0.85rem 0.78rem;
-  min-height: 3.1rem;
+  padding: 0.72rem 0.78rem;
+  min-height: 2.8rem;
   font-size: 0.84rem;
   text-transform: uppercase;
   letter-spacing: 0.09em;
@@ -479,19 +448,6 @@ const MobileItem = styled.button`
   -webkit-tap-highlight-color: transparent;
   transition: all 0.22s ease;
 
-  &::after {
-    content: '';
-    position: absolute;
-    left: 0.72rem;
-    right: 0.72rem;
-    bottom: 0.34rem;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(240, 216, 173, 0.84), transparent);
-    transform: scaleX(${({ $active }) => ($active ? 1 : 0)});
-    transform-origin: center;
-    transition: transform 0.24s ease;
-  }
-
   &:hover,
   &:focus-visible {
     border-color: rgba(255, 255, 255, 0.32);
@@ -499,9 +455,6 @@ const MobileItem = styled.button`
     color: #ffffff;
     outline: none;
 
-    &::after {
-      transform: scaleX(1);
-    }
   }
 `;
 
@@ -558,7 +511,7 @@ const Backdrop = styled(motion.button)`
 `;
 
 const fmpItems = [
-  { label: 'Level 2', type: 'disabled' },
+  { label: 'Level 2', type: 'route', path: '/fmp-level-2' },
   {
     label: 'Level 3 Year 1',
     type: 'route',
@@ -593,11 +546,10 @@ const lookupTargets = [
     },
   },
   {
-    keywords: ['fmp 3', 'fmp3', 'final lesson', 'the final lesson'],
+    keywords: ['level 2', 'dark echoes', '1939'],
     action: {
       type: 'route',
-      path: '/final-lesson',
-      state: { allowUnlisted: true, unlisted: 'final-lesson', via: 'search' },
+      path: '/fmp-level-2',
     },
   },
   {
@@ -618,6 +570,7 @@ const routeSeoPaths = {
   '/privacy': '/privacy/',
   '/terms': '/terms/',
   '/final-lesson': '/the-final-lesson/',
+  '/fmp-level-2': '/fmp-level-2/',
 };
 
 const scrollSeoPaths = {
@@ -1031,19 +984,6 @@ const Navbar = () => {
                 animate="visible"
                 exit="exit"
               >
-                <MobileListItem variants={mobileItemVariants}>
-                  <MobileSearchForm onSubmit={handleSearchSubmit} role="search" aria-label="Lookup navigation">
-                    <MobileSearchInput
-                      type="search"
-                      value={searchQuery}
-                      onChange={(event) => setSearchQuery(event.target.value)}
-                      placeholder="Lookup..."
-                      aria-label="Lookup section"
-                    />
-                    <SearchSubmit type="submit">Go</SearchSubmit>
-                  </MobileSearchForm>
-                </MobileListItem>
-
                 {menuItems.filter((item) => !item.utility).map((item) => (
                   <MobileListItem key={item.label} variants={mobileItemVariants}>
                     {item.type === 'dropdown' ? (

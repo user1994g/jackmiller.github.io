@@ -27,6 +27,11 @@ const VideoContainer = styled.section.attrs({ className: 'container' })`
   min-height: 100vh;
   position: relative;
   overflow: hidden;
+
+  @media (max-width: 51.1875em) {
+    height: 100svh;
+    min-height: 100svh;
+  }
 `;
 
 /* Parallax background that reveals behind shrinking video */
@@ -311,8 +316,6 @@ const CoverVideo = () => {
       return undefined;
     }
 
-    const scrollerElement = scroll?.el || null;
-
     ScrollTrigger.getById('hero-video-scale')?.kill();
 
     gsap.set(scaleElement, {
@@ -334,6 +337,16 @@ const CoverVideo = () => {
     if (bgElement) {
       gsap.set(bgElement, { opacity: 0 });
     }
+
+    // On phones the hero is a straightforward, full-screen introduction.
+    // Pinning and scaling it made the first scroll feel like an effect rather
+    // than normal page navigation.
+    const isMobile = window.matchMedia('(max-width: 51.1875em)').matches;
+    if (isMobile) {
+      return undefined;
+    }
+
+    const scrollerElement = scroll?.el || null;
 
     const timeline = gsap.timeline({
       scrollTrigger: {

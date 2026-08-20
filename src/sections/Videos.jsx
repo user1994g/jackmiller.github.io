@@ -341,55 +341,99 @@ const Videos = () => {
         ref={sectionRef}
         aria-label="The Cut Room film programme"
       >
-        <section className="feature-film" aria-labelledby="feature-film-title">
-          <img
-            className="feature-film__image"
-            src={featuredFilm.image}
-            alt="Poster artwork for The Final Lesson"
-          />
-          <div className="feature-film__shade" aria-hidden="true" />
-          <div className="studio-wrap feature-film__content" data-reveal>
-            <span className="tape-label">Opening night · programme 01</span>
-            <h2 id="feature-film-title">{featuredFilm.title}</h2>
-            <Meta project={featuredFilm} />
-            <p>{featuredFilm.logline}</p>
-            <div className="feature-film__actions">
-              <button
-                className="studio-button studio-button--paper"
-                type="button"
-                onClick={(event) => openPlayer(featuredFilm, event.currentTarget)}
-                aria-haspopup="dialog"
-              >
-                Watch the film
-              </button>
-              <button
-                className="studio-button"
-                type="button"
-                onClick={(event) => openProject(featuredFilm, event.currentTarget)}
-                aria-haspopup="dialog"
-              >
-                Project notes
-              </button>
-              <button
-                className="studio-button studio-button--ghost"
-                type="button"
-                onClick={() =>
-                  programmeRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-                }
-              >
-                Browse all 12
-              </button>
+        <section className="video-showcase" aria-labelledby="feature-film-title">
+          <div className="studio-wrap video-showcase__grid">
+            <div className="video-showcase__stage">
+              <div className="video-showcase__screen">
+                <video
+                  src={featuredFilm.video}
+                  poster={featuredFilm.image}
+                  controls
+                  playsInline
+                  preload="metadata"
+                  controlsList="nodownload noplaybackrate"
+                  disablePictureInPicture
+                  disableRemotePlayback
+                  onContextMenu={(event) => event.preventDefault()}
+                  onDragStart={(event) => event.preventDefault()}
+                  aria-label={`Watch ${featuredFilm.title}`}
+                >
+                  Your browser does not support the video player.
+                </video>
+              </div>
+              <div className="video-showcase__screen-bar" aria-hidden="true">
+                <span>Now showing</span>
+                <span>01 / 12</span>
+              </div>
+            </div>
+
+            <div className="video-showcase__content">
+              <span className="tape-label">Featured film · available now</span>
+              <h2 id="feature-film-title">{featuredFilm.title}</h2>
+              <Meta project={featuredFilm} />
+              <p>{featuredFilm.logline}</p>
+              <div className="video-showcase__actions">
+                <button
+                  className="studio-button studio-button--paper"
+                  type="button"
+                  onClick={(event) => openPlayer(featuredFilm, event.currentTarget)}
+                  aria-haspopup="dialog"
+                >
+                  Open cinema view
+                </button>
+                <button
+                  className="studio-button studio-button--ghost"
+                  type="button"
+                  onClick={(event) => openProject(featuredFilm, event.currentTarget)}
+                  aria-haspopup="dialog"
+                >
+                  Project notes
+                </button>
+              </div>
             </div>
           </div>
         </section>
 
-        <div className="studio-wrap" ref={programmeRef}>
+        <div className="studio-wrap video-library" ref={programmeRef}>
+          <div className="video-library__intro" data-reveal>
+            <div>
+              <span className="studio-kicker">Browse the archive</span>
+              <h2>All videos</h2>
+            </div>
+            <p>
+              One complete film is ready to watch. The other eleven entries open project notes,
+              artwork, and production details while their previews are being prepared.
+            </p>
+          </div>
+
+          <nav className="video-index" aria-label="Video collections" data-stagger>
+            {programme.map((collection, index) => {
+              const collectionId = collection.title.toLowerCase().replace(/\s+/g, '-');
+              return (
+                <a href={`#${collectionId}`} key={collection.title}>
+                  <span>{String(index + 1).padStart(2, '0')}</span>
+                  <strong>{collection.title}</strong>
+                  <span>{collection.items.length} projects</span>
+                </a>
+              );
+            })}
+          </nav>
+
           {programme.map((collection) => {
-            const sectionId = `${collection.title.toLowerCase().replace(/\s+/g, '-')}-title`;
+            const collectionId = collection.title.toLowerCase().replace(/\s+/g, '-');
+            const sectionId = `${collectionId}-title`;
             return (
-              <section className="programme-section" key={collection.title} aria-labelledby={sectionId}>
+              <section
+                className="programme-section"
+                id={collectionId}
+                key={collection.title}
+                aria-labelledby={sectionId}
+              >
                 <header className="programme-section__head" data-reveal>
-                  <h2 id={sectionId}>{collection.title}</h2>
+                  <div>
+                    <span className="studio-kicker">Collection</span>
+                    <h2 id={sectionId}>{collection.title}</h2>
+                  </div>
                   <p>{collection.note}</p>
                 </header>
 
@@ -412,17 +456,26 @@ const Videos = () => {
                           width="520"
                           height="325"
                         />
+                        <span className="programme-card__play" aria-hidden="true">
+                          {project.video ? '▶' : '+'}
+                        </span>
                         <span className="programme-card__status">
                           {project.video ? 'Watch film' : 'Project notes'}
                         </span>
                       </span>
                       <span className="programme-card__copy">
-                        <span className="frame-number" aria-hidden="true">
-                          {project.programmeNumber}
+                        <span className="programme-card__eyebrow">
+                          <span className="frame-number" aria-hidden="true">
+                            {project.programmeNumber}
+                          </span>
+                          <span>{project.category}</span>
                         </span>
                         <strong>{project.title}</strong>
-                        <span>
-                          {project.year} · {project.duration}
+                        <span className="programme-card__logline">{project.logline}</span>
+                        <span className="programme-card__footer">
+                          <span>{project.year}</span>
+                          <span>{project.duration}</span>
+                          <span>{project.tools}</span>
                         </span>
                       </span>
                     </button>

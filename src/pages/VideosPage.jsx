@@ -10,9 +10,9 @@ const VideosPage = () => {
   const pageRef = useRef(null);
 
   usePageSeo({
-    title: 'The Cut Room | Films by Jack Miller Media',
+    title: 'Films & Videos | Jack Miller Media',
     description:
-      'Explore The Cut Room, Jack Miller Media’s film-festival programme of narrative shorts, documentary fragments, and experimental visual work.',
+      'Explore twelve narrative, documentary, and experimental film projects by Jack Miller, including The Final Lesson.',
     url: 'https://jackmillermedia.com/videos/',
   });
   useStudioMotion(pageRef, { hero: true });
@@ -30,13 +30,13 @@ const VideosPage = () => {
           <div className="studio-wrap page-hero__grid">
             <div>
               <span className="tape-label" data-hero>
-                Film programme · 12 selections
+                The Cut Room · 12 selections
               </span>
-              <h1 data-hero>The Cut Room</h1>
+              <h1 data-hero>Videos</h1>
             </div>
             <p className="page-hero__intro" data-hero>
-              Narrative shorts, documentary fragments, and visual experiments — programmed like a
-              tiny film festival and presented one cut at a time.
+              Watch the finished cuts, then browse narrative shorts, documentary fragments, and
+              visual experiments from the project archive.
             </p>
           </div>
           <div className="page-hero__mark" aria-hidden="true">

@@ -72,7 +72,7 @@ test('renders the redesigned portfolio home page', () => {
 });
 
 test.each([
-  ['/videos', /the cut room/i],
+  ['/videos', /videos/i],
   ['/photos', /photo portfolio/i],
   ['/about', /made with intent/i],
   ['/contact', /get in touch/i],

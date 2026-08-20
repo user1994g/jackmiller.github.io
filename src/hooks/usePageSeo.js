@@ -28,6 +28,7 @@ const usePageSeo = ({
   title,
   description,
   url,
+  robots = 'index, follow, max-image-preview:large',
 }) => {
   useEffect(() => {
     if (typeof document === 'undefined') return;
@@ -56,7 +57,10 @@ const usePageSeo = ({
       }
       canonical.setAttribute('href', url);
     }
-  }, [description, title, url]);
+
+    upsertMetaByName('robots', robots);
+    upsertMetaByName('googlebot', robots);
+  }, [description, robots, title, url]);
 };
 
 export default usePageSeo;

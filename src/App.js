@@ -2,8 +2,12 @@ import React, { Suspense, lazy, useEffect, useState } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 
+import BackToTop from './components/BackToTop';
 import ClarityTracker from './components/ClarityTracker';
 import GeoBlockGate from './components/GeoBlockGate';
+import GrainLayer from './components/GrainLayer';
+import IntroSplash from './components/IntroSplash';
+import ScrollProgress from './components/ScrollProgress';
 import Footer from './sections/Footer';
 import HomePage from './pages/HomePage';
 import WriteUpsPage from './pages/WriteUpsPage';
@@ -16,7 +20,7 @@ import GlobalStyles from './styles/GlobalStyles';
 import { dark } from './styles/Themes';
 
 const SiteHelperChat = lazy(() => import('./components/SiteHelperChat'));
-const DesktopMouseAura = lazy(() => import('./components/DesktopMouseAura'));
+const CustomCursor = lazy(() => import('./components/CustomCursor'));
 
 function App() {
   const [deferredUiReady, setDeferredUiReady] = useState(false);
@@ -50,6 +54,9 @@ function App() {
       <a className="skip-link" href="#main-content">Skip to main content</a>
       <ThemeProvider theme={dark}>
         <GeoBlockGate>
+          <GrainLayer />
+          <IntroSplash />
+          <ScrollProgress />
           <ClarityTracker />
           <Routes>
             <Route path="/" element={<HomePage />} />
@@ -63,10 +70,11 @@ function App() {
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
           <Footer />
+          <BackToTop />
 
           <Suspense fallback={null}>
             {deferredUiReady ? <SiteHelperChat /> : null}
-            {deferredUiReady && enableDesktopAura ? <DesktopMouseAura /> : null}
+            {deferredUiReady && enableDesktopAura ? <CustomCursor /> : null}
           </Suspense>
         </GeoBlockGate>
       </ThemeProvider>

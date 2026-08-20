@@ -11,10 +11,6 @@ const PageShell = styled.main`
   min-height: 100vh;
   padding: clamp(6.75rem, 11vw, 9.5rem) var(--gutter) clamp(3.5rem, 8vw, 7rem);
   overflow: hidden;
-  background:
-    radial-gradient(circle at 82% 7%, rgba(111, 22, 26, 0.28), transparent 24rem),
-    radial-gradient(circle at 8% 38%, rgba(220, 188, 126, 0.08), transparent 26rem),
-    #0a0a0c;
 `;
 
 const Content = styled.div`
@@ -40,7 +36,7 @@ const Kicker = styled.p`
   align-items: center;
   gap: 0.65rem;
   margin-bottom: 1rem;
-  color: rgba(241, 215, 165, 0.95);
+  color: var(--acid);
   font-size: 0.72rem;
   font-weight: 600;
   letter-spacing: 0.18em;
@@ -56,11 +52,11 @@ const Kicker = styled.p`
 
 const Title = styled.h1`
   max-width: 9ch;
-  color: #f3eee5;
-  font-family: Georgia, 'Times New Roman', serif;
+  color: var(--paper);
+  font-family: var(--font-display);
   font-size: clamp(3.5rem, 8.2vw, 7.8rem);
-  font-weight: 400;
-  letter-spacing: -0.06em;
+  font-weight: 800;
+  letter-spacing: -0.07em;
   line-height: 0.87;
 `;
 
@@ -157,10 +153,10 @@ const Story = styled.section`
 const StoryCopy = styled.div`
   h2 {
     max-width: 10ch;
-    color: #f3eee5;
-    font-family: Georgia, 'Times New Roman', serif;
+    color: var(--paper);
+    font-family: var(--font-display);
     font-size: clamp(2.3rem, 5vw, 4.8rem);
-    font-weight: 400;
+    font-weight: 800;
     letter-spacing: -0.05em;
     line-height: 0.94;
   }
@@ -258,7 +254,9 @@ const FmpLevelTwoPage = () => {
                 src="https://clip-kingdom-play.lovable.app/embed/21230af6-5a84-4072-befc-276e5f349145"
                 allow="autoplay; fullscreen; picture-in-picture"
                 allowFullScreen
-                referrerPolicy="strict-origin-when-cross-origin"
+                loading="lazy"
+                referrerPolicy="no-referrer"
+                sandbox="allow-scripts allow-same-origin allow-presentation"
               />
             </Player>
           </FilmCard>

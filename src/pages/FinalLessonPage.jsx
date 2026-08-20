@@ -30,6 +30,7 @@ const FinalLessonPage = () => {
     description:
       'The Final Lesson is an independently produced short film by Jack Miller. Explore the film page and behind-the-scenes details.',
     url: 'https://jackmillermedia.com/the-final-lesson/',
+    robots: 'noindex, follow',
   });
 
   if (!allowFinalLesson) {
@@ -44,8 +45,8 @@ const FinalLessonPage = () => {
           title="The Final Lesson"
           src={`${process.env.PUBLIC_URL}/the-final-lesson.html`}
           loading="lazy"
-          referrerPolicy="strict-origin-when-cross-origin"
-          sandbox="allow-scripts allow-same-origin"
+          referrerPolicy="no-referrer"
+          sandbox="allow-scripts"
           allow="fullscreen"
           allowFullScreen
         />

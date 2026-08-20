@@ -9,11 +9,18 @@
     <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico?v=20260315" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta http-equiv="Content-Security-Policy" content="object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests" />
     <meta name="google-adsense-account" content="ca-pub-8954463256155993" />
     <meta name="googlebot" content="index,follow,max-image-preview:large" />
     <link rel="dns-prefetch" href="https://www.clarity.ms" />
     <link rel="preconnect" href="https://www.clarity.ms" crossorigin />
-    <meta name="theme-color" content="#0d0f14" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Instrument+Sans:wght@400;500;600;700&family=Syne:wght@500;700;800&display=swap"
+    />
+    <meta name="theme-color" content="#08070a" />
     <meta name="author" content="Jack Miller" />
     <meta
       name="description"
@@ -156,7 +163,17 @@
       (function () {
         function injectClarity() {
           if (window.__jackClarityLoaded) return;
+
+          var hostname = window.location.hostname.toLowerCase();
+          if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '::1') {
+            return;
+          }
+
           window.__jackClarityLoaded = true;
+          window.clarity = window.clarity || function () {
+            (window.clarity.q = window.clarity.q || []).push(arguments);
+          };
+
           var script = document.createElement('script');
           script.async = true;
           script.src = 'https://www.clarity.ms/tag/vklxf38ijp';
@@ -291,6 +308,7 @@
           <li><a href="https://jackmillermedia.com/about/" style="color:#f0d8ad;">About</a></li>
           <li><a href="https://jackmillermedia.com/photos/" style="color:#f0d8ad;">Photos</a></li>
           <li><a href="https://jackmillermedia.com/videos/" style="color:#f0d8ad;">Videos</a></li>
+          <li><a href="https://jackmillermedia.com/fmp-level-2/" style="color:#f0d8ad;">The Dark Echoes of 1939</a></li>
           <li><a href="https://jackmillermedia.com/3d-art/" style="color:#f0d8ad;">3D Art</a></li>
           <li><a href="https://jackmillermedia.com/write-ups/" style="color:#f0d8ad;">Write Ups</a></li>
           <li><a href="https://jackmillermedia.com/contact/" style="color:#f0d8ad;">Contact</a></li>

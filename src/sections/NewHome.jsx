@@ -399,14 +399,14 @@ const NewHome = () => {
                         alt=""
                         loading="lazy"
                         decoding="async"
-                        fetchPriority={grid.id === 'grid-1' && index < 4 ? 'high' : 'low'}
+                        fetchpriority={grid.id === 'grid-1' && index < 4 ? 'high' : 'low'}
                       />
                     </div>
                   </div>
                 ))}
               </div>
             </div>
-            <h3 className={`content__title ${grid.titleClass}`}>{grid.title}</h3>
+            <h2 className={`content__title ${grid.titleClass}`}>{grid.title}</h2>
           </section>
           </React.Fragment>
         ))}

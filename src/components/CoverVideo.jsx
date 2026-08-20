@@ -2,7 +2,6 @@ import anime from 'animejs/lib/anime.es.js';
 import gsap from 'gsap';
 import ScrollTrigger from 'gsap/ScrollTrigger';
 import React, { useEffect, useLayoutEffect, useRef, useCallback } from 'react';
-import { useLocomotiveScroll } from 'react-locomotive-scroll';
 import { useNavigate } from 'react-router-dom';
 import styled, { css, keyframes } from 'styled-components';
 
@@ -233,8 +232,7 @@ const CoverVideo = () => {
   const videoRef = useRef(null);
   const parallaxBgRef = useRef(null);
 
-  const locoContext = useLocomotiveScroll();
-  const scroll = locoContext?.scroll;
+  const scroll = null;
   const navigate = useNavigate();
 
   const scrollToTarget = useCallback(

@@ -3,51 +3,55 @@ import styled from 'styled-components';
 
 import Navbar from '../components/Navbar';
 import usePageSeo from '../hooks/usePageSeo';
+import { Stamp } from '../art/Marks';
 
 const PageShell = styled.main`
   min-height: 100vh;
   display: grid;
   place-items: center;
   padding: 8rem var(--gutter) 5rem;
-  background:
-    radial-gradient(circle at 50% 20%, rgba(240, 216, 173, 0.08), transparent 28rem),
-    linear-gradient(180deg, #0b0c0f 0%, #111319 100%);
 `;
 
 const Notice = styled.section`
-  width: min(600px, 100%);
-  padding: clamp(2rem, 6vw, 4.5rem);
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  border-radius: 20px;
-  background: rgba(9, 10, 13, 0.74);
-  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.4);
+  width: min(640px, 100%);
+  padding: clamp(2rem, 6vw, 4rem);
+  border: 1px dashed rgba(198, 240, 77, 0.4);
+  border-radius: 1.8rem;
+  background: rgba(18, 16, 23, 0.8);
   text-align: center;
 `;
 
 const Eyebrow = styled.p`
-  color: rgba(240, 216, 173, 0.9);
+  color: var(--acid);
   font-size: 0.72rem;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.18em;
   text-transform: uppercase;
 `;
 
 const Title = styled.h1`
   margin-top: 1rem;
-  color: rgba(248, 246, 240, 0.96);
-  font-family: Georgia, 'Times New Roman', serif;
-  font-size: clamp(2.5rem, 7vw, 5rem);
-  font-weight: 400;
-  letter-spacing: -0.05em;
-  line-height: 0.95;
+  color: var(--paper);
+  font-size: clamp(2.5rem, 7vw, 4.8rem);
+  font-weight: 800;
+  letter-spacing: -0.06em;
 `;
 
 const Message = styled.p`
   max-width: 38ch;
   margin: 1.25rem auto 0;
-  color: rgba(217, 220, 227, 0.72);
-  font-family: system-ui, sans-serif;
   line-height: 1.7;
+`;
+
+const Mark = styled.div`
+  width: 5.5rem;
+  margin: 1.4rem auto 0;
+  color: var(--signal);
+
+  svg {
+    width: 100%;
+    height: auto;
+  }
 `;
 
 const UnderDevelopmentPage = () => {
@@ -55,6 +59,7 @@ const UnderDevelopmentPage = () => {
     title: '3D Art | Under Development | Jack Miller',
     description: 'The 3D Art section of Jack Miller Media is currently under development.',
     url: 'https://jackmillermedia.com/3d-art/',
+    robots: 'noindex, follow',
   });
 
   return (
@@ -67,6 +72,9 @@ const UnderDevelopmentPage = () => {
           <Message>
             This space is being prepared for the 3D work. Check back soon for the finished gallery.
           </Message>
+          <Mark>
+            <Stamp label="WIP" />
+          </Mark>
         </Notice>
       </PageShell>
     </>

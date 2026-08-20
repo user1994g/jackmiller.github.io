@@ -1,59 +1,64 @@
 import { AnimatePresence } from 'framer-motion';
-import React, { useState } from 'react';
+import gsap from 'gsap';
+import ScrollTrigger from 'gsap/ScrollTrigger';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import pfp from '../assets/Images/pfp.webp';
+import { Scribble } from '../art/Marks';
 import ImageLightbox from '../components/ImageLightbox';
 
+gsap.registerPlugin(ScrollTrigger);
+
 const Section = styled.section`
-  width: min(var(--content-max), 92vw);
-  margin: var(--section-gap) auto;
-  padding-top: clamp(1rem, 3vw, 2rem);
-  position: relative;
-
+  width: min(var(--content-max), 100%);
+  margin: 0 auto var(--section-gap);
+  padding: 0 var(--gutter);
   display: grid;
-  grid-template-columns: 1.05fr 0.95fr;
-  gap: clamp(1.5rem, 4vw, 3.25rem);
+  gap: clamp(1.4rem, 4vw, 2.5rem);
 
-  @media (max-width: 64em) {
-    grid-template-columns: 1fr;
-    width: min(680px, 92vw);
+  @media (min-width: 64em) {
+    grid-template-columns: 1.05fr 0.95fr;
+    align-items: start;
   }
 `;
 
 const Header = styled.div`
   grid-column: 1 / -1;
-  display: grid;
-  gap: 0.85rem;
-  max-width: min(44rem, 100%);
 `;
 
 const Title = styled.h2`
-  font-family: 'Kaushan Script';
-  font-size: clamp(2.5rem, 6vw, 4.8rem);
-  font-weight: 300;
-  line-height: 0.96;
-  color: rgba(255, 255, 255, 0.93);
-  text-wrap: balance;
+  font-size: clamp(2.6rem, 9vw, 5.6rem);
+  color: var(--paper);
 `;
 
 const Intro = styled.p`
-  font-size: clamp(0.95rem, 1.3vw, 1.08rem);
-  line-height: 1.74;
-  color: rgba(233, 236, 242, 0.78);
+  max-width: 44rem;
+  margin-top: 0.85rem;
+  font-size: clamp(0.98rem, 1.6vw, 1.12rem);
+  line-height: 1.7;
+`;
+
+const Mark = styled.div`
+  width: min(12rem, 50%);
+  margin-top: 0.4rem;
+  color: var(--signal);
+
+  svg {
+    width: 100%;
+    height: auto;
+  }
 `;
 
 const Copy = styled.div`
-  padding: clamp(1.25rem, 2.6vw, 2rem);
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  border-radius: 20px;
-  background: rgba(18, 20, 26, 0.72);
-  backdrop-filter: blur(8px);
+  padding: clamp(1.2rem, 3vw, 1.8rem);
+  border: 1px dashed rgba(243, 235, 221, 0.28);
+  border-radius: 1.6rem;
+  background: rgba(18, 16, 23, 0.7);
 
   p {
-    font-size: clamp(0.88rem, 1.25vw, 1.08rem);
-    line-height: 1.75;
-    color: rgba(240, 242, 245, 0.85);
+    font-size: clamp(0.92rem, 1.3vw, 1.05rem);
+    line-height: 1.78;
   }
 
   p + p {
@@ -61,35 +66,25 @@ const Copy = styled.div`
   }
 `;
 
-const GalleryWrap = styled.div`
-  position: relative;
-  width: 100%;
-  align-self: start;
-
-  @media (max-width: 64em) {
-    margin-top: 0;
-  }
-`;
-
 const PortraitButton = styled.button`
   width: 100%;
-  border-radius: 16px;
   overflow: hidden;
+  border-radius: 1.6rem 0.4rem 1.8rem 0.7rem;
+  border: 1px solid var(--line);
   cursor: zoom-in;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  background: rgba(255, 255, 255, 0.03);
   padding: 0;
+  background: #111;
 
   img {
     width: 100%;
     height: clamp(340px, 58vh, 620px);
     object-fit: cover;
-    display: block;
+    filter: contrast(1.05) saturate(0.92);
   }
 
   &:focus-visible {
-    outline: 2px solid rgba(255, 255, 255, 0.8);
-    outline-offset: 2px;
+    outline: 2px solid var(--acid);
+    outline-offset: 3px;
   }
 `;
 
@@ -100,11 +95,31 @@ const aboutPhoto = {
 
 const About = () => {
   const [activeImage, setActiveImage] = useState(null);
+  const sectionRef = useRef(null);
+
+  useEffect(() => {
+    const root = sectionRef.current;
+    if (!root) return undefined;
+    const ctx = gsap.context(() => {
+      gsap.from(root.children, {
+        y: 28,
+        opacity: 0,
+        duration: 0.8,
+        stagger: 0.08,
+        ease: 'power3.out',
+        scrollTrigger: { trigger: root, start: 'top 80%' },
+      });
+    }, root);
+    return () => ctx.revert();
+  }, []);
 
   return (
-    <Section id="about" className="about">
+    <Section id="about" className="about" ref={sectionRef}>
       <Header>
         <Title>about me</Title>
+        <Mark>
+          <Scribble />
+        </Mark>
         <Intro>
           Build visual stories through film and photography, with mood, tension, and cinematic
           composition leading the frame.
@@ -128,23 +143,21 @@ const About = () => {
         </p>
       </Copy>
 
-      <GalleryWrap>
-        <PortraitButton
-          type="button"
-          aria-label={`Open ${aboutPhoto.alt}`}
-          onClick={() => setActiveImage({ src: aboutPhoto.src, alt: aboutPhoto.alt })}
-        >
-          <img
-            src={aboutPhoto.src}
-            alt={aboutPhoto.alt}
-            loading="lazy"
-            decoding="async"
-            width="1200"
-            height="900"
-            sizes="(max-width: 64em) 92vw, 45vw"
-          />
-        </PortraitButton>
-      </GalleryWrap>
+      <PortraitButton
+        type="button"
+        aria-label={`Open ${aboutPhoto.alt}`}
+        onClick={() => setActiveImage({ src: aboutPhoto.src, alt: aboutPhoto.alt })}
+      >
+        <img
+          src={aboutPhoto.src}
+          alt={aboutPhoto.alt}
+          loading="lazy"
+          decoding="async"
+          width="1200"
+          height="900"
+          sizes="(max-width: 64em) 92vw, 45vw"
+        />
+      </PortraitButton>
 
       <AnimatePresence>
         {activeImage && <ImageLightbox image={activeImage} onClose={() => setActiveImage(null)} />}

@@ -6,11 +6,11 @@ import styled, { keyframes } from 'styled-components';
 const pulse = keyframes`
   0%,
   100% {
-    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35), 0 0 0 0 rgba(240, 216, 173, 0.34);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35), 0 0 0 0 rgba(198, 240, 77, 0.34);
   }
 
   50% {
-    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.45), 0 0 0 8px rgba(240, 216, 173, 0);
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.45), 0 0 0 8px rgba(198, 240, 77, 0);
   }
 `;
 
@@ -42,7 +42,7 @@ const ToggleButton = styled.button`
   font-weight: 700;
   cursor: pointer;
   animation: ${pulse} 2.4s ease-in-out infinite;
-  box-shadow: 0 0 0 1px rgba(240, 216, 173, 0.24);
+  box-shadow: 0 0 0 1px rgba(198, 240, 77, 0.24);
   transition: transform 0.18s ease, border-color 0.18s ease;
 
   &:hover,

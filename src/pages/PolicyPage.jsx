@@ -23,6 +23,11 @@ const policyCopy = {
           'This site may use Microsoft Clarity and Google advertising services to understand how pages are used and to support the site with ads. These services may use cookies or similar technologies to measure visits, prevent fraud, and personalise or limit advertising where applicable.',
       },
       {
+        heading: 'Location availability checks',
+        body:
+          'To check whether the site is available in a visitor’s region, the browser may request approximate location information from ipwho.is, ipapi.co, or ipinfo.io. Those providers receive the visitor’s IP address as part of the request. The resulting allow or block decision may be stored temporarily in the visitor’s browser.',
+      },
+      {
         heading: 'Cookies',
         body:
           'Cookies are small files stored by your browser. You can block or delete cookies in your browser settings. Some embedded media, analytics, or advertising features may work differently if cookies are disabled.',
@@ -78,24 +83,20 @@ const policyCopy = {
 const PageMain = styled.main`
   min-height: 100vh;
   padding: calc(5.8rem + var(--gutter)) var(--gutter) var(--section-gap);
-  background:
-    radial-gradient(circle at 15% 8%, rgba(240, 216, 173, 0.1), transparent 26%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.025), transparent 32%);
 `;
 
 const Article = styled.article`
   width: min(860px, 100%);
   margin: 0 auto;
   padding: clamp(1.35rem, 4vw, 2.6rem);
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(9, 10, 14, 0.82);
-  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.34);
+  border-radius: 1.5rem;
+  border: 1px solid var(--line);
+  background: rgba(18, 16, 23, 0.86);
 `;
 
 const Kicker = styled.p`
   margin: 0;
-  color: rgba(240, 216, 173, 0.9);
+  color: var(--acid);
   text-transform: uppercase;
   letter-spacing: 0.18em;
   font-size: 0.76rem;
@@ -103,8 +104,10 @@ const Kicker = styled.p`
 
 const Title = styled.h1`
   margin: 0.7rem 0 0;
+  font-family: var(--font-display);
   font-size: clamp(2rem, 5vw, 4rem);
-  color: rgba(255, 255, 255, 0.98);
+  letter-spacing: -0.05em;
+  color: var(--paper);
 `;
 
 const Intro = styled.p`

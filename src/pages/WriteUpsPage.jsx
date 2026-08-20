@@ -51,9 +51,8 @@ const PageMain = styled.main`
     position: absolute;
     inset: 0;
     background:
-      radial-gradient(circle at 18% 10%, rgba(240, 216, 173, 0.12), transparent 26%),
-      radial-gradient(circle at 82% 18%, rgba(136, 150, 196, 0.12), transparent 24%),
-      linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 24%);
+      radial-gradient(circle at 18% 10%, rgba(255, 61, 31, 0.16), transparent 26%),
+      radial-gradient(circle at 82% 18%, rgba(198, 240, 77, 0.1), transparent 24%);
     pointer-events: none;
   }
 `;
@@ -88,15 +87,16 @@ const Kicker = styled.p`
   font-size: 0.76rem;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: rgba(240, 216, 173, 0.9);
+  color: var(--acid);
 `;
 
 const Headline = styled.h1`
   margin: 0.7rem 0 0;
-  font-family: 'Kaushan Script', cursive;
+  font-family: var(--font-display);
   font-size: clamp(3rem, 7vw, 6rem);
-  line-height: 0.96;
-  color: rgba(252, 252, 252, 0.98);
+  line-height: 0.9;
+  letter-spacing: -0.06em;
+  color: var(--paper);
 `;
 
 const Dek = styled.p`
@@ -154,7 +154,7 @@ const ArticleLabel = styled.p`
   font-size: 0.74rem;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: rgba(240, 216, 173, 0.88);
+  color: var(--signal);
 `;
 
 const ArticleTitle = styled.h2`

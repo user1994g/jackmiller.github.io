@@ -1,24 +1,22 @@
-import '@fontsource/sirin-stencil';
-import '@fontsource/kaushan-script';
-
 import { createGlobalStyle } from 'styled-components';
 
 const GlobalStyles = createGlobalStyle`
   :root {
-    --content-max: 1240px;
-    --gutter: clamp(1rem, 2vw, 2rem);
-    --section-gap: clamp(4rem, 8vw, 8rem);
-    --bg-dark: #101113;
-    --bg-soft: #1b1c20;
-    --text-main: #f4f4f4;
-    --text-muted: #bfc3ca;
-    --accent: #f0d8ad;
-  }
-
-  html.has-scroll-smooth {
-    overflow: hidden;
-    position: fixed;
-    inset: 0;
+    --ink: #08070a;
+    --ink-2: #121017;
+    --paper: #f3ebdd;
+    --paper-soft: #e7dcc8;
+    --signal: #ff3d1f;
+    --acid: #c6f04d;
+    --fog: #b8b0a6;
+    --line: rgba(243, 235, 221, 0.16);
+    --content-max: 1180px;
+    --gutter: clamp(1rem, 4.2vw, 2.25rem);
+    --section-gap: clamp(4.5rem, 12vw, 8.5rem);
+    --radius: 1.35rem;
+    --font-display: 'Syne', 'Trebuchet MS', sans-serif;
+    --font-body: 'Instrument Sans', 'Segoe UI', sans-serif;
+    --font-serif: 'Fraunces', Georgia, serif;
   }
 
   *,
@@ -29,6 +27,10 @@ const GlobalStyles = createGlobalStyle`
     padding: 0;
   }
 
+  html {
+    scroll-behavior: smooth;
+  }
+
   html,
   body {
     width: 100%;
@@ -36,16 +38,18 @@ const GlobalStyles = createGlobalStyle`
   }
 
   body {
-    font-family: 'Sirin Stencil', 'Trebuchet MS', sans-serif;
+    font-family: var(--font-body);
     overflow-x: hidden;
-    line-height: 1.5;
-    color: var(--text-main);
-    background:
-      radial-gradient(1400px circle at 18% -5%, #2a2b31 0%, transparent 42%),
-      radial-gradient(1000px circle at 82% -10%, #181a1f 0%, transparent 45%),
-      linear-gradient(180deg, #0c0d10 0%, #111319 45%, #0d0f14 100%);
+    line-height: 1.55;
+    color: var(--paper);
+    background: var(--ink);
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
+  }
+
+  body.has-custom-cursor,
+  body.has-custom-cursor * {
+    cursor: none !important;
   }
 
   h1,
@@ -55,11 +59,14 @@ const GlobalStyles = createGlobalStyle`
   h5,
   h6 {
     margin: 0;
-    line-height: 1.1;
+    font-family: var(--font-display);
+    line-height: 0.92;
+    letter-spacing: -0.045em;
+    text-wrap: balance;
   }
 
   p {
-    color: var(--text-muted);
+    color: rgba(243, 235, 221, 0.72);
   }
 
   a {
@@ -80,22 +87,26 @@ const GlobalStyles = createGlobalStyle`
     color: inherit;
   }
 
+  button {
+    background: none;
+    border: 0;
+  }
+
   .App {
     overflow: hidden;
   }
-
 
   .skip-link {
     position: fixed;
     left: 0.75rem;
     top: -3rem;
     z-index: 9999;
-    padding: 0.55rem 0.75rem;
-    border-radius: 0.45rem;
-    background: rgba(5, 8, 13, 0.94);
-    color: #f5f7fb;
-    border: 1px solid rgba(255, 255, 255, 0.28);
-    font-size: 0.8rem;
+    padding: 0.55rem 0.8rem;
+    border-radius: 999px;
+    background: var(--acid);
+    color: var(--ink);
+    font-size: 0.78rem;
+    font-weight: 700;
     letter-spacing: 0.04em;
     transition: top 0.2s ease;
   }
@@ -103,6 +114,21 @@ const GlobalStyles = createGlobalStyle`
   .skip-link:focus {
     top: 0.75rem;
     outline: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-timeline: none !important;
+    }
   }
 `;
 

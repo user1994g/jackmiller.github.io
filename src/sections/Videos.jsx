@@ -31,7 +31,7 @@ const Section = styled.section`
   width: 100%;
   overflow: hidden;
   background: #050507;
-  padding: clamp(4.6rem, 7vw, 6.4rem) 0 clamp(2.6rem, 6vw, 4.4rem);
+  padding: clamp(5.4rem, 8vw, 7.2rem) 0 clamp(2.6rem, 6vw, 4.4rem);
 `;
 
 const Wrap = styled.div`
@@ -86,10 +86,11 @@ const Kicker = styled.span`
 
 const Title = styled.h1`
   margin: 0;
-  color: rgba(249, 250, 252, 0.98);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  line-height: 0.95;
+  color: var(--paper);
+  font-family: var(--font-display);
+  text-transform: none;
+  letter-spacing: -0.05em;
+  line-height: 0.92;
   font-size: clamp(1.7rem, 5vw, 4.4rem);
 `;
 
@@ -126,10 +127,10 @@ const Actions = styled.div`
 
 const Primary = styled.button`
   border: none;
-  border-radius: 0.55rem;
+  border-radius: 999px;
   padding: 0.64rem 1rem;
-  background: rgba(245, 245, 246, 0.96);
-  color: #090a0d;
+  background: var(--acid);
+  color: var(--ink);
   font-size: 0.82rem;
   font-weight: 700;
   letter-spacing: 0.04em;
@@ -342,7 +343,7 @@ const SheetInfo = styled.div`
 `;
 
 const SheetEyebrow = styled.span`
-  color: rgba(240, 216, 173, 0.88);
+  color: var(--acid);
   text-transform: uppercase;
   letter-spacing: 0.16em;
   font-size: 0.62rem;
@@ -350,9 +351,10 @@ const SheetEyebrow = styled.span`
 
 const SheetTitle = styled.h2`
   margin: 0;
-  color: rgba(249, 250, 252, 0.98);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+  color: var(--paper);
+  font-family: var(--font-display);
+  text-transform: none;
+  letter-spacing: -0.04em;
   line-height: 0.96;
   font-size: clamp(1.3rem, 2.4vw, 2rem);
 `;
@@ -384,10 +386,10 @@ const SheetActions = styled.div`
 
 const SheetPlayButton = styled.button`
   border: none;
-  border-radius: 0.6rem;
+  border-radius: 999px;
   padding: 0.68rem 1rem;
-  background: rgba(245, 245, 246, 0.96);
-  color: #090a0d;
+  background: var(--acid);
+  color: var(--ink);
   font-size: 0.82rem;
   font-weight: 700;
   letter-spacing: 0.04em;

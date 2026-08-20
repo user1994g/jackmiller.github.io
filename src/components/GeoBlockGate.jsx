@@ -7,6 +7,11 @@ const BLOCKED_TIMEZONES = new Set(['asia/dubai']);
 const GEO_BLOCK_CACHE_KEY = 'geo-block-cache-v3';
 const BLOCKED_CACHE_TTL_MS = 1000 * 60 * 60 * 24;
 const ALLOWED_CACHE_TTL_MS = 1000 * 60 * 10;
+const GEO_FETCH_OPTIONS = {
+  cache: 'no-store',
+  credentials: 'omit',
+  referrerPolicy: 'no-referrer',
+};
 
 const BlockedMain = styled.main`
   min-height: 100dvh;
@@ -105,8 +110,8 @@ const fetchGeoPayload = async (signal) => {
   const providers = [
     async () => {
       const data = await fetch('https://ipwho.is/?fields=success,country_code,city,timezone', {
+        ...GEO_FETCH_OPTIONS,
         signal,
-        cache: 'no-store',
       }).then((response) => (response.ok ? response.json() : null));
 
       if (!data || data.success === false) {
@@ -122,8 +127,8 @@ const fetchGeoPayload = async (signal) => {
     },
     async () => {
       const data = await fetch('https://ipapi.co/json/', {
+        ...GEO_FETCH_OPTIONS,
         signal,
-        cache: 'no-store',
       }).then((response) => (response.ok ? response.json() : null));
 
       if (!data) {
@@ -139,8 +144,8 @@ const fetchGeoPayload = async (signal) => {
     },
     async () => {
       const data = await fetch('https://ipinfo.io/json', {
+        ...GEO_FETCH_OPTIONS,
         signal,
-        cache: 'no-store',
       }).then((response) => (response.ok ? response.json() : null));
 
       if (!data) {

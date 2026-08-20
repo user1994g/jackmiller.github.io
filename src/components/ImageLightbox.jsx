@@ -1,6 +1,5 @@
 import { motion } from 'framer-motion';
 import React, { useEffect } from 'react';
-import { useLocomotiveScroll } from 'react-locomotive-scroll';
 import { createPortal } from 'react-dom';
 import styled from 'styled-components';
 
@@ -73,8 +72,7 @@ const isHomeHashRoute = () => {
 };
 
 const ImageLightbox = ({ image, onClose }) => {
-  const locoContext = useLocomotiveScroll();
-  const scroll = locoContext?.scroll;
+  const scroll = null;
 
   useEffect(() => {
     const savedScrollY = window.scrollY;

@@ -193,23 +193,119 @@
 
     <script type="text/javascript">
       (function () {
+        var recoveryPromise = null;
+
         function rootHasContent() {
           var root = document.getElementById('root');
           return !!(root && root.children && root.children.length > 0);
         }
 
-        function getMainScriptSrc() {
-          var scripts = document.getElementsByTagName('script');
-          for (var i = 0; i < scripts.length; i += 1) {
-            var src = scripts[i].getAttribute('src');
-            if (src && src.indexOf('/static/js/main.') !== -1) {
-              return src;
+        function findBuildAsset(doc, selector, attribute, fragment) {
+          var nodes = doc.querySelectorAll(selector);
+          for (var i = 0; i < nodes.length; i += 1) {
+            var value = nodes[i].getAttribute(attribute);
+            if (value && value.indexOf(fragment) !== -1) {
+              return value;
             }
           }
           return null;
         }
 
-        function showRecoveryHint(mainSrc) {
+        function isSafeBuildAsset(asset, directory, extension) {
+          if (!asset) {
+            return false;
+          }
+
+          var url = new URL(asset, window.location.origin);
+          var pattern = new RegExp('^/static/' + directory + '/main\\.[A-Za-z0-9]+\\.' + extension + '$');
+          return url.origin === window.location.origin && pattern.test(url.pathname);
+        }
+
+        function appendStylesheet(href) {
+          if (!isSafeBuildAsset(href, 'css', 'css')) {
+            return;
+          }
+
+          var links = document.querySelectorAll('link[rel="stylesheet"]');
+          var targetUrl = new URL(href, window.location.origin).href;
+          for (var i = 0; i < links.length; i += 1) {
+            if (new URL(links[i].href, window.location.origin).href === targetUrl) {
+              return;
+            }
+          }
+
+          var link = document.createElement('link');
+          link.rel = 'stylesheet';
+          link.href = href;
+          document.head.appendChild(link);
+        }
+
+        function loadScript(src) {
+          return new Promise(function (resolve) {
+            if (!isSafeBuildAsset(src, 'js', 'js')) {
+              resolve(false);
+              return;
+            }
+
+            var script = document.createElement('script');
+            script.async = false;
+            script.src = src;
+            script.onload = function () {
+              resolve(true);
+            };
+            script.onerror = function () {
+              resolve(false);
+            };
+            document.head.appendChild(script);
+          });
+        }
+
+        function recoverCurrentBuild() {
+          if (recoveryPromise) {
+            return recoveryPromise;
+          }
+
+          var probePath = '/__boot-recovery/' + String(Date.now()) + '-' + Math.random().toString(36).slice(2) + '.html';
+          recoveryPromise = fetch(probePath, {
+            cache: 'no-store',
+            headers: { Accept: 'text/html' }
+          })
+            .then(function (response) {
+              return response.text();
+            })
+            .then(function (html) {
+              var recoveryDoc = new DOMParser().parseFromString(html, 'text/html');
+              var currentScript = findBuildAsset(recoveryDoc, 'script[src]', 'src', '/static/js/main.');
+              var currentStylesheet = findBuildAsset(recoveryDoc, 'link[href]', 'href', '/static/css/main.');
+
+              if (!isSafeBuildAsset(currentScript, 'js', 'js')) {
+                return false;
+              }
+
+              appendStylesheet(currentStylesheet);
+              return loadScript(currentScript);
+            })
+            .catch(function () {
+              return false;
+            });
+
+          return recoveryPromise;
+        }
+
+        function finishRecovery(started) {
+          if (!started) {
+            showRecoveryHint();
+            return;
+          }
+
+          window.setTimeout(function () {
+            if (!window.__jackAppBooted && !rootHasContent()) {
+              showRecoveryHint();
+            }
+          }, 2800);
+        }
+
+        function showRecoveryHint() {
           if (document.getElementById('jack-boot-hint')) {
             return;
           }
@@ -245,12 +341,17 @@
           btn.style.color = '#fff';
           btn.style.cursor = 'pointer';
           btn.onclick = function () {
-            if (mainSrc) {
-              var separator = window.location.href.indexOf('?') === -1 ? '?' : '&';
-              window.location.replace(window.location.href + separator + 'v=' + String(Date.now()));
-              return;
-            }
-            window.location.reload();
+            btn.disabled = true;
+            btn.textContent = 'Retrying…';
+            recoveryPromise = null;
+            recoverCurrentBuild().then(function (started) {
+              if (!started) {
+                btn.disabled = false;
+                btn.textContent = 'Try again';
+                return;
+              }
+              finishRecovery(true);
+            });
           };
 
           hint.appendChild(msg);
@@ -266,28 +367,24 @@
           }
         };
 
+        window.addEventListener('error', function (event) {
+          var target = event && event.target;
+          var failedSrc = target && target.tagName === 'SCRIPT' ? target.getAttribute('src') : null;
+
+          if (!failedSrc || failedSrc.indexOf('/static/js/main.') === -1 || rootHasContent()) {
+            return;
+          }
+
+          recoverCurrentBuild().then(finishRecovery);
+        }, true);
+
         window.addEventListener('load', function () {
           window.setTimeout(function () {
             if (window.__jackAppBooted || rootHasContent()) {
               return;
             }
 
-            var mainSrc = getMainScriptSrc();
-            if (!mainSrc) {
-              showRecoveryHint(null);
-              return;
-            }
-
-            var retryScript = document.createElement('script');
-            retryScript.defer = true;
-            retryScript.src = mainSrc + (mainSrc.indexOf('?') === -1 ? '?v=' : '&v=') + String(Date.now());
-            document.head.appendChild(retryScript);
-
-            window.setTimeout(function () {
-              if (!window.__jackAppBooted && !rootHasContent()) {
-                showRecoveryHint(mainSrc);
-              }
-            }, 2800);
+            recoverCurrentBuild().then(finishRecovery);
           }, 8000);
         });
       })();

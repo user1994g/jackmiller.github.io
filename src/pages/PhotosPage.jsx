@@ -85,7 +85,7 @@ const PhotosPage = () => {
                 <article
                   className="photo-print"
                   key={photo.title}
-                  style={{ '--tilt': photo.tilt, '--photo-ratio': photo.ratio }}
+                  style={{ '--tilt': photo.tilt }}
                 >
                   <button
                     type="button"

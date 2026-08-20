@@ -17,12 +17,6 @@ const Footer = () => (
         <Link to="/photos">Photos</Link>
         <Link to="/about">About</Link>
         <Link to="/write-ups">Write Ups</Link>
-        <a href="https://www.instagram.com/jackmillermedia/" target="_blank" rel="noreferrer">
-          Instagram ↗
-        </a>
-        <a href="https://www.youtube.com/@jackmillermedia" target="_blank" rel="noreferrer">
-          YouTube ↗
-        </a>
       </nav>
     </div>
 

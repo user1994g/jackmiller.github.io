@@ -264,7 +264,9 @@
 }
 
 .cut-hero__photo--main {
-  inset: 2% 0 12% 8%;
+  inset: 2% auto 12% 8%;
+  width: auto;
+  aspect-ratio: 9 / 16;
   clip-path: polygon(0 0, 90% 0, 100% 10%, 100% 100%, 10% 100%, 0 90%);
   transform: rotate(2.4deg);
 }
@@ -278,7 +280,7 @@
   right: -2%;
   bottom: 0;
   width: 42%;
-  aspect-ratio: 4 / 5;
+  aspect-ratio: 16 / 9;
   box-shadow: 0 0 0 2px var(--ink), 8px 8px 0 var(--violet);
   transform: rotate(-6deg);
 }
@@ -503,10 +505,12 @@
 }
 
 .about-scene__portrait img {
+  display: block;
   width: 100%;
-  aspect-ratio: 4 / 5;
-  object-fit: cover;
-  object-position: 50% 52%;
+  height: auto;
+  aspect-ratio: 1600 / 1064;
+  object-fit: contain;
+  background: var(--ink);
   filter: contrast(1.04) saturate(0.92);
 }
 
@@ -593,35 +597,20 @@
 
 .contact-sheet__grid {
   display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  grid-auto-flow: dense;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: clamp(0.7rem, 1.5vw, 1.2rem);
+  align-items: start;
 }
 
 .photo-print {
   position: relative;
-  grid-column: span 3;
+  min-width: 0;
   overflow: hidden;
   padding: 0.5rem 0.5rem 2.1rem;
   color: var(--ink);
   background: var(--paper-bright);
   box-shadow: 5px 5px 0 rgba(11, 10, 15, 0.14);
   transform: rotate(var(--tilt, 0deg));
-}
-
-.photo-print:nth-child(1),
-.photo-print:nth-child(6) {
-  grid-column: span 6;
-}
-
-.photo-print:nth-child(3),
-.photo-print:nth-child(8) {
-  grid-column: span 4;
-}
-
-.photo-print:nth-child(4),
-.photo-print:nth-child(9) {
-  grid-column: span 2;
 }
 
 .photo-print button {
@@ -634,16 +623,18 @@
 }
 
 .photo-print img {
+  display: block;
   width: 100%;
-  aspect-ratio: var(--photo-ratio, 4 / 5);
-  object-fit: cover;
-  transition: transform 0.55s cubic-bezier(0.2, 0.75, 0.25, 1), filter 0.3s ease;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: contain;
+  background: var(--ink);
+  transition: filter 0.3s ease;
 }
 
 .photo-print:hover img,
 .photo-print:focus-within img {
   filter: saturate(1.12) contrast(1.03);
-  transform: scale(1.025);
 }
 
 .photo-print figcaption {
@@ -827,15 +818,8 @@
 }
 
 @media (max-width: 70rem) {
-  .photo-print,
-  .photo-print:nth-child(3),
-  .photo-print:nth-child(8) {
-    grid-column: span 4;
-  }
-
-  .photo-print:nth-child(1),
-  .photo-print:nth-child(6) {
-    grid-column: span 8;
+  .contact-sheet__grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
@@ -872,7 +856,7 @@
   }
 
   .cut-hero__photo--main {
-    inset: 0 6% 8% 2%;
+    inset: 0 auto 8% 2%;
   }
 
   .cut-hero__scroll {
@@ -904,6 +888,10 @@
   .about-scene__portrait {
     width: min(32rem, 88%);
     margin-inline: auto;
+  }
+
+  .contact-sheet__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -953,22 +941,7 @@
   }
 
   .contact-sheet__grid {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .photo-print,
-  .photo-print:nth-child(1),
-  .photo-print:nth-child(3),
-  .photo-print:nth-child(4),
-  .photo-print:nth-child(6),
-  .photo-print:nth-child(8),
-  .photo-print:nth-child(9) {
-    grid-column: span 1;
-  }
-
-  .photo-print:nth-child(1),
-  .photo-print:nth-child(6) {
-    grid-column: span 2;
+    grid-template-columns: 1fr;
   }
 
   .site-footer__main {
@@ -1602,9 +1575,12 @@
 .archive-print:nth-child(3) { bottom: 0; left: 18%; transform: rotate(-1deg); }
 
 .archive-print img {
+  display: block;
   width: 100%;
-  aspect-ratio: 4 / 5;
-  object-fit: cover;
+  height: auto;
+  aspect-ratio: 2 / 3;
+  object-fit: contain;
+  background: #312725;
   filter: grayscale(1) sepia(0.15) contrast(1.05);
   transition: filter 0.6s ease;
 }
@@ -1751,9 +1727,12 @@
 }
 
 .profile-grid__image img {
+  display: block;
   width: 100%;
-  aspect-ratio: 4 / 5;
-  object-fit: cover;
+  height: auto;
+  aspect-ratio: 1600 / 1064;
+  object-fit: contain;
+  background: var(--ink);
 }
 
 .profile-grid__copy {

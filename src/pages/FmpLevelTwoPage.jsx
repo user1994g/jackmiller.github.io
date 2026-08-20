@@ -22,16 +22,22 @@ const memories = [
     src: portraitImage,
     alt: 'A portrait in soft, reflective light',
     caption: 'Remembering',
+    width: 1920,
+    height: 2880,
   },
   {
     src: memoryImage,
     alt: 'A close detail suggesting a treasured memory',
     caption: 'Memory',
+    width: 1280,
+    height: 1920,
   },
   {
     src: objectImage,
     alt: 'A personal object held in a quiet moment',
     caption: 'What remains',
+    width: 1920,
+    height: 2880,
   },
 ];
 
@@ -146,8 +152,8 @@ const FmpLevelTwoPage = () => {
                     alt={memory.alt}
                     loading="lazy"
                     decoding="async"
-                    width="800"
-                    height="1000"
+                    width={memory.width}
+                    height={memory.height}
                   />
                   <figcaption>
                     <span>{memory.caption}</span>

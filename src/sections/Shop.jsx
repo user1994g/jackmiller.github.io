@@ -29,7 +29,7 @@ const Shop = ({ fullPage = false }) => {
             <article
               className="photo-print"
               key={photo.title}
-              style={{ '--tilt': photo.tilt, '--photo-ratio': photo.ratio }}
+              style={{ '--tilt': photo.tilt }}
             >
               <button type="button" aria-label={`Open ${photo.title}`} onClick={() => setActiveImage({ src: photo.src, alt: photo.alt })}>
                 <figure>

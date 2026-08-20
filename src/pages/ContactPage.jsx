@@ -5,9 +5,7 @@ import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import usePageSeo from '../hooks/usePageSeo';
 
-const socialLinks = [
-  { label: 'Instagram', detail: '@jackmillermedia', href: 'https://www.instagram.com/jackmillermedia/' },
-  { label: 'YouTube', detail: 'Jack Miller Media', href: 'https://www.youtube.com/@jackmillermedia' },
+const profileLinks = [
   { label: 'GitHub', detail: 'user1994g', href: 'https://github.com/user1994g' },
 ];
 
@@ -52,7 +50,7 @@ const ContactPage = () => {
             <p className="page-hero__intro" data-contact-reveal>
               Jack Miller Media is available for selected creative collaborations in film,
               photography, videography, and visual storytelling. For the latest work and updates,
-              use the main portfolio or reach out through the active social channels below.
+              use the main portfolio or visit the public profile below.
             </p>
           </div>
         </header>
@@ -63,16 +61,16 @@ const ContactPage = () => {
               <span className="studio-kicker">Open channel</span>
               <h2 id="contact-card-title">Make something worth replaying.</h2>
               <p>
-                Share the project, the mood, and what you want the audience to feel. The active social
-                channels are the best place to start a conversation.
+                Share the project, the mood, and what you want the audience to feel. The main
+                portfolio and public profile are the best places to begin.
               </p>
               <Link className="studio-link-button studio-button--paper contact-home-link" to="/">
                 Main portfolio <span aria-hidden="true">↗</span>
               </Link>
             </div>
 
-            <div className="contact-links" aria-label="Social channels">
-              {socialLinks.map((link) => (
+            <div className="contact-links" aria-label="Public profile">
+              {profileLinks.map((link) => (
                 <a
                   className="contact-link"
                   key={link.label}

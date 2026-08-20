@@ -1,33 +1,51 @@
-import { motion } from 'framer-motion';
-import styled from 'styled-components';
+import React, { useRef } from 'react';
 
-import usePageSeo from '../hooks/usePageSeo';
+import { ReelGlyph } from '../art/Marks';
 import Navbar from '../components/Navbar';
+import usePageSeo from '../hooks/usePageSeo';
+import useStudioMotion from '../hooks/useStudioMotion';
 import Videos from '../sections/Videos';
 
-const PageMain = styled.main`
-  min-height: 100vh;
-`;
-
 const VideosPage = () => {
+  const pageRef = useRef(null);
+
   usePageSeo({
-    title: 'Videography and Film Portfolio | Jack Miller Media',
+    title: 'The Cut Room | Films by Jack Miller Media',
     description:
-      'Watch film, videography, and creative video portfolio work from Jack Miller Media, including cinematic projects and selected media pieces.',
+      'Explore The Cut Room, Jack Miller Media’s film-festival programme of narrative shorts, documentary fragments, and experimental visual work.',
     url: 'https://jackmillermedia.com/videos/',
   });
+  useStudioMotion(pageRef, { hero: true });
 
   return (
     <>
       <Navbar />
-      <PageMain id="main-content" className="App" role="main">
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.38 }}
-        >
-          <Videos />
-        </motion.div>      </PageMain>
+      <main
+        id="main-content"
+        className="studio-page studio-page--ink"
+        ref={pageRef}
+        role="main"
+      >
+        <header className="page-hero">
+          <div className="studio-wrap page-hero__grid">
+            <div>
+              <span className="tape-label" data-hero>
+                Film programme · 12 selections
+              </span>
+              <h1 data-hero>The Cut Room</h1>
+            </div>
+            <p className="page-hero__intro" data-hero>
+              Narrative shorts, documentary fragments, and visual experiments — programmed like a
+              tiny film festival and presented one cut at a time.
+            </p>
+          </div>
+          <div className="page-hero__mark" aria-hidden="true">
+            <ReelGlyph />
+          </div>
+        </header>
+
+        <Videos />
+      </main>
     </>
   );
 };

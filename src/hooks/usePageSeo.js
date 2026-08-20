@@ -29,6 +29,10 @@ const usePageSeo = ({
   description,
   url,
   robots = 'index, follow, max-image-preview:large',
+  image = 'https://jackmillermedia.com/logo512.png',
+  imageAlt = 'Jack Miller Media logo',
+  type = 'website',
+  jsonLd,
 }) => {
   useEffect(() => {
     if (typeof document === 'undefined') return;
@@ -58,9 +62,30 @@ const usePageSeo = ({
       canonical.setAttribute('href', url);
     }
 
+    upsertMetaByProperty('og:type', type);
+    upsertMetaByProperty('og:image', image);
+    upsertMetaByProperty('og:image:alt', imageAlt);
+    upsertMetaByName('twitter:image', image);
+    upsertMetaByName('twitter:image:alt', imageAlt);
+
     upsertMetaByName('robots', robots);
     upsertMetaByName('googlebot', robots);
-  }, [description, robots, title, url]);
+
+    const schemaId = 'route-structured-data';
+    const previousSchema = document.getElementById(schemaId);
+    if (previousSchema) previousSchema.remove();
+    if (jsonLd) {
+      const schema = document.createElement('script');
+      schema.id = schemaId;
+      schema.type = 'application/ld+json';
+      schema.text = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
+      document.head.appendChild(schema);
+    }
+
+    return () => {
+      document.getElementById(schemaId)?.remove();
+    };
+  }, [description, image, imageAlt, jsonLd, robots, title, type, url]);
 };
 
 export default usePageSeo;

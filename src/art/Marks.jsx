@@ -98,3 +98,57 @@ export const DividerWave = ({ className }) => (
     />
   </svg>
 );
+
+export const CutArrow = ({ className }) => (
+  <svg className={className} viewBox="0 0 180 150" fill="none" aria-hidden="true">
+    <path
+      d="M13 118c28-3 56-14 77-33 17-15 28-34 38-55"
+      stroke="currentColor"
+      strokeWidth="6"
+      strokeLinecap="round"
+    />
+    <path
+      d="m98 35 34-13 4 36"
+      stroke="currentColor"
+      strokeWidth="6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path d="M18 128c20 5 39 3 58-3" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+  </svg>
+);
+
+export const ClapperMark = ({ className }) => (
+  <svg className={className} viewBox="0 0 180 150" fill="none" aria-hidden="true">
+    <path d="M24 54h132v78H24z" stroke="currentColor" strokeWidth="5" />
+    <path d="m18 25 130-9 8 34-130 9z" stroke="currentColor" strokeWidth="5" />
+    <path d="m37 24 24 31m23-35 24 31m21-34 24 31" stroke="currentColor" strokeWidth="5" />
+    <path d="M42 76h96M42 94h63" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
+  </svg>
+);
+
+export const WireCube = ({ className }) => (
+  <svg className={className} viewBox="0 0 320 300" fill="none" aria-hidden="true">
+    <path d="m157 25 112 62-3 126-112 63-111-64 3-125 111-62Z" stroke="currentColor" strokeWidth="4" />
+    <path d="m46 87 109 64 114-64M155 151l-1 125M157 25l-2 126" stroke="currentColor" strokeWidth="4" />
+    <path d="m43 212 50-29 25 14 36-21 39 22 73-42" stroke="currentColor" strokeWidth="3" strokeDasharray="8 9" />
+    <circle cx="155" cy="151" r="8" fill="currentColor" />
+    <circle cx="43" cy="212" r="6" fill="currentColor" />
+    <circle cx="269" cy="87" r="6" fill="currentColor" />
+  </svg>
+);
+
+export const MemoryFlower = ({ className }) => (
+  <svg className={className} viewBox="0 0 180 260" fill="none" aria-hidden="true">
+    <path d="M91 241c-7-51 3-98 2-151" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+    <path d="M91 167c-24-1-40-14-48-35 25-1 42 10 50 29M92 190c23-5 40-20 46-43-24 2-40 15-45 37" stroke="currentColor" strokeWidth="3" strokeLinejoin="round" />
+    <path d="M91 91c-16-13-19-29-8-42 10 4 15 12 16 22 4-16 14-25 28-25 6 16-1 31-21 45 18-5 32 0 39 14-9 15-25 18-48 8-15 15-32 17-47 6 4-17 17-26 41-28Z" stroke="currentColor" strokeWidth="3" strokeLinejoin="round" />
+    <circle cx="96" cy="94" r="9" fill="currentColor" />
+  </svg>
+);
+
+export const BurstMark = ({ className }) => (
+  <svg className={className} viewBox="0 0 160 160" fill="none" aria-hidden="true">
+    <path d="m80 5 9 47 29-38-16 45 44-21-36 33 49-4-47 18 45 15-49-1 38 31-46-19 20 44-31-37-6 47-7-47-30 37 19-44-45 19 37-31-48 1 44-15L1 67l49 4-36-33 44 21-16-45 29 38 9-47Z" fill="currentColor" />
+  </svg>
+);

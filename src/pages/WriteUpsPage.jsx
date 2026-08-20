@@ -1,9 +1,12 @@
-import { motion } from 'framer-motion';
-import React from 'react';
-import styled from 'styled-components';
+import gsap from 'gsap';
+import ScrollTrigger from 'gsap/ScrollTrigger';
+import React, { useLayoutEffect, useRef } from 'react';
 
 import Navbar from '../components/Navbar';
+import { Scribble } from '../art/Marks';
 import usePageSeo from '../hooks/usePageSeo';
+
+gsap.registerPlugin(ScrollTrigger);
 
 const articles = [
   {
@@ -40,157 +43,9 @@ const articles = [
   },
 ];
 
-const PageMain = styled.main`
-  position: relative;
-  min-height: 100vh;
-  padding: calc(5.8rem + var(--gutter)) var(--gutter) var(--section-gap);
-  overflow: hidden;
-
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background:
-      radial-gradient(circle at 18% 10%, rgba(255, 61, 31, 0.16), transparent 26%),
-      radial-gradient(circle at 82% 18%, rgba(198, 240, 77, 0.1), transparent 24%);
-    pointer-events: none;
-  }
-`;
-
-const Wrap = styled.div`
-  position: relative;
-  z-index: 1;
-  width: min(var(--content-max), 100%);
-  margin: 0 auto;
-`;
-
-const Hero = styled(motion.section)`
-  display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(18rem, 0.72fr);
-  gap: clamp(1.25rem, 3vw, 2rem);
-  align-items: end;
-  padding: clamp(1.4rem, 4vw, 2.8rem);
-  border-radius: 18px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.015)),
-    rgba(8, 10, 15, 0.8);
-  box-shadow: 0 28px 90px rgba(0, 0, 0, 0.42);
-
-  @media (max-width: 58rem) {
-    grid-template-columns: 1fr;
-  }
-`;
-
-const Kicker = styled.p`
-  margin: 0;
-  font-size: 0.76rem;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--acid);
-`;
-
-const Headline = styled.h1`
-  margin: 0.7rem 0 0;
-  font-family: var(--font-display);
-  font-size: clamp(3rem, 7vw, 6rem);
-  line-height: 0.9;
-  letter-spacing: -0.06em;
-  color: var(--paper);
-`;
-
-const Dek = styled.p`
-  max-width: 66ch;
-  margin-top: 1rem;
-  line-height: 1.78;
-  font-size: clamp(1rem, 1.3vw, 1.08rem);
-  color: rgba(232, 236, 244, 0.82);
-`;
-
-const SummaryPanel = styled.aside`
-  display: grid;
-  gap: 0.8rem;
-  padding: clamp(1.1rem, 3vw, 1.5rem);
-  border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(12, 13, 18, 0.78);
-`;
-
-const SummaryTitle = styled.h2`
-  margin: 0;
-  font-size: clamp(1.2rem, 2vw, 1.55rem);
-  color: rgba(255, 255, 255, 0.95);
-`;
-
-const SummaryText = styled.p`
-  line-height: 1.7;
-  color: rgba(228, 231, 236, 0.76);
-`;
-
-const ArticleGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(1rem, 2vw, 1.35rem);
-  margin-top: clamp(1rem, 2.2vw, 1.6rem);
-
-  @media (max-width: 48rem) {
-    grid-template-columns: 1fr;
-  }
-`;
-
-const Article = styled(motion.article)`
-  display: grid;
-  gap: 0.95rem;
-  padding: clamp(1.25rem, 3vw, 1.8rem);
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background:
-    radial-gradient(circle at top right, rgba(255, 255, 255, 0.06), transparent 34%),
-    rgba(12, 14, 18, 0.76);
-`;
-
-const ArticleLabel = styled.p`
-  margin: 0;
-  font-size: 0.74rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--signal);
-`;
-
-const ArticleTitle = styled.h2`
-  margin: 0;
-  font-size: clamp(1.25rem, 2.2vw, 1.75rem);
-  line-height: 1.18;
-  color: rgba(250, 250, 251, 0.95);
-`;
-
-const ArticleText = styled.p`
-  line-height: 1.76;
-  color: rgba(226, 229, 235, 0.76);
-`;
-
-const Closing = styled(motion.section)`
-  margin-top: clamp(1rem, 2.2vw, 1.6rem);
-  padding: clamp(1.35rem, 3vw, 2rem);
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(9, 10, 14, 0.78);
-`;
-
-const ClosingTitle = styled.h2`
-  margin: 0;
-  font-size: clamp(1.35rem, 2.3vw, 1.95rem);
-  color: rgba(255, 255, 255, 0.95);
-`;
-
-const ClosingText = styled.p`
-  max-width: 76ch;
-  margin-top: 0.9rem;
-  line-height: 1.72;
-  color: rgba(228, 231, 236, 0.76);
-`;
-
 const WriteUpsPage = () => {
+  const pageRef = useRef(null);
+
   usePageSeo({
     title: 'Write Ups | Jack Miller Media Production Notes',
     description:
@@ -198,67 +53,111 @@ const WriteUpsPage = () => {
     url: 'https://jackmillermedia.com/write-ups/',
   });
 
+  useLayoutEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
+
+    const context = gsap.context(() => {
+      gsap.from('[data-page-reveal]', {
+        opacity: 0,
+        y: 30,
+        duration: 0.75,
+        stagger: 0.08,
+        ease: 'power3.out',
+      });
+
+      gsap.utils.toArray('[data-note-reveal]').forEach((article) => {
+        gsap.from(article, {
+          opacity: 0,
+          y: 36,
+          duration: 0.72,
+          ease: 'power3.out',
+          scrollTrigger: { trigger: article, start: 'top 84%', once: true },
+        });
+      });
+    }, pageRef);
+
+    return () => context?.revert?.();
+  }, []);
+
   return (
     <>
       <Navbar />
-      <PageMain id="main-content" className="App" role="main" aria-label="Write ups page">
-        <Wrap>
-          <Hero
-            initial={{ opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, ease: 'easeOut' }}
-          >
-            <div>
-              <Kicker>Jack Miller Media Notes</Kicker>
-              <Headline>Write Ups</Headline>
-              <Dek>
+      <main ref={pageRef} id="main-content" className="studio-page notes-page" role="main">
+        <header className="page-hero">
+          <div className="studio-wrap page-hero__grid">
+            <div data-page-reveal>
+              <span className="tape-label">Jack Miller Media Notes</span>
+              <h1>
+                Write <em>Ups</em>
+              </h1>
+            </div>
+            <div data-page-reveal>
+              <p className="page-hero__intro">
                 Original notes from the work behind this portfolio: how I plan short films, choose
                 images, shape edits, and use 3D experiments to practise visual storytelling. This page
                 is here to add context to the finished pieces, not to repeat captions from the gallery.
-              </Dek>
+              </p>
+              <div className="notes-hero-mark" aria-hidden="true">
+                <Scribble />
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <div className="studio-wrap notes-layout">
+          <aside className="notes-index" aria-label="Write up index" data-page-reveal>
+            <h2>On this page</h2>
+            <nav>
+              {articles.map((article, index) => (
+                <a key={article.title} href={`#note-${index + 1}`}>
+                  <span>{String(index + 1).padStart(2, '0')}</span>
+                  <span>{article.title}</span>
+                </a>
+              ))}
+            </nav>
+            <p className="notes-purpose">
+              <strong>Why this page exists</strong>
+              Visitors should be able to understand the site without guessing from images alone.
+              These write ups explain the decisions behind the videos, photos, and digital art so
+              the portfolio has useful text as well as visuals.
+            </p>
+          </aside>
+
+          <div>
+            <div className="notes-articles">
+              {articles.map((article, index) => (
+                <article
+                  key={article.title}
+                  id={`note-${index + 1}`}
+                  className="note-article"
+                  data-note-reveal
+                >
+                  <div className="note-article__number" aria-hidden="true">
+                    {String(index + 1).padStart(2, '0')}
+                  </div>
+                  <div className="note-article__copy">
+                    <span className="studio-kicker">{article.label}</span>
+                    <h2>{article.title}</h2>
+                    <p>{article.text}</p>
+                    <p>{article.detail}</p>
+                  </div>
+                </article>
+              ))}
             </div>
 
-            <SummaryPanel>
-              <SummaryTitle>Why this page exists</SummaryTitle>
-              <SummaryText>
-                Visitors should be able to understand the site without guessing from images alone.
-                These write ups explain the decisions behind the videos, photos, and digital art so
-                the portfolio has useful text as well as visuals.
-              </SummaryText>
-            </SummaryPanel>
-          </Hero>
-
-          <ArticleGrid>
-            {articles.map((article, index) => (
-              <Article
-                key={article.title}
-                initial={{ opacity: 0, y: 24 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.42, delay: 0.1 + index * 0.06, ease: 'easeOut' }}
-              >
-                <ArticleLabel>{article.label}</ArticleLabel>
-                <ArticleTitle>{article.title}</ArticleTitle>
-                <ArticleText>{article.text}</ArticleText>
-                <ArticleText>{article.detail}</ArticleText>
-              </Article>
-            ))}
-          </ArticleGrid>
-
-          <Closing
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.42, delay: 0.3, ease: 'easeOut' }}
-          >
-            <ClosingTitle>Editorial approach</ClosingTitle>
-            <ClosingText>
-              I keep the writing connected to work I have made or am developing. When a project is
-              updated, the note should explain something specific: a production choice, a technical
-              problem, a visual reference, or what I would change next time. That gives the site
-              original context and makes it more useful than a thin portfolio page with images alone.
-            </ClosingText>
-          </Closing>
-        </Wrap>
-      </PageMain>
+            <section className="notes-closing" data-note-reveal aria-labelledby="editorial-approach-title">
+              <span className="studio-kicker">The working rule</span>
+              <h2 id="editorial-approach-title">Editorial approach</h2>
+              <p>
+                I keep the writing connected to work I have made or am developing. When a project is
+                updated, the note should explain something specific: a production choice, a technical
+                problem, a visual reference, or what I would change next time. That gives the site
+                original context and makes it more useful than a thin portfolio page with images alone.
+              </p>
+            </section>
+          </div>
+        </div>
+      </main>
     </>
   );
 };

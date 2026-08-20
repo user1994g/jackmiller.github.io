@@ -35,6 +35,11 @@ jobs:
       - name: Block critical dependency vulnerabilities
         run: npm audit --audit-level=critical
 
+      - name: Test routes and page rendering
+        run: npm test -- --watchAll=false --runInBand
+        env:
+          CI: true
+
       - name: Build site
         run: npm run build
 

@@ -1,176 +1,81 @@
-import { motion } from 'framer-motion';
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import styled from 'styled-components';
-
-const Overlay = styled(motion.div)`
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  background: rgba(2, 3, 7, 0.92);
-  backdrop-filter: blur(6px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  overscroll-behavior: none;
-  touch-action: none;
-`;
-
-const Dialog = styled(motion.div)`
-  position: relative;
-  width: 100vw;
-  height: 100dvh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: clamp(3.2rem, 8vw, 4rem) clamp(0.7rem, 2vw, 1.2rem) clamp(0.8rem, 2vw, 1.2rem);
-  overflow: hidden;
-
-  img {
-    width: auto;
-    height: auto;
-    max-width: calc(100vw - 1.6rem);
-    max-height: calc(100dvh - 4.6rem);
-    object-fit: contain;
-    user-select: none;
-    -webkit-user-drag: none;
-  }
-`;
-
-const CloseButton = styled.button`
-  position: absolute;
-  top: 0.85rem;
-  right: 0.85rem;
-  z-index: 2;
-  border: 1px solid rgba(255, 255, 255, 0.38);
-  border-radius: 999px;
-  background: rgba(6, 7, 10, 0.86);
-  color: #ffffff;
-  font-size: 0.78rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  padding: 0.5rem 0.82rem;
-  cursor: pointer;
-
-  &:hover,
-  &:focus-visible {
-    background: rgba(255, 255, 255, 0.18);
-    outline: none;
-  }
-`;
-
-const lockKeys = new Set(['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End', ' ']);
-
-const isHomeHashRoute = () => {
-  if (typeof window === 'undefined') {
-    return false;
-  }
-
-  const hashPath = (window.location.hash || '#/').replace(/^#/, '');
-  return hashPath === '/' || hashPath === '' || hashPath.startsWith('/?');
-};
 
 const ImageLightbox = ({ image, onClose }) => {
-  const scroll = null;
+  const dialogRef = useRef(null);
 
   useEffect(() => {
-    const savedScrollY = window.scrollY;
-
-    const previousBodyOverflow = document.body.style.overflow;
-    const previousBodyPosition = document.body.style.position;
-    const previousBodyTop = document.body.style.top;
-    const previousBodyWidth = document.body.style.width;
-    const previousBodyTouchAction = document.body.style.touchAction;
-    const previousHtmlOverflow = document.documentElement.style.overflow;
-
-    document.documentElement.style.overflow = 'hidden';
-    document.body.style.overflow = 'hidden';
-    document.body.style.position = 'fixed';
-    document.body.style.top = `-${savedScrollY}px`;
-    document.body.style.width = '100%';
-    document.body.style.touchAction = 'none';
-
-    if (scroll && typeof scroll.stop === 'function') {
-      scroll.stop();
-    }
-
-    const preventScroll = (event) => {
-      event.preventDefault();
-      event.stopPropagation();
+    const opener = document.activeElement;
+    const scrollY = window.scrollY;
+    const previous = {
+      position: document.body.style.position,
+      top: document.body.style.top,
+      width: document.body.style.width,
+      overflow: document.body.style.overflow,
     };
 
-    const handleKeydown = (event) => {
+    document.body.classList.add('dialog-open');
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.width = '100%';
+    document.body.style.overflow = 'hidden';
+
+    const dialog = dialogRef.current;
+    dialog?.querySelector('button')?.focus();
+
+    const handleKeyDown = (event) => {
       if (event.key === 'Escape') {
         event.preventDefault();
         onClose();
         return;
       }
 
-      if (lockKeys.has(event.key)) {
+      if (event.key !== 'Tab' || !dialog) return;
+      const focusable = [...dialog.querySelectorAll('button, [href], [tabindex]:not([tabindex="-1"])')];
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
         event.preventDefault();
-        event.stopPropagation();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
       }
     };
 
-    window.addEventListener('wheel', preventScroll, { passive: false, capture: true });
-    window.addEventListener('touchmove', preventScroll, { passive: false, capture: true });
-    window.addEventListener('keydown', handleKeydown, true);
-
+    document.addEventListener('keydown', handleKeyDown);
     return () => {
-      window.removeEventListener('wheel', preventScroll, true);
-      window.removeEventListener('touchmove', preventScroll, true);
-      window.removeEventListener('keydown', handleKeydown, true);
-
-      document.documentElement.style.overflow = previousHtmlOverflow;
-      document.body.style.overflow = previousBodyOverflow;
-      document.body.style.position = previousBodyPosition;
-      document.body.style.top = previousBodyTop;
-      document.body.style.width = previousBodyWidth;
-      document.body.style.touchAction = previousBodyTouchAction;
-
-      if (isHomeHashRoute()) {
-        window.scrollTo(0, savedScrollY);
-
-        if (scroll && typeof scroll.start === 'function') {
-          scroll.start();
-        }
-        if (scroll && typeof scroll.update === 'function') {
-          scroll.update();
-        }
-      }
+      document.removeEventListener('keydown', handleKeyDown);
+      document.body.classList.remove('dialog-open');
+      document.body.style.position = previous.position;
+      document.body.style.top = previous.top;
+      document.body.style.width = previous.width;
+      document.body.style.overflow = previous.overflow;
+      window.scrollTo(0, scrollY);
+      if (opener instanceof HTMLElement) opener.focus();
     };
-  }, [onClose, scroll]);
+  }, [onClose]);
 
-  if (!image || typeof document === 'undefined') {
-    return null;
-  }
+  if (!image || typeof document === 'undefined') return null;
 
   return createPortal(
-    <Overlay
-      role="presentation"
-      onClick={onClose}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.2 }}
-    >
-      <Dialog
+    <div className="image-lightbox" role="presentation" onMouseDown={onClose}>
+      <div
+        className="image-lightbox__dialog"
+        ref={dialogRef}
         role="dialog"
         aria-modal="true"
-        aria-label="Expanded photo view"
-        onClick={(event) => event.stopPropagation()}
-        initial={{ y: 10, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        exit={{ y: 10, opacity: 0 }}
-        transition={{ duration: 0.18 }}
+        aria-label={`Expanded view: ${image.alt}`}
+        onMouseDown={(event) => event.stopPropagation()}
       >
-        <CloseButton type="button" onClick={onClose} autoFocus>
-          Close
-        </CloseButton>
-        <img src={image.src} alt={image.alt} loading="eager" />
-      </Dialog>
-    </Overlay>,
+        <div className="image-lightbox__bar">
+          <span>Contact print / enlarged</span>
+          <button type="button" onClick={onClose}>Close <span aria-hidden="true">×</span></button>
+        </div>
+        <img src={image.src} alt={image.alt} loading="eager" decoding="async" />
+      </div>
+    </div>,
     document.body,
   );
 };

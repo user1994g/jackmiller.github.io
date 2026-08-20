@@ -1,0 +1,90 @@
+[
+  {
+    "path": "/",
+    "title": "Jack Miller Media | Film, Photography & Visual Stories",
+    "description": "The creative media portfolio of Jack Miller: cinematic short films, photography, visual experiments, production notes, and distinctive storytelling.",
+    "priority": "1.0",
+    "changefreq": "weekly",
+    "robots": "index, follow, max-image-preview:large"
+  },
+  {
+    "path": "/videos",
+    "title": "Films & Videos | Jack Miller Media",
+    "description": "Explore twelve narrative, documentary, and experimental film projects by Jack Miller, including The Final Lesson.",
+    "priority": "0.8",
+    "changefreq": "weekly",
+    "robots": "index, follow, max-image-preview:large"
+  },
+  {
+    "path": "/photos",
+    "title": "Photography & Visual Narratives | Jack Miller Media",
+    "description": "A ten-image contact sheet of Jack Miller's original countryside photographs: woodland paths, quiet water, railway lines, wildlife, and spring light.",
+    "priority": "0.75",
+    "changefreq": "monthly",
+    "robots": "index, follow, max-image-preview:large"
+  },
+  {
+    "path": "/about",
+    "title": "About Jack Miller | Creative Media Portfolio",
+    "description": "Meet Jack Miller and discover the process, creative direction, and cinematic thinking behind his film and photography portfolio.",
+    "priority": "0.7",
+    "changefreq": "monthly",
+    "robots": "index, follow, max-image-preview:large"
+  },
+  {
+    "path": "/contact",
+    "title": "Contact | Jack Miller Media",
+    "description": "Contact Jack Miller Media for selected film, photography, video, and visual storytelling collaborations.",
+    "priority": "0.65",
+    "changefreq": "monthly",
+    "robots": "index, follow, max-image-preview:large"
+  },
+  {
+    "path": "/write-ups",
+    "title": "Production Write Ups | Jack Miller Media",
+    "description": "Four original field notes by Jack Miller about short-film ideas, finished portfolio videos, image selection, and treating 3D work like camera work.",
+    "priority": "0.7",
+    "changefreq": "monthly",
+    "robots": "index, follow, max-image-preview:large"
+  },
+  {
+    "path": "/fmp-level-2",
+    "title": "The Dark Echoes of 1939 | FMP Level 2",
+    "description": "Watch The Dark Echoes of 1939, Jack Miller's FMP Level 2 short film about grief, memory, and the loss of a mother.",
+    "priority": "0.8",
+    "changefreq": "monthly",
+    "robots": "index, follow, max-image-preview:large"
+  },
+  {
+    "path": "/3d-art",
+    "title": "3D Art — Under Development | Jack Miller Media",
+    "description": "Jack Miller Media's 3D art workspace is currently under development.",
+    "priority": "0.1",
+    "changefreq": "monthly",
+    "robots": "noindex, follow"
+  },
+  {
+    "path": "/the-final-lesson",
+    "title": "The Final Lesson (Short Film) | Jack Miller",
+    "description": "Watch The Final Lesson, an independently written, directed, and produced 2024 short film by Jack Miller.",
+    "priority": "0.1",
+    "changefreq": "yearly",
+    "robots": "noindex, follow"
+  },
+  {
+    "path": "/privacy",
+    "title": "Privacy Policy | Jack Miller Media",
+    "description": "Read how Jack Miller Media handles analytics, advertising, cookies, location checks, and external services.",
+    "priority": "0.4",
+    "changefreq": "yearly",
+    "robots": "index, follow"
+  },
+  {
+    "path": "/terms",
+    "title": "Terms & Editorial Standards | Jack Miller Media",
+    "description": "Read the ownership, permitted use, accuracy, advertising, updates, and external-link terms for Jack Miller Media.",
+    "priority": "0.4",
+    "changefreq": "yearly",
+    "robots": "index, follow"
+  }
+]

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 
 import Navbar from '../components/Navbar';
 import usePageSeo from '../hooks/usePageSeo';
@@ -17,14 +17,10 @@ const HomePage = () => {
     url: 'https://jackmillermedia.com/',
   });
 
-  useEffect(() => {
-    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
-  }, []);
-
   return (
     <>
       <Navbar />
-      <main id="main-content" className="App" role="main">
+      <main id="main-content" className="App studio-page" role="main">
         <Home />
         <Stats />
         <HeroButtons />

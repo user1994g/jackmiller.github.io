@@ -1,694 +1,375 @@
-import { AnimatePresence, motion } from 'framer-motion';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { Link, NavLink, useLocation } from 'react-router-dom';
 
-const NavRoot = styled.nav`
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: ${({ $menuOpen }) => ($menuOpen ? 130 : 90)};
-  display: flex;
-  justify-content: center;
-  padding: calc(0.7rem + max(0px, env(safe-area-inset-top))) var(--gutter);
-`;
-
-const NavFrame = styled.div`
-  width: min(var(--content-max), 100%);
-`;
-
-const NavBar = styled(motion.div)`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.7rem;
-  min-height: 3.4rem;
-  padding: 0.4rem 0.45rem 0.4rem 0.9rem;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  background: rgba(8, 7, 10, 0.72);
-  backdrop-filter: blur(16px) saturate(1.2);
-`;
-
-const BrandButton = styled.a`
-  display: inline-flex;
-  align-items: center;
-  gap: 0.55rem;
-  color: var(--paper);
-  font-family: var(--font-display);
-  font-size: 0.82rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  padding: 0.45rem 0.4rem;
-
-  span {
-    width: 0.48rem;
-    height: 0.48rem;
-    border-radius: 50%;
-    background: var(--signal);
-    box-shadow: 0 0 0 5px rgba(255, 61, 31, 0.16);
-  }
-`;
-
-const RightControls = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-`;
-
-const DesktopMenu = styled.div`
-  display: none;
-  align-items: center;
-  gap: 0.15rem;
-
-  @media (min-width: 56.01em) {
-    display: flex;
-  }
-`;
-
-const DesktopMenuItem = styled.div`
-  position: relative;
-`;
-
-const MenuButton = styled.a`
-  display: inline-flex;
-  padding: 0.52rem 0.7rem;
-  border-radius: 999px;
-  font-size: 0.74rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  color: ${({ $active }) => ($active ? 'var(--ink)' : 'rgba(243, 235, 221, 0.78)')};
-  background: ${({ $active }) => ($active ? 'var(--acid)' : 'transparent')};
-
-  &:hover,
-  &:focus-visible {
-    color: ${({ $active }) => ($active ? 'var(--ink)' : 'var(--paper)')};
-    outline: none;
-  }
-`;
-
-const DropdownToggle = styled.button`
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  padding: 0.52rem 0.7rem;
-  border-radius: 999px;
-  font-size: 0.74rem;
-  font-weight: 600;
-  color: ${({ $active }) => ($active ? 'var(--ink)' : 'rgba(243, 235, 221, 0.78)')};
-  background: ${({ $active }) => ($active ? 'var(--acid)' : 'transparent')};
-  cursor: pointer;
-`;
-
-const DropdownCaret = styled.i`
-  width: 0.4rem;
-  height: 0.4rem;
-  border-right: 1.5px solid currentColor;
-  border-bottom: 1.5px solid currentColor;
-  transform: rotate(${({ $open }) => ($open ? '-135deg' : '45deg')}) translateY(-1px);
-`;
-
-const DropdownPanel = styled(motion.div)`
-  position: absolute;
-  top: calc(100% + 0.45rem);
-  right: 0;
-  min-width: 11.5rem;
-  padding: 0.4rem;
-  border: 1px solid var(--line);
-  border-radius: 1rem;
-  background: rgba(12, 11, 16, 0.96);
-`;
-
-const DropdownItem = styled.a`
-  display: block;
-  width: 100%;
-  padding: 0.62rem 0.7rem;
-  border-radius: 0.7rem;
-  font-size: 0.78rem;
-  color: ${({ $disabled }) => ($disabled ? 'rgba(243, 235, 221, 0.32)' : 'var(--paper)')};
-  cursor: ${({ $disabled }) => ($disabled ? 'not-allowed' : 'pointer')};
-  text-align: left;
-
-  &:hover {
-    background: ${({ $disabled }) => ($disabled ? 'transparent' : 'rgba(198, 240, 77, 0.12)')};
-  }
-`;
-
-const DesktopSearchForm = styled.form`
-  display: none;
-  align-items: center;
-  gap: 0.25rem;
-  padding: 0.18rem;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-
-  @media (min-width: 56.01em) {
-    display: flex;
-  }
-`;
-
-const SearchInput = styled.input`
-  width: 7.5rem;
-  border: 0;
-  background: transparent;
-  padding: 0.42rem 0.55rem;
-  font-size: 0.74rem;
-  color: var(--paper);
-
-  &:focus {
-    outline: none;
-  }
-`;
-
-const SearchSubmit = styled.button`
-  padding: 0.38rem 0.62rem;
-  border-radius: 999px;
-  background: var(--signal);
-  color: var(--paper);
-  font-size: 0.68rem;
-  font-weight: 800;
-  cursor: pointer;
-`;
-
-const MobileToggle = styled.button`
-  display: inline-flex;
-  padding: 0.5rem 0.85rem;
-  border-radius: 999px;
-  background: var(--paper);
-  color: var(--ink);
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  cursor: pointer;
-
-  @media (min-width: 56.01em) {
-    display: none;
-  }
-`;
-
-const MobilePanel = styled(motion.div)`
-  margin-top: 0.65rem;
-  padding: 0.7rem;
-  border: 1px solid var(--line);
-  border-radius: 1.4rem;
-  background: rgba(8, 7, 10, 0.96);
-  display: grid;
-  gap: 0.25rem;
-
-  @media (min-width: 56.01em) {
-    display: none;
-  }
-`;
-
-const MobileListItem = styled(motion.div)``;
-
-const MobileItem = styled.a`
-  display: flex;
-  width: 100%;
-  padding: 0.9rem 0.85rem;
-  border-radius: 1rem;
-  font-family: var(--font-display);
-  font-size: 1.15rem;
-  font-weight: 800;
-  color: ${({ $active }) => ($active ? 'var(--ink)' : 'var(--paper)')};
-  background: ${({ $active }) => ($active ? 'var(--acid)' : 'transparent')};
-  text-align: left;
-  cursor: pointer;
-`;
-
-const MobileSubmenu = styled.div`
-  display: grid;
-  gap: 0.2rem;
-  padding: 0.2rem 0 0.4rem 0.7rem;
-`;
-
-const MobileSubItem = styled.a`
-  display: block;
-  padding: 0.7rem 0.75rem;
-  border-radius: 0.8rem;
-  color: ${({ $disabled }) => ($disabled ? 'rgba(243, 235, 221, 0.32)' : 'var(--paper-soft)')};
-  font-size: 0.92rem;
-  text-align: left;
-  cursor: ${({ $disabled }) => ($disabled ? 'not-allowed' : 'pointer')};
-`;
-
-const Backdrop = styled(motion.button)`
-  position: fixed;
-  inset: 0;
-  z-index: 125;
-  border: none;
-  background: rgba(4, 4, 7, 0.55);
-
-  @media (min-width: 56.01em) {
-    display: none;
-  }
-`;
-
-const fmpItems = [
-  { label: 'Level 2', type: 'route', path: '/fmp-level-2' },
-  {
-    label: 'Level 3 Year 1',
-    type: 'route',
-    path: '/final-lesson',
-    state: { allowUnlisted: true, unlisted: 'final-lesson', via: 'menu' },
-  },
-  { label: 'Level 3 Year 2', type: 'disabled' },
+const primaryLinks = [
+  { label: 'Home', to: '/', end: true },
+  { label: 'Videos', to: '/videos' },
+  { label: 'Photos', to: '/photos' },
+  { label: 'About', to: '/about' },
+  { label: '3D Art', to: '/3d-art' },
+  { label: 'Write Ups', to: '/write-ups' },
 ];
 
-const menuItems = [
-  { label: 'Home', type: 'route', path: '/' },
-  { label: 'Videos', type: 'route', path: '/videos' },
-  { label: '3D Art', type: 'route', path: '/3d-art' },
-  { label: 'Gallery', type: 'scroll', target: '#shop' },
-  { label: 'Write Ups', type: 'route', path: '/write-ups' },
-  { label: 'Privacy', type: 'route', path: '/privacy', utility: true },
-  { label: 'Terms', type: 'route', path: '/terms', utility: true },
-  { label: 'FMP', type: 'dropdown', items: fmpItems },
-];
+const finalLessonState = {
+  allowUnlisted: true,
+  unlisted: 'final-lesson',
+  via: 'menu',
+};
 
-const lookupTargets = [
-  { keywords: ['home', 'start', 'top'], action: { type: 'route', path: '/' } },
-  { keywords: ['video', 'videos', 'film', 'netflix'], action: { type: 'route', path: '/videos' } },
-  { keywords: ['3d', '3dart', 'art', '3d art', 'three d', 'three d art'], action: { type: 'route', path: '/3d-art' } },
-  { keywords: ['gallery', 'photo', 'photos', 'image', 'images', 'shop'], action: { type: 'scroll', target: '#shop' } },
-  { keywords: ['contact', 'email'], action: { type: 'scroll', target: '#contact' } },
+const fmpLinks = [
+  { label: 'Level 2', note: 'The Dark Echoes of 1939', to: '/fmp-level-2' },
   {
-    keywords: ['write ups', 'write up', 'write-ups', 'writeup', 'writeups', 'notes', 'blog'],
-    action: { type: 'route', path: '/write-ups' },
-  },
-  {
-    keywords: ['level 2', 'dark echoes', '1939'],
-    action: { type: 'route', path: '/fmp-level-2' },
-  },
-  {
-    keywords: ['level 3 year 1', 'fmp level 3', 'fmp year 1'],
-    action: {
-      type: 'route',
-      path: '/final-lesson',
-      state: { allowUnlisted: true, unlisted: 'final-lesson', via: 'search' },
-    },
+    label: 'Final Lesson',
+    note: 'Level 3 · Year 1',
+    to: '/the-final-lesson',
+    state: finalLessonState,
   },
 ];
 
-const routeSeoPaths = {
-  '/': '/',
-  '/videos': '/videos/',
-  '/3d-art': '/3d-art/',
-  '/write-ups': '/write-ups/',
-  '/privacy': '/privacy/',
-  '/terms': '/terms/',
-  '/final-lesson': '/the-final-lesson/',
-  '/fmp-level-2': '/fmp-level-2/',
+const focusableSelector = [
+  'a[href]',
+  'button:not([disabled])',
+  'input:not([disabled])',
+  'select:not([disabled])',
+  'textarea:not([disabled])',
+  '[tabindex]:not([tabindex="-1"])',
+].join(',');
+
+const makeOutsideContentInert = (dialog) => {
+  if (!dialog) return () => {};
+
+  const changedElements = [];
+  let activeBranch = dialog;
+
+  while (activeBranch && activeBranch !== document.body) {
+    const parent = activeBranch.parentElement;
+    if (!parent) break;
+
+    for (const sibling of Array.from(parent.children)) {
+      if (sibling === activeBranch || !(sibling instanceof HTMLElement)) continue;
+
+      changedElements.push({
+        element: sibling,
+        hadInert: sibling.hasAttribute('inert'),
+        ariaHidden: sibling.getAttribute('aria-hidden'),
+      });
+      sibling.setAttribute('inert', '');
+      sibling.setAttribute('aria-hidden', 'true');
+    }
+
+    activeBranch = parent;
+  }
+
+  return () => {
+    changedElements.reverse().forEach(({ element, hadInert, ariaHidden }) => {
+      if (!element.isConnected) return;
+
+      if (!hadInert) element.removeAttribute('inert');
+      if (ariaHidden === null) {
+        element.removeAttribute('aria-hidden');
+      } else {
+        element.setAttribute('aria-hidden', ariaHidden);
+      }
+    });
+  };
 };
 
-const scrollSeoPaths = {
-  '#home': '/',
-  '#shop': '/photos/',
-  '#contact': '/contact/',
-  '#about': '/about/',
-};
+const activeLinkClass = ({ isActive }) =>
+  `cut-nav__link${isActive ? ' cut-nav__link--active' : ''}`;
 
-const mobilePanelVariants = {
-  hidden: { opacity: 0, y: -12, scale: 0.985 },
-  visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.22, staggerChildren: 0.045 } },
-  exit: { opacity: 0, y: -10, scale: 0.985, transition: { duration: 0.16 } },
-};
-
-const mobileItemVariants = {
-  hidden: { opacity: 0, x: 8 },
-  visible: { opacity: 1, x: 0, transition: { duration: 0.2 } },
-};
+const mobileLinkClass = ({ isActive }) =>
+  `cut-menu__link${isActive ? ' cut-menu__link--active' : ''}`;
 
 const Navbar = () => {
-  const [open, setOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [desktopFmpOpen, setDesktopFmpOpen] = useState(false);
-  const [mobileFmpOpen, setMobileFmpOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const scroll = null;
   const location = useLocation();
-  const navigate = useNavigate();
-  const panelId = useMemo(() => 'mobile-navigation-panel', []);
+  const menuRef = useRef(null);
+  const menuCloseRef = useRef(null);
+  const previousFocusRef = useRef(null);
+  const desktopFmpRef = useRef(null);
+  const desktopFmpButtonRef = useRef(null);
+  const desktopFmpFirstLinkRef = useRef(null);
 
-  const getSeoHref = useCallback((item) => {
-    if (!item) return '/';
-    if (item.type === 'route') return routeSeoPaths[item.path] || '/';
-    if (item.type === 'scroll') return scrollSeoPaths[item.target] || '/';
-    return '/';
-  }, []);
+  const closeMenu = useCallback(() => setMenuOpen(false), []);
 
-  const scrollToTarget = useCallback((target) => {
-    const element = document.querySelector(target);
-    if (!element) return;
-    if (scroll) {
-      scroll.scrollTo(element, { offset: -88, duration: 1100, easing: [0.25, 0.0, 0.35, 1.0] });
-      return;
-    }
-    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, [scroll]);
-
-  const handleMenuSelect = (item) => {
-    if (!item || item.type === 'disabled' || item.type === 'dropdown') return;
-
-    if (item.type === 'route') {
-      if (item.path === '/' && location.pathname === '/') {
-        scrollToTarget('#home');
-        setOpen(false);
-        setDesktopFmpOpen(false);
-        setMobileFmpOpen(false);
-        return;
-      }
-      if (location.pathname !== item.path) {
-        if (item.state) navigate(item.path, { state: item.state });
-        else navigate(item.path);
-      }
-      setOpen(false);
-      setDesktopFmpOpen(false);
-      setMobileFmpOpen(false);
-      return;
-    }
-
-    if (location.pathname !== '/') {
-      navigate('/', { state: { scrollTarget: item.target } });
-      setOpen(false);
-      setDesktopFmpOpen(false);
-      setMobileFmpOpen(false);
-      return;
-    }
-
-    scrollToTarget(item.target);
-    setOpen(false);
+  useEffect(() => {
+    closeMenu();
     setDesktopFmpOpen(false);
-    setMobileFmpOpen(false);
-  };
+  }, [closeMenu, location.pathname]);
 
-  const handleSearchSubmit = (event) => {
-    event.preventDefault();
-    const normalizedQuery = searchQuery.trim().toLowerCase();
-    if (!normalizedQuery) return;
-    const match = lookupTargets.find(({ keywords }) =>
-      keywords.some((keyword) => normalizedQuery.includes(keyword)),
-    );
-    if (match) {
-      handleMenuSelect(match.action);
-      setSearchQuery('');
-      setDesktopFmpOpen(false);
-      setMobileFmpOpen(false);
+  useEffect(() => {
+    const desktopQuery = window.matchMedia('(min-width: 68rem)');
+    const handleBreakpointChange = (event) => {
+      if (event.matches) closeMenu();
+    };
+
+    if (desktopQuery.addEventListener) {
+      desktopQuery.addEventListener('change', handleBreakpointChange);
+      return () => desktopQuery.removeEventListener('change', handleBreakpointChange);
     }
-  };
 
-  const handleBrandClick = () => {
-    if (location.pathname !== '/') {
-      navigate('/');
-    } else {
-      scrollToTarget('#home');
-    }
-    setOpen(false);
-    setDesktopFmpOpen(false);
-    setMobileFmpOpen(false);
-  };
-
-  const handleAnchorSelect = (event, item) => {
-    event.preventDefault();
-    handleMenuSelect(item);
-  };
-
-  const handleBrandAnchor = (event) => {
-    event.preventDefault();
-    handleBrandClick();
-  };
-
-  const isActiveItem = (item) => {
-    if (item.type === 'dropdown') return item.items?.some((child) => isActiveItem(child));
-    if (item.type === 'route') return item.path === location.pathname;
-    return item.label === 'Home' && location.pathname === '/';
-  };
+    desktopQuery.addListener(handleBreakpointChange);
+    return () => desktopQuery.removeListener(handleBreakpointChange);
+  }, [closeMenu]);
 
   useEffect(() => {
-    const handleEscape = (event) => {
-      if (event.key === 'Escape') {
-        setOpen(false);
-        setDesktopFmpOpen(false);
-        setMobileFmpOpen(false);
-      }
-    };
-    window.addEventListener('keydown', handleEscape);
-    return () => window.removeEventListener('keydown', handleEscape);
-  }, []);
+    if (!menuOpen) return undefined;
 
-  useEffect(() => {
-    setOpen(false);
-    setDesktopFmpOpen(false);
-    setMobileFmpOpen(false);
-  }, [location.pathname]);
+    previousFocusRef.current = document.activeElement;
+    const savedScrollY = window.scrollY;
+    const previousBodyPosition = document.body.style.position;
+    const previousBodyTop = document.body.style.top;
+    const previousBodyWidth = document.body.style.width;
+    const previousBodyOverflow = document.body.style.overflow;
 
-  useEffect(() => {
-    if (location.pathname !== '/' || !location.state?.scrollTarget) return;
-    const target = location.state.scrollTarget;
-    let frameId = null;
-    const startedAt = performance.now();
-    const maxWaitMs = 2200;
-    const clearNavState = () => navigate('/', { replace: true, state: null });
-    const runScrollWhenReady = () => {
-      const element = document.querySelector(target);
-      if (element) {
-        scrollToTarget(target);
-        clearNavState();
-        return;
-      }
-      if (performance.now() - startedAt < maxWaitMs) {
-        frameId = window.requestAnimationFrame(runScrollWhenReady);
-        return;
-      }
-      clearNavState();
-    };
-    frameId = window.requestAnimationFrame(runScrollWhenReady);
-    return () => {
-      if (frameId !== null) window.cancelAnimationFrame(frameId);
-    };
-  }, [location.pathname, location.state, navigate, scrollToTarget]);
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(min-width: 56em)');
-    const handleMediaChange = (event) => {
-      if (event.matches) {
-        setOpen(false);
-        setDesktopFmpOpen(false);
-      }
-    };
-    if (mediaQuery.addEventListener) {
-      mediaQuery.addEventListener('change', handleMediaChange);
-      return () => mediaQuery.removeEventListener('change', handleMediaChange);
-    }
-    mediaQuery.addListener(handleMediaChange);
-    return () => mediaQuery.removeListener(handleMediaChange);
-  }, []);
-
-  useEffect(() => {
-    if (!open) return undefined;
-    const scrollY = window.scrollY;
-    const previousOverflow = document.body.style.overflow;
-    const previousPosition = document.body.style.position;
-    const previousTop = document.body.style.top;
-    const previousWidth = document.body.style.width;
-    document.body.style.overflow = 'hidden';
+    document.body.classList.add('menu-open');
     document.body.style.position = 'fixed';
-    document.body.style.top = `-${scrollY}px`;
+    document.body.style.top = `-${savedScrollY}px`;
     document.body.style.width = '100%';
-    return () => {
-      document.body.style.overflow = previousOverflow;
-      document.body.style.position = previousPosition;
-      document.body.style.top = previousTop;
-      document.body.style.width = previousWidth;
-      window.scrollTo(0, scrollY);
+    document.body.style.overflow = 'hidden';
+
+    menuCloseRef.current?.focus({ preventScroll: true });
+    const restoreOutsideContent = makeOutsideContentInert(menuRef.current);
+
+    const focusFrame = window.requestAnimationFrame(() => {
+      if (!menuRef.current?.contains(document.activeElement)) {
+        menuCloseRef.current?.focus({ preventScroll: true });
+      }
+    });
+
+    const handleKeydown = (event) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        closeMenu();
+        return;
+      }
+
+      if (event.key !== 'Tab' || !menuRef.current) return;
+
+      const focusable = Array.from(menuRef.current.querySelectorAll(focusableSelector)).filter(
+        (element) => !element.hasAttribute('disabled') && element.getAttribute('aria-hidden') !== 'true',
+      );
+
+      if (!focusable.length) {
+        event.preventDefault();
+        return;
+      }
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (!menuRef.current.contains(document.activeElement)) {
+        event.preventDefault();
+        (event.shiftKey ? last : first).focus();
+      } else if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
     };
-  }, [open]);
+
+    document.addEventListener('keydown', handleKeydown);
+
+    return () => {
+      window.cancelAnimationFrame(focusFrame);
+      document.removeEventListener('keydown', handleKeydown);
+      restoreOutsideContent();
+      document.body.classList.remove('menu-open');
+      document.body.style.position = previousBodyPosition;
+      document.body.style.top = previousBodyTop;
+      document.body.style.width = previousBodyWidth;
+      document.body.style.overflow = previousBodyOverflow;
+      window.scrollTo(0, savedScrollY);
+
+      if (previousFocusRef.current?.isConnected) {
+        previousFocusRef.current.focus({ preventScroll: true });
+      }
+    };
+  }, [closeMenu, menuOpen]);
+
+  useEffect(() => {
+    if (!desktopFmpOpen) return undefined;
+
+    const handlePointerDown = (event) => {
+      if (!desktopFmpRef.current?.contains(event.target)) {
+        setDesktopFmpOpen(false);
+      }
+    };
+
+    const handleKeydown = (event) => {
+      if (event.key === 'Escape') {
+        setDesktopFmpOpen(false);
+        desktopFmpButtonRef.current?.focus();
+      }
+    };
+
+    document.addEventListener('pointerdown', handlePointerDown);
+    document.addEventListener('keydown', handleKeydown);
+    return () => {
+      document.removeEventListener('pointerdown', handlePointerDown);
+      document.removeEventListener('keydown', handleKeydown);
+    };
+  }, [desktopFmpOpen]);
+
+  const fmpActive = fmpLinks.some(({ to }) => location.pathname === to);
 
   return (
-    <>
-      <NavRoot aria-label="Primary" $menuOpen={open}>
-        <NavFrame>
-          <NavBar
-            initial={{ opacity: 0, y: -18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <BrandButton as="a" href="/" onClick={handleBrandAnchor}>
-              <span />
-              Jack Miller
-            </BrandButton>
+    <header className="cut-nav" data-menu-open={menuOpen ? 'true' : 'false'}>
+      <nav className="cut-nav__bar studio-wrap" aria-label="Primary navigation">
+        <Link className="cut-nav__brand" to="/" aria-label="Jack Miller Media home">
+          <span className="cut-nav__brand-mark" aria-hidden="true">
+            <span>JM</span>
+          </span>
+          <span className="cut-nav__brand-copy">
+            <strong>Jack Miller</strong>
+            <small>Film · Photo · Visuals</small>
+          </span>
+        </Link>
 
-            <RightControls>
-              <DesktopMenu>
-                {menuItems.map((item) => (
-                  <DesktopMenuItem
-                    key={item.label}
-                    aria-hidden={item.utility ? 'true' : undefined}
-                    style={item.utility ? { display: 'none' } : undefined}
-                    onMouseEnter={() => item.type === 'dropdown' && setDesktopFmpOpen(true)}
-                    onMouseLeave={() => item.type === 'dropdown' && setDesktopFmpOpen(false)}
-                  >
-                    {item.type === 'dropdown' ? (
-                      <>
-                        <DropdownToggle
-                          type="button"
-                          onClick={() => setDesktopFmpOpen((prev) => !prev)}
-                          $active={isActiveItem(item)}
-                          aria-expanded={desktopFmpOpen}
-                          aria-haspopup="menu"
-                        >
-                          {item.label}
-                          <DropdownCaret $open={desktopFmpOpen} />
-                        </DropdownToggle>
-                        <AnimatePresence>
-                          {desktopFmpOpen && (
-                            <DropdownPanel
-                              initial={{ opacity: 0, y: -8 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              exit={{ opacity: 0, y: -6 }}
-                              transition={{ duration: 0.18 }}
-                              role="menu"
-                              aria-label="FMP pages"
-                            >
-                              {item.items.map((child) => (
-                                <DropdownItem
-                                  key={child.label}
-                                  as={child.type === 'disabled' ? 'button' : 'a'}
-                                  href={child.type === 'disabled' ? undefined : getSeoHref(child)}
-                                  type={child.type === 'disabled' ? 'button' : undefined}
-                                  onClick={child.type === 'disabled' ? undefined : (event) => handleAnchorSelect(event, child)}
-                                  $disabled={child.type === 'disabled'}
-                                  disabled={child.type === 'disabled'}
-                                  role="menuitem"
-                                  aria-current={isActiveItem(child) ? 'page' : undefined}
-                                >
-                                  {child.label}
-                                </DropdownItem>
-                              ))}
-                            </DropdownPanel>
-                          )}
-                        </AnimatePresence>
-                      </>
-                    ) : (
-                      <MenuButton
-                        as="a"
-                        href={getSeoHref(item)}
-                        onClick={(event) => handleAnchorSelect(event, item)}
-                        $active={isActiveItem(item)}
-                        aria-current={isActiveItem(item) ? 'page' : undefined}
-                      >
-                        {item.label}
-                      </MenuButton>
-                    )}
-                  </DesktopMenuItem>
-                ))}
-              </DesktopMenu>
+        <div className="cut-nav__desktop">
+          <div className="cut-nav__links">
+            {primaryLinks.map((item) => (
+              <NavLink key={item.to} className={activeLinkClass} end={item.end} to={item.to}>
+                {item.label}
+              </NavLink>
+            ))}
 
-              <DesktopSearchForm onSubmit={handleSearchSubmit} role="search" aria-label="Lookup navigation">
-                <SearchInput
-                  type="search"
-                  value={searchQuery}
-                  onChange={(event) => setSearchQuery(event.target.value)}
-                  placeholder="Lookup..."
-                  aria-label="Lookup section"
-                />
-                <SearchSubmit type="submit">Go</SearchSubmit>
-              </DesktopSearchForm>
-
-              <MobileToggle
+            <div className="cut-nav__fmp" ref={desktopFmpRef}>
+              <button
+                ref={desktopFmpButtonRef}
+                className={`cut-nav__link cut-nav__fmp-toggle${fmpActive ? ' cut-nav__link--active' : ''}`}
                 type="button"
-                onClick={() => setOpen((prev) => !prev)}
-                aria-controls={panelId}
-                aria-expanded={open}
-                aria-label={open ? 'Close navigation menu' : 'Open navigation menu'}
+                aria-expanded={desktopFmpOpen}
+                aria-controls="desktop-fmp-menu"
+                aria-haspopup="menu"
+                onClick={() => setDesktopFmpOpen((current) => !current)}
+                onKeyDown={(event) => {
+                  if (event.key === 'ArrowDown') {
+                    event.preventDefault();
+                    setDesktopFmpOpen(true);
+                    window.requestAnimationFrame(() => desktopFmpFirstLinkRef.current?.focus());
+                  }
+                }}
               >
-                {open ? 'Close' : 'Menu'}
-              </MobileToggle>
-            </RightControls>
-          </NavBar>
+                FMP
+                <span aria-hidden="true">{desktopFmpOpen ? '−' : '+'}</span>
+              </button>
 
-          <AnimatePresence>
-            {open && (
-              <MobilePanel id={panelId} variants={mobilePanelVariants} initial="hidden" animate="visible" exit="exit">
-                {menuItems.filter((item) => !item.utility).map((item) => (
-                  <MobileListItem key={item.label} variants={mobileItemVariants}>
-                    {item.type === 'dropdown' ? (
-                      <>
-                        <MobileItem
-                          as="button"
-                          type="button"
-                          onClick={() => setMobileFmpOpen((prev) => !prev)}
-                          $active={isActiveItem(item)}
-                          aria-expanded={mobileFmpOpen}
-                          aria-controls="mobile-fmp-submenu"
-                        >
-                          {item.label}
-                        </MobileItem>
-                        <AnimatePresence initial={false}>
-                          {mobileFmpOpen && (
-                            <motion.div
-                              id="mobile-fmp-submenu"
-                              initial={{ opacity: 0, height: 0 }}
-                              animate={{ opacity: 1, height: 'auto' }}
-                              exit={{ opacity: 0, height: 0 }}
-                              transition={{ duration: 0.2 }}
-                            >
-                              <MobileSubmenu>
-                                {item.items.map((child) => (
-                                  <MobileSubItem
-                                    key={child.label}
-                                    as={child.type === 'disabled' ? 'button' : 'a'}
-                                    href={child.type === 'disabled' ? undefined : getSeoHref(child)}
-                                    type={child.type === 'disabled' ? 'button' : undefined}
-                                    onClick={child.type === 'disabled' ? undefined : (event) => handleAnchorSelect(event, child)}
-                                    $active={isActiveItem(child)}
-                                    $disabled={child.type === 'disabled'}
-                                    disabled={child.type === 'disabled'}
-                                    aria-current={isActiveItem(child) ? 'page' : undefined}
-                                  >
-                                    {child.label}
-                                  </MobileSubItem>
-                                ))}
-                              </MobileSubmenu>
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
-                      </>
-                    ) : (
-                      <MobileItem
-                        as="a"
-                        href={getSeoHref(item)}
-                        onClick={(event) => handleAnchorSelect(event, item)}
-                        $active={isActiveItem(item)}
-                        aria-current={isActiveItem(item) ? 'page' : undefined}
-                      >
-                        {item.label}
-                      </MobileItem>
-                    )}
-                  </MobileListItem>
-                ))}
-              </MobilePanel>
-            )}
-          </AnimatePresence>
-        </NavFrame>
-      </NavRoot>
+              {desktopFmpOpen ? (
+                <div id="desktop-fmp-menu" className="cut-nav__fmp-menu" role="menu" aria-label="FMP projects">
+                  {fmpLinks.map((item, index) => (
+                    <NavLink
+                      key={item.to}
+                      ref={index === 0 ? desktopFmpFirstLinkRef : undefined}
+                      className="cut-nav__fmp-item"
+                      role="menuitem"
+                      to={item.to}
+                      state={item.state}
+                      onClick={() => setDesktopFmpOpen(false)}
+                    >
+                      <span>{item.label}</span>
+                      <small>{item.note}</small>
+                    </NavLink>
+                  ))}
+                  <span className="cut-nav__fmp-item cut-nav__fmp-item--disabled" aria-disabled="true">
+                    <span>Level 3 · Year 2</span>
+                    <small>In development</small>
+                  </span>
+                </div>
+              ) : null}
+            </div>
+          </div>
 
-      <AnimatePresence>
-        {open && (
-          <Backdrop
-            type="button"
-            aria-label="Close navigation menu"
-            onClick={() => setOpen(false)}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.18 }}
-          />
-        )}
-      </AnimatePresence>
-    </>
+          <NavLink className="cut-nav__contact" to="/contact">
+            Start a project <span aria-hidden="true">↗</span>
+          </NavLink>
+        </div>
+
+        <button
+          className="cut-nav__menu-button"
+          type="button"
+          aria-expanded={menuOpen}
+          aria-controls="cut-room-menu"
+          aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+          onClick={() => setMenuOpen((current) => !current)}
+        >
+          <span>{menuOpen ? 'Close' : 'Menu'}</span>
+          <span className="cut-nav__menu-icon" aria-hidden="true">
+            <i />
+            <i />
+          </span>
+        </button>
+      </nav>
+
+      {menuOpen ? (
+        <div
+          id="cut-room-menu"
+          ref={menuRef}
+          className="cut-menu"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="cut-menu-title"
+        >
+          <div className="cut-menu__top studio-wrap">
+            <p id="cut-menu-title">The Cut Room / Site Index</p>
+            <button ref={menuCloseRef} className="cut-menu__close" type="button" onClick={closeMenu}>
+              Close <span aria-hidden="true">×</span>
+            </button>
+          </div>
+
+          <div className="cut-menu__body studio-wrap">
+            <nav className="cut-menu__primary" aria-label="Mobile navigation">
+              {primaryLinks.map((item, index) => (
+                <NavLink
+                  key={item.to}
+                  className={mobileLinkClass}
+                  end={item.end}
+                  to={item.to}
+                  onClick={closeMenu}
+                >
+                  <span className="cut-menu__number" aria-hidden="true">
+                    {String(index + 1).padStart(2, '0')}
+                  </span>
+                  <span>{item.label}</span>
+                  <span className="cut-menu__arrow" aria-hidden="true">↗</span>
+                </NavLink>
+              ))}
+            </nav>
+
+            <section className="cut-menu__fmp" aria-labelledby="mobile-fmp-title">
+              <div className="cut-menu__section-head">
+                <p id="mobile-fmp-title">Final Major Projects</p>
+                <span>Archive 02</span>
+              </div>
+              {fmpLinks.map((item) => (
+                <NavLink
+                  key={item.to}
+                  className="cut-menu__project"
+                  to={item.to}
+                  state={item.state}
+                  onClick={closeMenu}
+                >
+                  <strong>{item.label}</strong>
+                  <span>{item.note}</span>
+                </NavLink>
+              ))}
+              <span className="cut-menu__project cut-menu__project--disabled" aria-disabled="true">
+                <strong>Level 3 · Year 2</strong>
+                <span>Page under development</span>
+              </span>
+            </section>
+          </div>
+
+          <div className="cut-menu__foot studio-wrap">
+            <span>Creative media portfolio · 2026</span>
+            <Link to="/contact" onClick={closeMenu}>Contact Jack <span aria-hidden="true">→</span></Link>
+          </div>
+        </div>
+      ) : null}
+    </header>
   );
 };
 

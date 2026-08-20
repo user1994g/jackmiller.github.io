@@ -1,5 +1,4 @@
 import React from 'react';
-import styled from 'styled-components';
 
 import Navbar from '../components/Navbar';
 import usePageSeo from '../hooks/usePageSeo';
@@ -11,6 +10,7 @@ const policyCopy = {
       'Privacy policy for Jack Miller Media, including analytics, advertising, cookies, and contact information.',
     intro:
       'This privacy policy explains how Jack Miller Media handles basic visitor information, analytics, advertising services, and contact messages. The site is a personal creative media portfolio run by Jack Miller.',
+    updated: '31 July 2026',
     sections: [
       {
         heading: 'Information this site may collect',
@@ -50,6 +50,7 @@ const policyCopy = {
       'Terms, content ownership, editorial standards, and advertising standards for Jack Miller Media.',
     intro:
       'These terms explain how the work on Jack Miller Media may be used and how the site approaches original content, advertising, and visitor experience.',
+    updated: '28 June 2026',
     sections: [
       {
         heading: 'Original portfolio content',
@@ -80,65 +81,7 @@ const policyCopy = {
   },
 };
 
-const PageMain = styled.main`
-  min-height: 100vh;
-  padding: calc(5.8rem + var(--gutter)) var(--gutter) var(--section-gap);
-`;
-
-const Article = styled.article`
-  width: min(860px, 100%);
-  margin: 0 auto;
-  padding: clamp(1.35rem, 4vw, 2.6rem);
-  border-radius: 1.5rem;
-  border: 1px solid var(--line);
-  background: rgba(18, 16, 23, 0.86);
-`;
-
-const Kicker = styled.p`
-  margin: 0;
-  color: var(--acid);
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
-  font-size: 0.76rem;
-`;
-
-const Title = styled.h1`
-  margin: 0.7rem 0 0;
-  font-family: var(--font-display);
-  font-size: clamp(2rem, 5vw, 4rem);
-  letter-spacing: -0.05em;
-  color: var(--paper);
-`;
-
-const Intro = styled.p`
-  margin-top: 1rem;
-  line-height: 1.78;
-  color: rgba(229, 233, 240, 0.8);
-`;
-
-const Section = styled.section`
-  margin-top: clamp(1.25rem, 3vw, 2rem);
-  padding-top: clamp(1.1rem, 2.5vw, 1.5rem);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-`;
-
-const Heading = styled.h2`
-  margin: 0;
-  font-size: clamp(1.1rem, 2vw, 1.45rem);
-  color: rgba(255, 255, 255, 0.95);
-`;
-
-const Body = styled.p`
-  margin-top: 0.65rem;
-  line-height: 1.76;
-  color: rgba(224, 228, 235, 0.76);
-`;
-
-const Updated = styled.p`
-  margin-top: 1.5rem;
-  color: rgba(224, 228, 235, 0.62);
-  font-size: 0.86rem;
-`;
+const toId = (heading) => heading.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 
 const PolicyPage = ({ variant = 'privacy' }) => {
   const page = policyCopy[variant] || policyCopy.privacy;
@@ -153,20 +96,36 @@ const PolicyPage = ({ variant = 'privacy' }) => {
   return (
     <>
       <Navbar />
-      <PageMain id="main-content" className="App" role="main">
-        <Article>
-          <Kicker>Jack Miller Media</Kicker>
-          <Title>{page.title}</Title>
-          <Intro>{page.intro}</Intro>
-          {page.sections.map((section) => (
-            <Section key={section.heading}>
-              <Heading>{section.heading}</Heading>
-              <Body>{section.body}</Body>
-            </Section>
-          ))}
-          <Updated>Last updated: 28 June 2026</Updated>
-        </Article>
-      </PageMain>
+      <main id="main-content" className="reading-page" role="main">
+        <div className="studio-wrap reading-layout">
+          <aside className="reading-layout__rail">
+            <span>Jack Miller Media</span>
+            <nav aria-label={`${page.title} sections`}>
+              {page.sections.map((section, index) => (
+                <a key={section.heading} href={`#${toId(section.heading)}`}>
+                  <span>{String(index + 1).padStart(2, '0')}</span>
+                  <span>{section.heading}</span>
+                </a>
+              ))}
+            </nav>
+          </aside>
+
+          <article className="reading-article">
+            <span className="tape-label">Jack Miller Media</span>
+            <h1>{page.title}</h1>
+            <p className="reading-article__intro">{page.intro}</p>
+
+            {page.sections.map((section) => (
+              <section className="reading-section" id={toId(section.heading)} key={section.heading}>
+                <h2>{section.heading}</h2>
+                <p>{section.body}</p>
+              </section>
+            ))}
+
+            <p className="reading-updated">Last updated: {page.updated}</p>
+          </article>
+        </div>
+      </main>
     </>
   );
 };

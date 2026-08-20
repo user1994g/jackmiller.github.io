@@ -1,60 +1,27 @@
-import React from 'react';
-import styled from 'styled-components';
+import gsap from 'gsap';
+import React, { useLayoutEffect, useRef } from 'react';
 
+import { Stamp } from '../art/Marks';
 import Navbar from '../components/Navbar';
 import usePageSeo from '../hooks/usePageSeo';
-import { Stamp } from '../art/Marks';
 
-const PageShell = styled.main`
-  min-height: 100vh;
-  display: grid;
-  place-items: center;
-  padding: 8rem var(--gutter) 5rem;
-`;
-
-const Notice = styled.section`
-  width: min(640px, 100%);
-  padding: clamp(2rem, 6vw, 4rem);
-  border: 1px dashed rgba(198, 240, 77, 0.4);
-  border-radius: 1.8rem;
-  background: rgba(18, 16, 23, 0.8);
-  text-align: center;
-`;
-
-const Eyebrow = styled.p`
-  color: var(--acid);
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-`;
-
-const Title = styled.h1`
-  margin-top: 1rem;
-  color: var(--paper);
-  font-size: clamp(2.5rem, 7vw, 4.8rem);
-  font-weight: 800;
-  letter-spacing: -0.06em;
-`;
-
-const Message = styled.p`
-  max-width: 38ch;
-  margin: 1.25rem auto 0;
-  line-height: 1.7;
-`;
-
-const Mark = styled.div`
-  width: 5.5rem;
-  margin: 1.4rem auto 0;
-  color: var(--signal);
-
-  svg {
-    width: 100%;
-    height: auto;
-  }
-`;
+const WireCube = () => (
+  <svg viewBox="0 0 420 420" fill="none" aria-hidden="true">
+    <path d="M210 42 360 128v174l-150 86-150-86V128L210 42Z" stroke="currentColor" strokeWidth="3" />
+    <path d="m60 128 150 88 150-88M210 216v172M210 42v174" stroke="currentColor" strokeWidth="2" />
+    <path d="m108 157 102-59 102 59v118l-102 59-102-59V157Z" stroke="currentColor" strokeWidth="1.5" strokeDasharray="7 9" />
+    <circle cx="210" cy="42" r="7" fill="currentColor" />
+    <circle cx="360" cy="128" r="7" fill="currentColor" />
+    <circle cx="360" cy="302" r="7" fill="currentColor" />
+    <circle cx="210" cy="388" r="7" fill="currentColor" />
+    <circle cx="60" cy="302" r="7" fill="currentColor" />
+    <circle cx="60" cy="128" r="7" fill="currentColor" />
+  </svg>
+);
 
 const UnderDevelopmentPage = () => {
+  const pageRef = useRef(null);
+
   usePageSeo({
     title: '3D Art | Under Development | Jack Miller',
     description: 'The 3D Art section of Jack Miller Media is currently under development.',
@@ -62,21 +29,50 @@ const UnderDevelopmentPage = () => {
     robots: 'noindex, follow',
   });
 
+  useLayoutEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
+
+    const context = gsap.context(() => {
+      gsap.from('.wip-panel > *', {
+        opacity: 0,
+        y: 24,
+        duration: 0.8,
+        stagger: 0.1,
+        ease: 'power3.out',
+      });
+      gsap.to('.wip-panel__art', {
+        y: -10,
+        rotation: 2,
+        duration: 3.8,
+        repeat: -1,
+        yoyo: true,
+        ease: 'sine.inOut',
+      });
+    }, pageRef);
+
+    return () => context?.revert?.();
+  }, []);
+
   return (
     <>
       <Navbar />
-      <PageShell id="main-content" role="main">
-        <Notice>
-          <Eyebrow>3D Art</Eyebrow>
-          <Title>Page under development</Title>
-          <Message>
-            This space is being prepared for the 3D work. Check back soon for the finished gallery.
-          </Message>
-          <Mark>
-            <Stamp label="WIP" />
-          </Mark>
-        </Notice>
-      </PageShell>
+      <main ref={pageRef} id="main-content" className="wip-page" role="main">
+        <section className="wip-panel" aria-labelledby="wip-title">
+          <div>
+            <span className="tape-label">3D Art · Work in progress</span>
+            <h1 id="wip-title">Page under development</h1>
+            <p>
+              This space is being prepared for the 3D work. Check back soon for the finished gallery.
+            </p>
+            <div className="wip-stamp">
+              <Stamp label="WIP" />
+            </div>
+          </div>
+          <div className="wip-panel__art">
+            <WireCube />
+          </div>
+        </section>
+      </main>
     </>
   );
 };

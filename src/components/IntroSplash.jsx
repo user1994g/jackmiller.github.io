@@ -1,90 +1,57 @@
-import React, { useEffect, useRef, useState } from 'react';
-import styled from 'styled-components';
+import React, { useEffect, useState } from 'react';
 
-const Overlay = styled.div`
-  position: fixed;
-  inset: 0;
-  z-index: 400;
-  display: grid;
-  place-items: center;
-  background: var(--ink);
-  color: var(--paper);
-  pointer-events: ${({ $gone }) => ($gone ? 'none' : 'auto')};
-  opacity: ${({ $gone }) => ($gone ? 0 : 1)};
-  transition: opacity 0.55s ease;
-`;
+const introStorageKey = 'jm-cut-room-intro-v1';
 
-const Stage = styled.div`
-  display: grid;
-  justify-items: center;
-  gap: 1.1rem;
-  text-align: center;
-  padding: 1.5rem;
-`;
+const shouldShowIntro = () => {
+  if (typeof window === 'undefined') return false;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return false;
 
-const Count = styled.p`
-  margin: 0;
-  font-family: var(--font-display);
-  font-size: clamp(4rem, 18vw, 10rem);
-  font-weight: 800;
-  letter-spacing: -0.08em;
-  line-height: 0.8;
-  color: var(--signal);
-`;
-
-const Label = styled.p`
-  margin: 0;
-  font-size: 0.78rem;
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
-  color: var(--acid);
-`;
+  try {
+    return window.sessionStorage.getItem(introStorageKey) !== '1';
+  } catch {
+    return true;
+  }
+};
 
 const IntroSplash = () => {
-  const [count, setCount] = useState(3);
-  const [gone, setGone] = useState(false);
-  const [mounted, setMounted] = useState(true);
-  const shown = useRef(false);
+  const [mounted, setMounted] = useState(shouldShowIntro);
+  const [closing, setClosing] = useState(false);
 
   useEffect(() => {
-    if (typeof window === 'undefined') return undefined;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      setMounted(false);
-      return undefined;
-    }
-    if (sessionStorage.getItem('jm-intro') === '1') {
-      setMounted(false);
-      return undefined;
-    }
-    if (shown.current) return undefined;
-    shown.current = true;
+    if (!mounted) return undefined;
 
-    const ticks = [3, 2, 1];
-    let i = 0;
-    const timer = window.setInterval(() => {
-      i += 1;
-      if (i >= ticks.length) {
-        window.clearInterval(timer);
-        setGone(true);
-        sessionStorage.setItem('jm-intro', '1');
-        window.setTimeout(() => setMounted(false), 600);
-        return;
-      }
-      setCount(ticks[i]);
-    }, 420);
+    document.body.classList.add('intro-open');
 
-    return () => window.clearInterval(timer);
-  }, []);
+    try {
+      window.sessionStorage.setItem(introStorageKey, '1');
+    } catch {
+      // The intro still works when storage is unavailable.
+    }
+
+    const closeTimer = window.setTimeout(() => setClosing(true), 480);
+    const removeTimer = window.setTimeout(() => setMounted(false), 700);
+
+    return () => {
+      window.clearTimeout(closeTimer);
+      window.clearTimeout(removeTimer);
+      document.body.classList.remove('intro-open');
+    };
+  }, [mounted]);
 
   if (!mounted) return null;
 
   return (
-    <Overlay $gone={gone} aria-hidden="true">
-      <Stage>
-        <Count>{count}</Count>
-        <Label>Picture start</Label>
-      </Stage>
-    </Overlay>
+    <div className={`cut-intro${closing ? ' cut-intro--closing' : ''}`} aria-hidden="true">
+      <div className="cut-intro__frame">
+        <span className="cut-intro__corner cut-intro__corner--one" />
+        <span className="cut-intro__corner cut-intro__corner--two" />
+        <div className="cut-intro__slate">
+          <span className="cut-intro__take">JMM / TAKE 01</span>
+          <strong>Picture up.</strong>
+          <span className="cut-intro__timecode">00:00:01:00</span>
+        </div>
+      </div>
+    </div>
   );
 };
 

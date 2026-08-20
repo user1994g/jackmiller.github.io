@@ -6,11 +6,11 @@ import styled, { keyframes } from 'styled-components';
 const pulse = keyframes`
   0%,
   100% {
-    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35), 0 0 0 0 rgba(198, 240, 77, 0.34);
+    box-shadow: 6px 6px 0 var(--poppy), 0 0 0 0 rgba(76, 59, 238, 0.28);
   }
 
   50% {
-    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.45), 0 0 0 8px rgba(198, 240, 77, 0);
+    box-shadow: 4px 4px 0 var(--poppy), 0 0 0 8px rgba(76, 59, 238, 0);
   }
 `;
 
@@ -31,10 +31,10 @@ const ToggleButton = styled.button`
   min-width: 3.15rem;
   height: 3.15rem;
   padding: 0 0.8rem;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  border-radius: 999px;
-  background: linear-gradient(180deg, rgba(17, 18, 22, 0.95), rgba(8, 9, 12, 0.96));
-  color: rgba(250, 252, 255, 0.98);
+  border: 2px solid var(--ink);
+  clip-path: var(--notch);
+  background: var(--violet);
+  color: var(--paper-bright);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -42,14 +42,13 @@ const ToggleButton = styled.button`
   font-weight: 700;
   cursor: pointer;
   animation: ${pulse} 2.4s ease-in-out infinite;
-  box-shadow: 0 0 0 1px rgba(198, 240, 77, 0.24);
+  box-shadow: 6px 6px 0 var(--poppy);
   transition: transform 0.18s ease, border-color 0.18s ease;
 
   &:hover,
   &:focus-visible {
     transform: translateY(-2px);
-    border-color: rgba(240, 216, 173, 0.58);
-    outline: none;
+    background: var(--ink);
   }
 `;
 
@@ -79,15 +78,11 @@ const ChatPanel = styled(motion.section)`
   gap: 0.6rem;
   padding: 0.72rem;
   transform-origin: bottom right;
-  border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.24);
-  background:
-    linear-gradient(180deg, rgba(8, 9, 12, 0.97), rgba(5, 6, 9, 0.98)),
-    radial-gradient(circle at 50% -40%, rgba(255, 255, 255, 0.08), transparent 54%);
-  box-shadow:
-    0 22px 56px rgba(0, 0, 0, 0.56),
-    inset 0 1px 0 rgba(255, 255, 255, 0.09);
-  backdrop-filter: blur(9px);
+  border: 2px solid var(--ink);
+  clip-path: var(--notch);
+  color: var(--ink);
+  background: var(--paper-bright);
+  box-shadow: 9px 9px 0 var(--poppy);
 
   @media (max-width: 42em) {
     right: 0.75rem;
@@ -109,21 +104,20 @@ const Header = styled.div`
     font-size: 0.82rem;
     letter-spacing: 0.09em;
     text-transform: uppercase;
-    color: rgba(248, 251, 255, 0.96);
+    color: var(--ink);
   }
 
   p {
     margin: 0.22rem 0 0;
     font-size: 0.72rem;
-    color: rgba(207, 213, 224, 0.72);
+    color: var(--ink-muted);
   }
 `;
 
 const CloseButton = styled.button`
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.05);
-  color: rgba(247, 249, 252, 0.92);
+  border: 1px solid var(--ink);
+  background: transparent;
+  color: var(--ink);
   font-size: 0.74rem;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -132,8 +126,8 @@ const CloseButton = styled.button`
 
   &:hover,
   &:focus-visible {
-    border-color: rgba(240, 216, 173, 0.58);
-    outline: none;
+    color: var(--paper);
+    background: var(--violet);
   }
 `;
 
@@ -149,7 +143,7 @@ const Messages = styled.div`
   }
 
   &::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.22);
+    background: var(--violet);
     border-radius: 999px;
   }
 `;
@@ -165,15 +159,15 @@ const Bubble = styled.div`
   ${({ $role }) => ($role === 'user'
     ? `
       align-self: flex-end;
-      background: rgba(240, 216, 173, 0.2);
-      color: rgba(255, 248, 236, 0.98);
-      border: 1px solid rgba(240, 216, 173, 0.38);
+      background: var(--violet);
+      color: var(--paper-bright);
+      border: 1px solid var(--violet);
     `
     : `
       align-self: flex-start;
-      background: rgba(255, 255, 255, 0.08);
-      color: rgba(239, 242, 247, 0.92);
-      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(11, 10, 15, 0.07);
+      color: var(--ink);
+      border: 1px solid rgba(11, 10, 15, 0.2);
     `)}
 `;
 
@@ -184,11 +178,11 @@ const QuickActions = styled.div`
 `;
 
 const Chip = styled.button`
-  border: 1px solid rgba(255, 255, 255, 0.22);
+  border: 1px solid var(--ink);
   border-radius: 999px;
   padding: 0.3rem 0.55rem;
-  background: rgba(255, 255, 255, 0.04);
-  color: rgba(236, 239, 244, 0.9);
+  background: transparent;
+  color: var(--ink);
   font-size: 0.7rem;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -196,9 +190,8 @@ const Chip = styled.button`
 
   &:hover,
   &:focus-visible {
-    border-color: rgba(240, 216, 173, 0.58);
-    color: #fff;
-    outline: none;
+    color: var(--paper-bright);
+    background: var(--poppy);
   }
 `;
 
@@ -209,29 +202,27 @@ const InputForm = styled.form`
 `;
 
 const Input = styled.input`
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.05);
-  color: rgba(245, 247, 250, 0.95);
+  border: 1px solid var(--ink);
+  background: var(--paper);
+  color: var(--ink);
   padding: 0.54rem 0.62rem;
   font-size: 16px;
   line-height: 1.2;
 
   &::placeholder {
-    color: rgba(204, 210, 219, 0.58);
+    color: var(--ink-muted);
   }
 
   &:focus {
     outline: none;
-    border-color: rgba(240, 216, 173, 0.6);
+    border-color: var(--violet);
   }
 `;
 
 const Send = styled.button`
-  border: 1px solid rgba(255, 255, 255, 0.24);
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.11);
-  color: rgba(250, 252, 255, 0.97);
+  border: 1px solid var(--ink);
+  background: var(--ink);
+  color: var(--paper-bright);
   padding: 0.54rem 0.7rem;
   font-size: 0.72rem;
   text-transform: uppercase;
@@ -240,12 +231,11 @@ const Send = styled.button`
 
   &:hover,
   &:focus-visible {
-    border-color: rgba(240, 216, 173, 0.58);
-    outline: none;
+    background: var(--violet);
   }
 `;
 
-const quickPrompts = ['Home', 'Photos', 'Videos', 'Level 2', 'NetVista Studio'];
+const quickPrompts = ['Home', 'Photos', 'Videos', 'Level 2', 'Contact', 'NetVista Studio'];
 
 const actionCues = new Set([
   'go',
@@ -276,7 +266,7 @@ const siteIntents = [
   {
     id: 'home',
     label: 'Home',
-    action: { type: 'scroll', target: '#home' },
+    action: { type: 'route', path: '/' },
     keywords: ['home', 'top', 'start', 'landing', 'main'],
     phrases: ['go home', 'take me home', 'back to top', 'home page', 'front page'],
     responses: [
@@ -289,7 +279,7 @@ const siteIntents = [
   {
     id: 'about',
     label: 'About',
-    action: { type: 'scroll', target: '#about' },
+    action: { type: 'route', path: '/about' },
     keywords: ['about', 'bio', 'story', 'background', 'jack', 'person'],
     phrases: ['about me', 'who is jack', 'jack story', 'about section', 'about page'],
     responses: [
@@ -302,7 +292,7 @@ const siteIntents = [
   {
     id: 'photos',
     label: 'Photos',
-    action: { type: 'scroll', target: '#shop' },
+    action: { type: 'route', path: '/photos' },
     keywords: ['photo', 'photos', 'image', 'images', 'picture', 'gallery', 'gallary', 'portfolio', 'stills'],
     phrases: ['photo gallery', 'show photos', 'open gallery', 'find photos', 'show me pictures'],
     responses: [
@@ -380,7 +370,7 @@ const siteIntents = [
   {
     id: 'finallesson',
     label: 'Final Lesson',
-    action: { type: 'route', path: '/final-lesson', state: { allowUnlisted: true, unlisted: 'final-lesson', via: 'assistant' } },
+    action: { type: 'route', path: '/the-final-lesson' },
     keywords: ['fmp 3', 'fmp3', 'final lesson', 'the final lesson'],
     phrases: ['open fmp 3', 'show fmp 3', 'open final lesson', 'open the final lesson', 'take me to final lesson'],
     responses: [
@@ -393,7 +383,7 @@ const siteIntents = [
   {
     id: 'contact',
     label: 'Contact',
-    action: { type: 'scroll', target: '#contact' },
+    action: { type: 'route', path: '/contact' },
     keywords: ['contact', 'email', 'reach', 'message', 'talk'],
     phrases: ['contact info', 'how to contact', 'reach jack', 'email jack'],
     responses: [
@@ -406,8 +396,11 @@ const siteIntents = [
 ];
 
 const videoTitles = [
-  "the dark echo's of 1939",
-  'signal field',
+  { title: "the dark echo's of 1939", intent: 'level2' },
+  { title: 'dark echoes of 1939', intent: 'level2' },
+  { title: 'the final lesson', intent: 'finallesson' },
+  { title: 'final lesson', intent: 'finallesson' },
+  { title: 'signal field', intent: 'videos' },
   'cold frame',
   'final composition',
   'echo transfer',
@@ -418,7 +411,7 @@ const videoTitles = [
   'no sleep city',
   'red corridor',
   'blue sector',
-];
+].map((entry) => (typeof entry === 'string' ? { title: entry, intent: 'videos' } : entry));
 
 const initialMessages = [
   {
@@ -542,7 +535,7 @@ const scoreIntent = (intent, normalized, tokens) => {
 
 const pickRandom = (items) => items[Math.floor(Math.random() * items.length)];
 
-const detectVideoTitleMention = (normalized) => videoTitles.find((title) => normalized.includes(title));
+const detectVideoTitleMention = (normalized) => videoTitles.find((entry) => normalized.includes(entry.title));
 
 const analyzeMessage = (rawValue, pendingIntent) => {
   const normalized = normalizeText(rawValue);
@@ -576,7 +569,11 @@ const analyzeMessage = (rawValue, pendingIntent) => {
   if (normalized.includes('play ') || normalized.includes('watch ') || normalized.includes('find ') || normalized.includes('show ')) {
     const matchedTitle = detectVideoTitleMention(normalized);
     if (matchedTitle) {
-      return { type: 'video-title', title: matchedTitle };
+      return {
+        type: 'video-title',
+        title: matchedTitle.title,
+        intent: siteIntents.find((intent) => intent.id === matchedTitle.intent),
+      };
     }
   }
 
@@ -629,13 +626,19 @@ const pageLabelByPath = (pathname) => {
     return 'Write Ups';
   }
 
-  if (pathname === '/final-lesson') {
+  if (pathname === '/the-final-lesson') {
     return 'Final Lesson';
   }
 
   if (pathname === '/fmp-level-2') {
     return 'Level 2: The Dark Echoes of 1939';
   }
+
+  if (pathname === '/photos') return 'Photos';
+  if (pathname === '/about') return 'About';
+  if (pathname === '/contact') return 'Contact';
+  if (pathname === '/privacy') return 'Privacy Policy';
+  if (pathname === '/terms') return 'Terms';
 
   return 'Home';
 };
@@ -733,8 +736,8 @@ const SiteHelperChat = () => {
     }
 
     if (result.type === 'video-title') {
-      setPendingIntent(siteIntents.find((intent) => intent.id === 'videos'));
-      appendMessage('bot', `That title is on the Videos page. Say "yes" and I will open Videos so you can find ${result.title}.`);
+      setPendingIntent(result.intent);
+      appendMessage('bot', `${result.title} has its own place here. Say "yes" and I will open ${result.intent.label}.`);
       return;
     }
 
@@ -747,7 +750,7 @@ const SiteHelperChat = () => {
     if (result.type === 'recommend') {
       setPendingIntent(null);
       if (location.pathname === '/videos') {
-        appendMessage('bot', 'You are already in the strongest place for film work. Browse the poster rows or open The dark echo\'s of 1939 first.');
+        appendMessage('bot', 'You are already in the strongest place for film work. Browse the programme or open The Final Lesson first.');
         return;
       }
 
@@ -796,7 +799,7 @@ const SiteHelperChat = () => {
   }, [messages, open]);
 
   return (
-    <Root>
+    <Root data-site-helper="true">
       <AnimatePresence>
         {open && (
           <ChatPanel

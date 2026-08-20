@@ -1,6 +1,4 @@
-import { AnimatePresence, motion } from 'framer-motion';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import styled from 'styled-components';
+import React, { useEffect, useRef, useState } from 'react';
 
 import img4 from '../assets/VideoHeroes/4-hero.jpg';
 import img5 from '../assets/VideoHeroes/5-hero.jpg';
@@ -12,7 +10,6 @@ import img10 from '../assets/VideoHeroes/10-hero.jpg';
 import img12 from '../assets/VideoHeroes/12-hero.jpg';
 import img13 from '../assets/VideoHeroes/13-hero.jpg';
 import img14 from '../assets/VideoHeroes/14-hero.jpg';
-
 import thumb4 from '../assets/VideoThumbs/4-thumb.jpg';
 import thumb5 from '../assets/VideoThumbs/5-thumb.jpg';
 import thumb6 from '../assets/VideoThumbs/6-thumb.jpg';
@@ -23,483 +20,11 @@ import thumb10 from '../assets/VideoThumbs/10-thumb.jpg';
 import thumb12 from '../assets/VideoThumbs/12-thumb.jpg';
 import thumb13 from '../assets/VideoThumbs/13-thumb.jpg';
 import thumb14 from '../assets/VideoThumbs/14-thumb.jpg';
+import useStudioMotion from '../hooks/useStudioMotion';
 
 const finalLessonImage = `${process.env.PUBLIC_URL}/new-home/img/44.jpg`;
-
-const Section = styled.section`
-  position: relative;
-  width: 100%;
-  overflow: hidden;
-  background: #050507;
-  padding: clamp(5.4rem, 8vw, 7.2rem) 0 clamp(2.6rem, 6vw, 4.4rem);
-`;
-
-const Wrap = styled.div`
-  width: min(1640px, 96vw);
-  margin: 0 auto;
-  display: grid;
-  gap: clamp(1rem, 2.1vw, 1.6rem);
-`;
-
-const Billboard = styled(motion.section)`
-  position: relative;
-  min-height: clamp(360px, 54vw, 700px);
-  border-radius: 1rem;
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  background: #0a0b0f;
-`;
-
-const BillboardPoster = styled.img`
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-`;
-
-const BillboardShade = styled.div`
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background:
-    linear-gradient(90deg, rgba(5, 5, 7, 0.86) 0%, rgba(5, 5, 7, 0.62) 32%, rgba(5, 5, 7, 0.15) 68%),
-    linear-gradient(180deg, rgba(5, 5, 7, 0.2) 0%, rgba(5, 5, 7, 0.84) 100%);
-`;
-
-const BillboardInner = styled.div`
-  position: absolute;
-  inset: 0;
-  padding: clamp(1rem, 3vw, 2.4rem);
-  display: grid;
-  align-content: end;
-  width: min(760px, 100%);
-  gap: 0.75rem;
-`;
-
-const Kicker = styled.span`
-  color: rgba(255, 255, 255, 0.74);
-  text-transform: uppercase;
-  letter-spacing: 0.16em;
-  font-size: clamp(0.62rem, 0.85vw, 0.8rem);
-`;
-
-const Title = styled.h1`
-  margin: 0;
-  color: var(--paper);
-  font-family: var(--font-display);
-  text-transform: none;
-  letter-spacing: -0.05em;
-  line-height: 0.92;
-  font-size: clamp(1.7rem, 5vw, 4.4rem);
-`;
-
-const Meta = styled.div`
-  display: flex;
-  gap: 0.4rem;
-  flex-wrap: wrap;
-`;
-
-const MetaChip = styled.span`
-  border-radius: 0.5rem;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  background: rgba(255, 255, 255, 0.08);
-  color: rgba(243, 245, 248, 0.95);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  font-size: 0.66rem;
-  padding: 0.27rem 0.44rem;
-`;
-
-const Description = styled.p`
-  margin: 0;
-  color: rgba(230, 233, 239, 0.84);
-  font-size: clamp(0.86rem, 1.05vw, 1rem);
-  line-height: 1.6;
-  width: min(60ch, 100%);
-`;
-
-const Actions = styled.div`
-  display: flex;
-  gap: 0.6rem;
-  flex-wrap: wrap;
-`;
-
-const Primary = styled.button`
-  border: none;
-  border-radius: 999px;
-  padding: 0.64rem 1rem;
-  background: var(--acid);
-  color: var(--ink);
-  font-size: 0.82rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  cursor: pointer;
-`;
-
-const Secondary = styled.button`
-  border: 1px solid rgba(255, 255, 255, 0.24);
-  border-radius: 0.55rem;
-  padding: 0.62rem 0.98rem;
-  background: rgba(22, 24, 28, 0.8);
-  color: rgba(243, 245, 248, 0.95);
-  font-size: 0.82rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  cursor: pointer;
-`;
-
-const Rows = styled.div`
-  display: grid;
-  gap: clamp(0.9rem, 1.8vw, 1.3rem);
-`;
-
-const Row = styled(motion.section)`
-  display: grid;
-  gap: 0.5rem;
-`;
-
-const RowHead = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 0.8rem;
-  flex-wrap: wrap;
-`;
-
-const RowTitle = styled.h2`
-  margin: 0;
-  color: rgba(245, 246, 249, 0.98);
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  font-size: clamp(0.76rem, 1.02vw, 0.88rem);
-`;
-
-const RowNote = styled.p`
-  margin: 0;
-  color: rgba(202, 210, 223, 0.7);
-  font-size: 0.74rem;
-  letter-spacing: 0.04em;
-`;
-
-const Rail = styled.div`
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: minmax(190px, 1fr);
-  gap: 0.62rem;
-  overflow-x: auto;
-  padding: 0.15rem 0.05rem 0.55rem;
-  scroll-snap-type: x proximity;
-
-  &::-webkit-scrollbar {
-    height: 0.46rem;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.24);
-    border-radius: 999px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.08);
-    border-radius: 999px;
-  }
-
-  @media (max-width: 52em) {
-    grid-auto-columns: minmax(175px, 70vw);
-  }
-`;
-
-const Card = styled(motion.button)`
-  position: relative;
-  border: 1px solid ${({ $active }) => ($active ? 'rgba(255, 255, 255, 0.56)' : 'rgba(255, 255, 255, 0.14)')};
-  border-radius: 0.68rem;
-  overflow: hidden;
-  padding: 0;
-  background: #0b0c10;
-  cursor: pointer;
-  text-align: left;
-  scroll-snap-align: start;
-`;
-
-const CardImage = styled.img`
-  width: 100%;
-  aspect-ratio: var(--aspect, 16 / 9);
-  object-fit: cover;
-  display: block;
-`;
-
-const CardOverlay = styled.div`
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  padding: 0.55rem;
-  background: linear-gradient(180deg, rgba(8, 9, 12, 0) 0%, rgba(8, 9, 12, 0.86) 100%);
-  display: grid;
-  gap: 0.18rem;
-`;
-
-const CardTitle = styled.strong`
-  color: rgba(248, 249, 252, 0.96);
-  font-size: 0.74rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-`;
-
-const CardMeta = styled.span`
-  color: rgba(212, 220, 232, 0.74);
-  font-size: 0.66rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-`;
-
-const SheetBackdrop = styled(motion.div)`
-  position: fixed;
-  inset: 0;
-  z-index: 90;
-  background: rgba(0, 0, 0, 0.86);
-  backdrop-filter: blur(7px);
-  display: grid;
-  place-items: center;
-  padding: clamp(0.8rem, 2.5vw, 1.2rem);
-`;
-
-const SheetPanel = styled(motion.div)`
-  width: min(1080px, 100%);
-  border-radius: 0.9rem;
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  background: #06070b;
-  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.58);
-`;
-
-const SheetTop = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 0.6rem;
-  padding: 0.7rem 0.82rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-
-  strong {
-    color: rgba(248, 250, 252, 0.96);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    font-size: 0.82rem;
-  }
-`;
-
-const SheetClose = styled.button`
-  border-radius: 0.5rem;
-  border: 1px solid rgba(255, 255, 255, 0.28);
-  padding: 0.42rem 0.6rem;
-  background: rgba(255, 255, 255, 0.06);
-  color: rgba(246, 248, 251, 0.95);
-  font-size: 0.72rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  cursor: pointer;
-`;
-
-const SheetBody = styled.div`
-  display: grid;
-  grid-template-columns: minmax(0, 1.08fr) minmax(300px, 0.92fr);
-  gap: 0;
-
-  @media (max-width: 62em) {
-    grid-template-columns: 1fr;
-  }
-`;
-
-const SheetVisual = styled.div`
-  position: relative;
-  min-height: clamp(280px, 48vw, 620px);
-  background: #05060a;
-`;
-
-const SheetPoster = styled.img`
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-`;
-
-const SheetShade = styled.div`
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(180deg, rgba(5, 6, 10, 0.12) 0%, rgba(5, 6, 10, 0.84) 100%),
-    radial-gradient(circle at 72% 28%, rgba(255, 206, 148, 0.22), transparent 48%);
-`;
-
-const SheetInfo = styled.div`
-  padding: clamp(1rem, 2.2vw, 1.4rem);
-  display: grid;
-  align-content: start;
-  gap: 0.85rem;
-  background: linear-gradient(180deg, rgba(9, 10, 14, 0.96), rgba(6, 7, 10, 0.98));
-`;
-
-const SheetEyebrow = styled.span`
-  color: var(--acid);
-  text-transform: uppercase;
-  letter-spacing: 0.16em;
-  font-size: 0.62rem;
-`;
-
-const SheetTitle = styled.h2`
-  margin: 0;
-  color: var(--paper);
-  font-family: var(--font-display);
-  text-transform: none;
-  letter-spacing: -0.04em;
-  line-height: 0.96;
-  font-size: clamp(1.3rem, 2.4vw, 2rem);
-`;
-
-const SheetText = styled.p`
-  margin: 0;
-  color: rgba(226, 231, 239, 0.82);
-  font-size: 0.92rem;
-  line-height: 1.62;
-`;
-
-const SheetNotice = styled.div`
-  border-radius: 0.65rem;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  background: rgba(255, 255, 255, 0.04);
-  padding: 0.78rem 0.82rem;
-  color: rgba(244, 246, 249, 0.88);
-  font-size: 0.78rem;
-  letter-spacing: 0.04em;
-  line-height: 1.55;
-`;
-
-
-const SheetActions = styled.div`
-  display: flex;
-  gap: 0.55rem;
-  flex-wrap: wrap;
-`;
-
-const SheetPlayButton = styled.button`
-  border: none;
-  border-radius: 999px;
-  padding: 0.68rem 1rem;
-  background: var(--acid);
-  color: var(--ink);
-  font-size: 0.82rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  cursor: pointer;
-`;
-
-const SheetGhostButton = styled.button`
-  border-radius: 0.6rem;
-  border: 1px solid rgba(255, 255, 255, 0.24);
-  padding: 0.66rem 0.96rem;
-  background: rgba(255, 255, 255, 0.05);
-  color: rgba(245, 247, 250, 0.94);
-  font-size: 0.8rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  cursor: pointer;
-
-  &:disabled {
-    opacity: 0.46;
-    cursor: not-allowed;
-  }
-`;
-
-const PlayerBackdrop = styled(motion.div)`
-  position: fixed;
-  inset: 0;
-  z-index: 110;
-  background: rgba(0, 0, 0, 0.94);
-  backdrop-filter: blur(10px);
-  display: grid;
-  place-items: center;
-  padding: clamp(0.8rem, 2.5vw, 1.3rem);
-
-  @media (max-width: 48em) {
-    backdrop-filter: none;
-    padding: 0;
-    place-items: start stretch;
-  }
-`;
-
-const PlayerPanel = styled(motion.div)`
-  width: min(1200px, 100%);
-  display: grid;
-  gap: 0.75rem;
-
-  @media (max-width: 48em) {
-    width: 100%;
-    min-height: 100dvh;
-    gap: 0;
-    background: #000;
-  }
-`;
-
-const PlayerTop = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 0.75rem;
-
-  strong {
-    color: rgba(248, 250, 252, 0.96);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    font-size: 0.82rem;
-  }
-
-  @media (max-width: 48em) {
-    padding: 0.8rem 0.8rem 0.65rem;
-    background: rgba(0, 0, 0, 0.92);
-  }
-`;
-
-const PlayerClose = styled.button`
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.24);
-  padding: 0.66rem 0.95rem;
-  background: rgba(255, 255, 255, 0.08);
-  color: rgba(248, 249, 252, 0.96);
-  font-size: 0.76rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  cursor: pointer;
-`;
-
-const PlayerFrame = styled.div`
-  border-radius: 1rem;
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  background: #000;
-  box-shadow: 0 36px 90px rgba(0, 0, 0, 0.56);
-
-  video {
-    width: 100%;
-    max-height: min(78vh, 820px);
-    display: block;
-    background: #000;
-  }
-
-  @media (max-width: 48em) {
-    border-radius: 0;
-    border: none;
-    box-shadow: none;
-
-    video {
-      max-height: none;
-      min-height: 0;
-    }
-  }
-`;
+const finalLessonStream =
+  'https://clip-kingdom-play.lovable.app/api/public/stream/878b4496-ab7a-47fe-8e0f-0b489311241c';
 
 const collections = [
   {
@@ -507,45 +32,51 @@ const collections = [
     note: 'Narrative short films and story-led visual work.',
     items: [
       {
+        id: 'the-final-lesson',
         image: finalLessonImage,
+        thumbnail: finalLessonImage,
         title: 'The Final Lesson',
         category: 'Short film video',
         duration: '04:12',
-        year: '2026',
+        year: '2024',
         tools: 'Premiere + Lumetri',
-        logline: 'A narrative short film presented through cinematic visual storytelling and editorial pacing.',
-        aspect: '16 / 9',
-        video: 'https://clip-kingdom-play.lovable.app/api/public/stream/878b4496-ab7a-47fe-8e0f-0b489311241c',
+        logline:
+          'A narrative short film presented through cinematic visual storytelling and editorial pacing.',
+        video: finalLessonStream,
       },
       {
+        id: 'signal-field',
         image: img4,
+        thumbnail: thumb4,
         title: 'Signal Field',
         category: 'Cinematic study',
         duration: '03:31',
         year: '2026',
         tools: 'Sony A7 + DaVinci',
-        logline: 'An experiment in contrast, rhythm, and urban texture captured during blue hour.',
-        aspect: '16 / 9',
+        logline:
+          'An experiment in contrast, rhythm, and urban texture captured during blue hour.',
       },
       {
+        id: 'cold-frame',
         image: img6,
+        thumbnail: thumb6,
         title: 'Cold Frame',
         category: 'Visual poem',
         duration: '02:58',
         year: '2025',
         tools: 'FX3 + Resolve',
         logline: 'Still architecture and moving shadows become a single visual sentence.',
-        aspect: '16 / 9',
       },
       {
+        id: 'final-composition',
         image: img10,
+        thumbnail: thumb10,
         title: 'Final Composition',
         category: 'Edit exercise',
         duration: '05:06',
         year: '2025',
         tools: 'Premiere + After Effects',
         logline: 'A montage project exploring continuity cuts and emotional transitions.',
-        aspect: '16 / 9',
       },
     ],
   },
@@ -554,44 +85,51 @@ const collections = [
     note: 'Observed moments, natural light, and grounded sound design.',
     items: [
       {
+        id: 'echo-transfer',
         image: img8,
+        thumbnail: thumb8,
         title: 'Echo Transfer',
         category: 'Doc fragment',
         duration: '06:14',
         year: '2026',
         tools: 'Zoom H6 + FX30',
-        logline: 'A quiet portrait of late-night transit workers and the spaces between shifts.',
-        aspect: '16 / 9',
+        logline:
+          'A quiet portrait of late-night transit workers and the spaces between shifts.',
       },
       {
+        id: 'night-junction',
         image: img9,
+        thumbnail: thumb9,
         title: 'Night Junction',
         category: 'Field study',
         duration: '04:47',
         year: '2025',
         tools: 'Handheld + 35mm',
-        logline: 'One rail route, three viewpoints, and a layered soundscape built from station ambience.',
-        aspect: '16 / 9',
+        logline:
+          'One rail route, three viewpoints, and a layered soundscape built from station ambience.',
       },
       {
+        id: 'glass-division',
         image: img13,
+        thumbnail: thumb13,
         title: 'Glass Division',
         category: 'Interview piece',
         duration: '05:22',
         year: '2025',
         tools: 'Resolve Fairlight',
-        logline: 'Reflections and off-axis framing turn a simple interview into visual narrative.',
-        aspect: '16 / 9',
+        logline:
+          'Reflections and off-axis framing turn a simple interview into visual narrative.',
       },
       {
+        id: 'zero-ground',
         image: img14,
+        thumbnail: thumb14,
         title: 'Zero Ground',
         category: 'Location study',
         duration: '03:55',
         year: '2024',
         tools: 'Gimbal + ND filters',
         logline: 'A texture-first exploration of concrete, rain, and negative space.',
-        aspect: '16 / 9',
       },
     ],
   },
@@ -600,307 +138,415 @@ const collections = [
     note: 'Motion design tests, color language, and concept edits.',
     items: [
       {
+        id: 'liminal-room',
         image: img5,
+        thumbnail: thumb5,
         title: 'Liminal Room',
         category: 'Concept loop',
         duration: '02:09',
         year: '2026',
         tools: 'After Effects + Grain',
-        logline: 'Set design and looping edits create a shifting, dreamlike room sequence.',
-        aspect: '16 / 9',
+        logline:
+          'Set design and looping edits create a shifting, dreamlike room sequence.',
       },
       {
+        id: 'no-sleep-city',
         image: img7,
+        thumbnail: thumb7,
         title: 'No Sleep City',
         category: 'Night study',
         duration: '03:18',
         year: '2025',
         tools: 'Long exposure + AE',
-        logline: 'Neon motion and shutter drag are blended into an abstract city sketch.',
-        aspect: '16 / 9',
+        logline:
+          'Neon motion and shutter drag are blended into an abstract city sketch.',
       },
       {
+        id: 'red-corridor',
         image: img12,
+        thumbnail: thumb12,
         title: 'Red Corridor',
         category: 'Atmosphere piece',
         duration: '04:02',
         year: '2025',
         tools: 'Color isolation',
-        logline: 'A single red-lit location becomes a sequence of tension-driven compositions.',
-        aspect: '16 / 9',
+        logline:
+          'A single red-lit location becomes a sequence of tension-driven compositions.',
       },
       {
+        id: 'blue-sector',
         image: img6,
+        thumbnail: thumb6,
         title: 'Blue Sector',
         category: 'Studio test',
         duration: '02:44',
         year: '2024',
         tools: 'LED practicals',
-        logline: 'Controlled lighting and practical effects push a minimalist sci-fi look.',
-        aspect: '16 / 9',
+        logline:
+          'Controlled lighting and practical effects push a minimalist sci-fi look.',
       },
     ],
   },
 ];
 
-const thumbnailByImage = new Map([
-  [img4, thumb4],
-  [img5, thumb5],
-  [img6, thumb6],
-  [img7, thumb7],
-  [img8, thumb8],
-  [img9, thumb9],
-  [img10, thumb10],
-  [img12, thumb12],
-  [img13, thumb13],
-  [img14, thumb14],
-]);
-
-const getThumbnail = (source) => thumbnailByImage.get(source) || source;
-
-const Videos = () => {
-  const rowsRef = useRef(null);
-  const playerRef = useRef(null);
-
-  const allItems = useMemo(
-    () =>
-      collections.flatMap((collection) =>
-        collection.items.map((item) => ({
-          ...item,
-          collectionTitle: collection.title,
-          collectionNote: collection.note,
-        })),
-      ),
-    [],
-  );
-
-  const [featured, setFeatured] = useState(allItems[0]);
-  const [sheetOpen, setSheetOpen] = useState(false);
-  const [playerOpen, setPlayerOpen] = useState(false);
-
-  useEffect(() => {
-    if (!sheetOpen && !playerOpen) {
-      return undefined;
-    }
-
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-
-    const onEsc = (event) => {
-      if (event.key === 'Escape') {
-        if (playerOpen) {
-          setPlayerOpen(false);
-          return;
-        }
-
-        setSheetOpen(false);
-      }
-    };
-
-    const onContextMenu = (event) => {
-      if (playerRef.current && playerRef.current.contains(event.target)) {
-        event.preventDefault();
-      }
-    };
-
-    window.addEventListener('keydown', onEsc);
-    window.addEventListener('contextmenu', onContextMenu);
-
-    return () => {
-      document.body.style.overflow = previousOverflow;
-      window.removeEventListener('keydown', onEsc);
-      window.removeEventListener('contextmenu', onContextMenu);
-    };
-  }, [playerOpen, sheetOpen]);
-
-  const openItem = (item, collection) => {
-    setPlayerOpen(false);
-    setFeatured({
+let programmeIndex = 0;
+const programme = collections.map((collection) => ({
+  ...collection,
+  items: collection.items.map((item) => {
+    programmeIndex += 1;
+    return {
       ...item,
       collectionTitle: collection.title,
       collectionNote: collection.note,
-    });
-    setSheetOpen(true);
+      programmeNumber: String(programmeIndex).padStart(2, '0'),
+    };
+  }),
+}));
+
+const featuredFilm = programme[0].items[0];
+
+const focusableSelector = [
+  'a[href]',
+  'button:not([disabled])',
+  'input:not([disabled])',
+  'select:not([disabled])',
+  'textarea:not([disabled])',
+  '[tabindex]:not([tabindex="-1"])',
+].join(',');
+
+const getFocusableElements = (container) =>
+  Array.from(container?.querySelectorAll(focusableSelector) || []).filter(
+    (element) => !element.hasAttribute('hidden') && element.getAttribute('aria-hidden') !== 'true',
+  );
+
+const Meta = ({ project }) => (
+  <div className="film-meta" aria-label="Project details">
+    <span>{project.year}</span>
+    <span>{project.duration}</span>
+    <span>{project.category}</span>
+  </div>
+);
+
+const Videos = () => {
+  const sectionRef = useRef(null);
+  const programmeRef = useRef(null);
+  const projectDialogRef = useRef(null);
+  const projectCloseRef = useRef(null);
+  const cinemaDialogRef = useRef(null);
+  const cinemaCloseRef = useRef(null);
+  const videoRef = useRef(null);
+  const projectTriggerRef = useRef(null);
+  const playerTriggerRef = useRef(null);
+
+  const [selectedProject, setSelectedProject] = useState(null);
+  const [playingProject, setPlayingProject] = useState(null);
+  const playerOpen = Boolean(playingProject);
+  const modalOpen = Boolean(selectedProject || playingProject);
+
+  useStudioMotion(sectionRef);
+
+  const openProject = (project, trigger) => {
+    projectTriggerRef.current = trigger || document.activeElement;
+    setSelectedProject(project);
   };
 
-  const openPlayer = () => {
-    if (!featured.video) {
-      return;
-    }
-
-    setPlayerOpen(true);
+  const closeProject = () => {
+    setPlayingProject(null);
+    setSelectedProject(null);
   };
 
-  const closeSheet = () => {
-    setPlayerOpen(false);
-    setSheetOpen(false);
+  const openPlayer = (project, trigger) => {
+    if (!project.video) return;
+
+    playerTriggerRef.current = trigger || document.activeElement;
+    setPlayingProject(project);
   };
 
   const closePlayer = () => {
-    setPlayerOpen(false);
+    videoRef.current?.pause();
+    setPlayingProject(null);
   };
 
+  useEffect(() => {
+    if (!modalOpen) return undefined;
+
+    document.body.classList.add('dialog-open');
+    return () => {
+      document.body.classList.remove('dialog-open');
+    };
+  }, [modalOpen]);
+
+  useEffect(() => {
+    if (!selectedProject) return undefined;
+
+    const focusFrame = window.requestAnimationFrame(() => projectCloseRef.current?.focus());
+    return () => {
+      window.cancelAnimationFrame(focusFrame);
+      const restoreTarget = projectTriggerRef.current;
+      window.requestAnimationFrame(() => restoreTarget?.focus());
+    };
+  }, [selectedProject]);
+
+  useEffect(() => {
+    if (!playerOpen) return undefined;
+
+    const focusFrame = window.requestAnimationFrame(() => cinemaCloseRef.current?.focus());
+    return () => {
+      window.cancelAnimationFrame(focusFrame);
+      const restoreTarget = playerTriggerRef.current;
+      window.requestAnimationFrame(() => restoreTarget?.focus());
+    };
+  }, [playerOpen]);
+
+  useEffect(() => {
+    if (!selectedProject && !playerOpen) return undefined;
+
+    const onKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        if (playerOpen) closePlayer();
+        else closeProject();
+        return;
+      }
+
+      if (event.key !== 'Tab') return;
+
+      const activeDialog = playerOpen ? cinemaDialogRef.current : projectDialogRef.current;
+      const focusable = getFocusableElements(activeDialog);
+      if (!focusable.length) {
+        event.preventDefault();
+        activeDialog?.focus();
+        return;
+      }
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener('keydown', onKeyDown, true);
+    return () => document.removeEventListener('keydown', onKeyDown, true);
+  }, [playerOpen, selectedProject]);
+
   return (
-    <Section id="videos">
-      <Wrap>
-        <Billboard
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-        >
-          <BillboardPoster src={featured.image} alt={featured.title} />
-          <BillboardShade />
-          <BillboardInner>
-            <Kicker>Jack Miller Film Library</Kicker>
-            <Title>{featured.title}</Title>
-            <Meta>
-              <MetaChip>{featured.year}</MetaChip>
-              <MetaChip>{featured.duration}</MetaChip>
-              <MetaChip>{featured.category}</MetaChip>
-            </Meta>
-            <Description>{featured.logline}</Description>
-            <Actions>
-              <Primary type="button" onClick={() => setSheetOpen(true)}>View Project</Primary>
-              <Secondary
+    <>
+      <section
+        className="film-programme"
+        ref={sectionRef}
+        aria-label="The Cut Room film programme"
+      >
+        <section className="feature-film" aria-labelledby="feature-film-title">
+          <img
+            className="feature-film__image"
+            src={featuredFilm.image}
+            alt="Poster artwork for The Final Lesson"
+          />
+          <div className="feature-film__shade" aria-hidden="true" />
+          <div className="studio-wrap feature-film__content" data-reveal>
+            <span className="tape-label">Opening night · programme 01</span>
+            <h2 id="feature-film-title">{featuredFilm.title}</h2>
+            <Meta project={featuredFilm} />
+            <p>{featuredFilm.logline}</p>
+            <div className="feature-film__actions">
+              <button
+                className="studio-button studio-button--paper"
                 type="button"
-                onClick={() => rowsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+                onClick={(event) => openPlayer(featuredFilm, event.currentTarget)}
+                aria-haspopup="dialog"
               >
-                Browse Titles
-              </Secondary>
-            </Actions>
-          </BillboardInner>
-        </Billboard>
-
-        <Rows ref={rowsRef}>
-          {collections.map((collection, rowIndex) => (
-            <React.Fragment key={collection.title}>
-              <Row
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.2 }}
-                transition={{ duration: 0.3, delay: rowIndex * 0.04 }}
+                Watch the film
+              </button>
+              <button
+                className="studio-button"
+                type="button"
+                onClick={(event) => openProject(featuredFilm, event.currentTarget)}
+                aria-haspopup="dialog"
               >
-                <RowHead>
-                  <RowTitle>{collection.title}</RowTitle>
-                  <RowNote>{collection.note}</RowNote>
-                </RowHead>
-                <Rail>
-                  {collection.items.map((item) => {
-                    const active = featured.title === item.title;
+                Project notes
+              </button>
+              <button
+                className="studio-button studio-button--ghost"
+                type="button"
+                onClick={() =>
+                  programmeRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                }
+              >
+                Browse all 12
+              </button>
+            </div>
+          </div>
+        </section>
 
-                    return (
-                      <Card
-                        key={`${collection.title}-${item.title}`}
-                        type="button"
-                        $active={active}
-                        style={{ '--aspect': item.aspect }}
-                        onClick={() => openItem(item, collection)}
-                        whileHover={{ scale: 1.05, y: -4 }}
-                        transition={{ duration: 0.18 }}
-                        aria-label={`Open ${item.title}`}
-                      >
-                        <CardImage src={getThumbnail(item.image)} alt={item.title} loading="lazy" decoding="async" />
-                        <CardOverlay>
-                          <CardTitle>{item.title}</CardTitle>
-                          <CardMeta>
-                            {item.category} · {item.duration}
-                          </CardMeta>
-                        </CardOverlay>
-                      </Card>
-                    );
-                  })}
-                </Rail>
-              </Row>
-            </React.Fragment>
-          ))}
-        </Rows>
-      </Wrap>
+        <div className="studio-wrap" ref={programmeRef}>
+          {programme.map((collection) => {
+            const sectionId = `${collection.title.toLowerCase().replace(/\s+/g, '-')}-title`;
+            return (
+              <section className="programme-section" key={collection.title} aria-labelledby={sectionId}>
+                <header className="programme-section__head" data-reveal>
+                  <h2 id={sectionId}>{collection.title}</h2>
+                  <p>{collection.note}</p>
+                </header>
 
-      <AnimatePresence>
-        {sheetOpen ? (
-          <SheetBackdrop
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={closeSheet}
+                <div className="programme-grid" data-stagger>
+                  {collection.items.map((project) => (
+                    <button
+                      className="programme-card"
+                      type="button"
+                      key={project.id}
+                      onClick={(event) => openProject(project, event.currentTarget)}
+                      aria-haspopup="dialog"
+                      aria-label={`Open project notes for ${project.title}`}
+                    >
+                      <span className="programme-card__image">
+                        <img
+                          src={project.thumbnail}
+                          alt=""
+                          loading="lazy"
+                          decoding="async"
+                          width="520"
+                          height="325"
+                        />
+                        <span className="programme-card__status">
+                          {project.video ? 'Watch film' : 'Project notes'}
+                        </span>
+                      </span>
+                      <span className="programme-card__copy">
+                        <span className="frame-number" aria-hidden="true">
+                          {project.programmeNumber}
+                        </span>
+                        <strong>{project.title}</strong>
+                        <span>
+                          {project.year} · {project.duration}
+                        </span>
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </section>
+            );
+          })}
+        </div>
+      </section>
+
+      {selectedProject ? (
+        <div
+          className="studio-dialog studio-dialog--cinema"
+          onMouseDown={(event) => event.target === event.currentTarget && closeProject()}
+          aria-hidden={playerOpen ? 'true' : undefined}
+          style={playerOpen ? { visibility: 'hidden' } : undefined}
+        >
+          <section
+            className="project-dialog"
+            ref={projectDialogRef}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="project-dialog-title"
+            aria-describedby="project-dialog-description"
+            tabIndex="-1"
           >
-            <SheetPanel
-              initial={{ opacity: 0, y: 14, scale: 0.99 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 10, scale: 0.99 }}
-              transition={{ duration: 0.22 }}
-              onClick={(event) => event.stopPropagation()}
-            >
-              <SheetTop>
-                <strong>{featured.title}</strong>
-                <SheetClose type="button" onClick={closeSheet}>Close</SheetClose>
-              </SheetTop>
-              <SheetBody>
-                <SheetVisual>
-                  <SheetPoster src={featured.image} alt={featured.title} />
-                  <SheetShade />
-                </SheetVisual>
-                <SheetInfo>
-                  <SheetEyebrow>Jack Miller Media</SheetEyebrow>
-                  <SheetTitle>{featured.title}</SheetTitle>
-                  <Meta>
-                    <MetaChip>{featured.year}</MetaChip>
-                    <MetaChip>{featured.duration}</MetaChip>
-                    <MetaChip>{featured.category}</MetaChip>
-                  </Meta>
-                  <SheetText>{featured.logline}</SheetText>
-                  <SheetText>{featured.collectionNote}</SheetText>
-                  <Meta>
-                    <MetaChip>{featured.tools}</MetaChip>
-                    <MetaChip>{featured.collectionTitle}</MetaChip>
-                  </Meta>
-                  <SheetActions>
-                    <SheetPlayButton type="button" onClick={openPlayer} disabled={!featured.video}>
-                      Play
-                    </SheetPlayButton>
-                    <SheetGhostButton type="button" onClick={closeSheet}>
-                      Back to Library
-                    </SheetGhostButton>
-                  </SheetActions>
-                  <SheetNotice>
-                    {featured.video
-                      ? "Press play to open the full video. Close returns you straight back to the library sheet."
-                      : "Playback is off for this title right now. This page is still being built into the final video library."}
-                  </SheetNotice>
-                </SheetInfo>
-              </SheetBody>
-            </SheetPanel>
-          </SheetBackdrop>
-        ) : null}
-      </AnimatePresence>
+            <header className="project-dialog__bar">
+              <strong>
+                Programme {selectedProject.programmeNumber} · {selectedProject.collectionTitle}
+              </strong>
+              <button ref={projectCloseRef} type="button" onClick={closeProject}>
+                Close
+              </button>
+            </header>
 
-      <AnimatePresence>
-        {playerOpen && featured.video ? (
-          <PlayerBackdrop
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={closePlayer}
+            <div className="project-dialog__body">
+              <div className="project-dialog__visual">
+                <img src={selectedProject.image} alt={`Poster artwork for ${selectedProject.title}`} />
+              </div>
+              <div className="project-dialog__info">
+                <span className="studio-kicker">Jack Miller Media · project file</span>
+                <h2 id="project-dialog-title">{selectedProject.title}</h2>
+                <Meta project={selectedProject} />
+                <p id="project-dialog-description">{selectedProject.logline}</p>
+                <p>{selectedProject.collectionNote}</p>
+                <div className="film-meta" aria-label="Production tools">
+                  <span>{selectedProject.tools}</span>
+                  <span>{selectedProject.collectionTitle}</span>
+                </div>
+                <div className="project-dialog__actions">
+                  {selectedProject.video ? (
+                    <button
+                      className="studio-button"
+                      type="button"
+                      onClick={(event) => openPlayer(selectedProject, event.currentTarget)}
+                      aria-haspopup="dialog"
+                    >
+                      Watch the film
+                    </button>
+                  ) : (
+                    <button className="studio-button studio-button--ghost" type="button" disabled>
+                      Preview unavailable
+                    </button>
+                  )}
+                  <button
+                    className="studio-button studio-button--ghost"
+                    type="button"
+                    onClick={closeProject}
+                  >
+                    Back to programme
+                  </button>
+                </div>
+                <p className="project-dialog__note">
+                  {selectedProject.video
+                    ? 'The full cut is ready to watch in the cinema player.'
+                    : 'Preview unavailable — this programme entry currently presents project notes and artwork only.'}
+                </p>
+              </div>
+            </div>
+          </section>
+        </div>
+      ) : null}
+
+      {playingProject?.video ? (
+        <div
+          className="studio-dialog"
+          onMouseDown={(event) => event.target === event.currentTarget && closePlayer()}
+        >
+          <section
+            className="cinema-dialog"
+            ref={cinemaDialogRef}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="cinema-dialog-title"
+            tabIndex="-1"
           >
-            <PlayerPanel
-              initial={{ opacity: 0, scale: 0.98, y: 12 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.98, y: 10 }}
-              transition={{ duration: 0.22 }}
-              onClick={(event) => event.stopPropagation()}
-            >
-              <PlayerTop>
-                <strong>{featured.title}</strong>
-                <PlayerClose type="button" onClick={closePlayer}>Close Video</PlayerClose>
-              </PlayerTop>
-              <PlayerFrame>
-                <video ref={playerRef} src={featured.video} controls autoPlay playsInline preload="none" controlsList="nodownload noplaybackrate" disablePictureInPicture disableRemotePlayback onContextMenu={(event) => event.preventDefault()} onDragStart={(event) => event.preventDefault()} />
-              </PlayerFrame>
-            </PlayerPanel>
-          </PlayerBackdrop>
-        ) : null}
-      </AnimatePresence>
-    </Section>
+            <header className="cinema-dialog__bar">
+              <strong id="cinema-dialog-title">Now showing · {playingProject.title}</strong>
+              <button ref={cinemaCloseRef} type="button" onClick={closePlayer}>
+                Close film
+              </button>
+            </header>
+            <div className="cinema-dialog__screen">
+              <video
+                ref={videoRef}
+                src={playingProject.video}
+                controls
+                autoPlay
+                playsInline
+                preload="metadata"
+                controlsList="nodownload noplaybackrate"
+                disablePictureInPicture
+                disableRemotePlayback
+                onContextMenu={(event) => event.preventDefault()}
+                onDragStart={(event) => event.preventDefault()}
+              >
+                Your browser does not support the video player.
+              </video>
+            </div>
+          </section>
+        </div>
+      ) : null}
+    </>
   );
 };
 

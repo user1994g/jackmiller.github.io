@@ -1,32 +1,42 @@
-import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
-
-const Bar = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 200;
-  height: 3px;
-  width: ${({ $p }) => `${$p * 100}%`};
-  background: linear-gradient(90deg, var(--signal), var(--acid));
-  pointer-events: none;
-  transform-origin: 0 50%;
-`;
+import React, { useEffect, useRef } from 'react';
 
 const ScrollProgress = () => {
-  const [p, setP] = useState(0);
+  const barRef = useRef(null);
 
   useEffect(() => {
-    const onScroll = () => {
-      const max = document.documentElement.scrollHeight - window.innerHeight;
-      setP(max > 0 ? Math.min(1, window.scrollY / max) : 0);
+    let frame = null;
+
+    const update = () => {
+      frame = null;
+      const scrollRange = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = scrollRange > 0 ? Math.min(1, Math.max(0, window.scrollY / scrollRange)) : 0;
+
+      if (barRef.current) {
+        barRef.current.style.transform = `scaleX(${progress})`;
+      }
     };
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
+
+    const requestUpdate = () => {
+      if (frame !== null) return;
+      frame = window.requestAnimationFrame(update);
+    };
+
+    update();
+    window.addEventListener('scroll', requestUpdate, { passive: true });
+    window.addEventListener('resize', requestUpdate, { passive: true });
+
+    return () => {
+      window.removeEventListener('scroll', requestUpdate);
+      window.removeEventListener('resize', requestUpdate);
+      if (frame !== null) window.cancelAnimationFrame(frame);
+    };
   }, []);
 
-  return <Bar $p={p} role="presentation" />;
+  return (
+    <div className="cut-progress" aria-hidden="true">
+      <span ref={barRef} className="cut-progress__bar" />
+    </div>
+  );
 };
 
 export default ScrollProgress;

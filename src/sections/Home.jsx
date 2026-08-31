@@ -32,7 +32,7 @@ const Home = () => {
             Perspective-driven visual stories. Film, photography, and 3D — made to feel, not just look finished.
           </p>
           <div className="cut-hero__actions" data-hero>
-            <Link className="studio-link-button" to="/videos">Watch the work <span aria-hidden="true">↗</span></Link>
+            <Link className="studio-link-button" to="/fmp-level-2">Watch a film <span aria-hidden="true">↗</span></Link>
             <Link className="studio-link-button studio-button--ghost" to="/photos">Skip to stills <span aria-hidden="true">→</span></Link>
           </div>
         </div>

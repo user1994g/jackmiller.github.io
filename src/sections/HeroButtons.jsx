@@ -4,10 +4,9 @@ import { Link } from 'react-router-dom';
 import useStudioMotion from '../hooks/useStudioMotion';
 
 const paths = [
-  ['01', 'Films & Videos', 'Cinematic projects, short films, and visual storytelling sequences.', '/videos'],
-  ['02', 'Photo Gallery', 'Curated photography exploring light, shadow, character, and mood.', '/photos'],
-  ['03', '3D Art', 'A digital workspace for renders, objects, and new experiments.', '/3d-art'],
-  ['04', 'About Me', 'Background, creative philosophy, and the story behind the portfolio.', '/about'],
+  ['01', 'Photo Gallery', 'Curated photography exploring light, shadow, character, and mood.', '/photos'],
+  ['02', '3D Art', 'A digital workspace for renders, objects, and new experiments.', '/3d-art'],
+  ['03', 'About Me', 'Background, creative philosophy, and the story behind the portfolio.', '/about'],
 ];
 
 const HeroButtons = () => {
@@ -22,7 +21,7 @@ const HeroButtons = () => {
             <span className="tape-label">Pick a scene</span>
             <h2 className="work-index__title" id="explore-title">Explore the work</h2>
           </div>
-          <p className="studio-copy">Four ways into the same visual world—moving image, stills, new dimensions, and the thinking behind it.</p>
+          <p className="studio-copy">Three ways into the same visual world—stills, new dimensions, and the thinking behind it.</p>
         </header>
         <nav className="work-index__list" aria-label="Explore the portfolio" data-stagger>
           {paths.map(([number, title, description, path]) => (

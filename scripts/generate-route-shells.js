@@ -43,7 +43,6 @@ const renderRoute = (route) => {
 
   const schemaType = {
     '/': 'WebPage',
-    '/videos': 'CollectionPage',
     '/photos': 'ImageGallery',
     '/about': 'ProfilePage',
     '/contact': 'ContactPage',

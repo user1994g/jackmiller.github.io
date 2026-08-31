@@ -8,14 +8,6 @@
     "robots": "index, follow, max-image-preview:large"
   },
   {
-    "path": "/videos",
-    "title": "Films & Videos | Jack Miller Media",
-    "description": "Explore twelve narrative, documentary, and experimental film projects by Jack Miller, including The Final Lesson.",
-    "priority": "0.8",
-    "changefreq": "weekly",
-    "robots": "index, follow, max-image-preview:large"
-  },
-  {
     "path": "/photos",
     "title": "Photography & Visual Narratives | Jack Miller Media",
     "description": "A ten-image contact sheet of Jack Miller's original countryside photographs: woodland paths, quiet water, railway lines, wildlife, and spring light.",

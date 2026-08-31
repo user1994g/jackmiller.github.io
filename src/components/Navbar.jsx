@@ -3,7 +3,6 @@ import { Link, NavLink, useLocation } from 'react-router-dom';
 
 const primaryLinks = [
   { label: 'Home', to: '/', end: true },
-  { label: 'Videos', to: '/videos' },
   { label: 'Photos', to: '/photos' },
   { label: 'About', to: '/about' },
   { label: '3D Art', to: '/3d-art' },

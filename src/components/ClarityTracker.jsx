@@ -16,7 +16,9 @@ const ClarityTracker = () => {
     }
 
     const route = `${location.pathname}${location.search}${location.hash || ''}`;
-    const pageType = location.pathname === '/videos' ? 'videos' : 'home';
+    const pageType = location.pathname === '/'
+      ? 'home'
+      : location.pathname.replace(/^\/+|\/+$/g, '') || 'home';
 
     window.clarity('set', 'route', route);
     window.clarity('set', 'page_type', pageType);

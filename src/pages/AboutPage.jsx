@@ -123,8 +123,8 @@ const AboutPage = () => {
             </div>
 
             <div className="profile-actions">
-              <Link className="studio-link-button" to="/videos">
-                View videos <span aria-hidden="true">↗</span>
+              <Link className="studio-link-button" to="/fmp-level-2">
+                View film project <span aria-hidden="true">↗</span>
               </Link>
               <Link className="studio-link-button studio-button--ghost" to="/photos">
                 Browse photos <span aria-hidden="true">↗</span>

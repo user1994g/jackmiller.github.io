@@ -5,7 +5,6 @@ import { useLocation } from 'react-router-dom';
 import routes from '../content/routes.json';
 
 const schemaTypes = {
-  '/videos': 'CollectionPage',
   '/photos': 'ImageGallery',
   '/about': 'ProfilePage',
   '/contact': 'ContactPage',

@@ -68,11 +68,10 @@ test('renders the redesigned portfolio home page', () => {
 
   expect(screen.getByRole('main')).toBeInTheDocument();
   expect(screen.getByRole('heading', { level: 1, name: /stories that stick to the frame/i })).toBeInTheDocument();
-  expect(screen.getByRole('link', { name: /watch the work/i })).toHaveAttribute('href', '/videos');
+  expect(screen.getByRole('link', { name: /watch a film/i })).toHaveAttribute('href', '/fmp-level-2');
 });
 
 test.each([
-  ['/videos', /videos/i],
   ['/photos', /photo portfolio/i],
   ['/about', /made with intent/i],
   ['/contact', /get in touch/i],
@@ -97,4 +96,10 @@ test('redirects the legacy Final Lesson path to the canonical route', async () =
   );
 
   expect(await screen.findByRole('heading', { level: 1, name: /the final lesson/i })).toBeInTheDocument();
+});
+
+test('redirects the removed Videos path to home', async () => {
+  renderRoute('/videos');
+
+  expect(await screen.findByRole('heading', { level: 1, name: /stories that stick to the frame/i })).toBeInTheDocument();
 });

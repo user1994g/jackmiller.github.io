@@ -235,7 +235,7 @@ const Send = styled.button`
   }
 `;
 
-const quickPrompts = ['Home', 'Photos', 'Videos', 'Level 2', 'Contact', 'NetVista Studio'];
+const quickPrompts = ['Home', 'Photos', 'Level 2', 'Contact', 'NetVista Studio'];
 
 const actionCues = new Set([
   'go',
@@ -303,19 +303,6 @@ const siteIntents = [
     guidance: 'Use Photos for still images and gallery work.',
   },
   {
-    id: 'videos',
-    label: 'Videos',
-    action: { type: 'route', path: '/videos' },
-    keywords: ['video', 'videos', 'film', 'films', 'movie', 'movies', 'reel', 'reels', 'clip', 'clips', 'vedio', 'vedios'],
-    phrases: ['video page', 'show videos', 'open videos', 'find videos', 'watch videos', 'show me films'],
-    responses: [
-      'Opening the videos page.',
-      'Taking you to Videos now.',
-      'Got it. Jumping to the videos section.',
-    ],
-    guidance: 'Use Videos for film work, poster rows, and playable titles.',
-  },
-  {
     id: 'threedart',
     label: '3D Art',
     action: { type: 'route', path: '/3d-art' },
@@ -332,8 +319,8 @@ const siteIntents = [
     id: 'level2',
     label: 'Level 2',
     action: { type: 'route', path: '/fmp-level-2' },
-    keywords: ['level 2', 'level two', 'dark echoes', '1939', 'mum', 'mother', 'grief', 'loss'],
-    phrases: ['open level 2', 'show level 2', 'dark echoes', 'dark echoes of 1939', 'the film about mum'],
+    keywords: ['level 2', 'level two', 'dark echoes', '1939', 'mum', 'mother', 'grief', 'loss', 'video', 'videos', 'film', 'films', 'movie', 'watch'],
+    phrases: ['open level 2', 'show level 2', 'dark echoes', 'dark echoes of 1939', 'the film about mum', 'watch a film', 'show me a film'],
     responses: [
       'Opening Level 2: The Dark Echoes of 1939.',
       'Taking you to The Dark Echoes of 1939 now.',
@@ -400,18 +387,7 @@ const videoTitles = [
   { title: 'dark echoes of 1939', intent: 'level2' },
   { title: 'the final lesson', intent: 'finallesson' },
   { title: 'final lesson', intent: 'finallesson' },
-  { title: 'signal field', intent: 'videos' },
-  'cold frame',
-  'final composition',
-  'echo transfer',
-  'night junction',
-  'glass division',
-  'zero ground',
-  'liminal room',
-  'no sleep city',
-  'red corridor',
-  'blue sector',
-].map((entry) => (typeof entry === 'string' ? { title: entry, intent: 'videos' } : entry));
+];
 
 const initialMessages = [
   {
@@ -614,10 +590,6 @@ const analyzeMessage = (rawValue, pendingIntent) => {
 };
 
 const pageLabelByPath = (pathname) => {
-  if (pathname === '/videos') {
-    return 'Videos';
-  }
-
   if (pathname === '/3d-art') {
     return '3D Art (under development)';
   }
@@ -749,24 +721,19 @@ const SiteHelperChat = () => {
 
     if (result.type === 'recommend') {
       setPendingIntent(null);
-      if (location.pathname === '/videos') {
-        appendMessage('bot', 'You are already in the strongest place for film work. Browse the programme or open The Final Lesson first.');
-        return;
-      }
-
-      appendMessage('bot', 'If you want motion work, go to Videos. If you want still images, go to Photos. If you want CGI later, use 3D Art.');
+      appendMessage('bot', 'For a finished film, open Level 2. For still images, go to Photos. For CGI later, use 3D Art.');
       return;
     }
 
     if (result.type === 'thanks') {
       setPendingIntent(null);
-      appendMessage('bot', 'Anytime. I can still help with Home, About, Photos, Videos, and 3D Art.');
+      appendMessage('bot', 'Anytime. I can still help with Home, About, Photos, Level 2, and 3D Art.');
       return;
     }
 
     if (result.type === 'help') {
       setPendingIntent(null);
-      appendMessage('bot', 'I can guide you to Home, About, Photos, Videos, Level 2, and the 3D Art page under development. I can also open NetVista Studio. Ask naturally, like "show me Level 2" or "open NetVista Studio".');
+      appendMessage('bot', 'I can guide you to Home, About, Photos, Level 2, and the 3D Art page under development. I can also open NetVista Studio. Ask naturally, like "show me Level 2" or "open NetVista Studio".');
       return;
     }
 
@@ -777,7 +744,7 @@ const SiteHelperChat = () => {
     }
 
     setPendingIntent(null);
-    appendMessage('bot', 'I can help with Home, About, Photos, Videos, Level 2, 3D Art, or NetVista Studio. Try asking what you want in a full sentence.');
+    appendMessage('bot', 'I can help with Home, About, Photos, Level 2, 3D Art, or NetVista Studio. Try asking what you want in a full sentence.');
   };
 
   const handleSubmit = (event) => {
@@ -836,7 +803,7 @@ const SiteHelperChat = () => {
                 type="search"
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
-                placeholder="Try: hello i want to find the videos pls"
+                placeholder="Try: show me the Level 2 film"
                 aria-label="Find something on site"
               />
               <Send type="submit">Send</Send>

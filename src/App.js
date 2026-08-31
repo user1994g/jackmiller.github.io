@@ -18,7 +18,6 @@ const SiteHelperChat = lazy(() => import('./components/SiteHelperChat'));
 const CustomCursor = lazy(() => import('./components/CustomCursor'));
 const WriteUpsPage = lazy(() => import('./pages/WriteUpsPage'));
 const PolicyPage = lazy(() => import('./pages/PolicyPage'));
-const VideosPage = lazy(() => import('./pages/VideosPage'));
 const UnderDevelopmentPage = lazy(() => import('./pages/UnderDevelopmentPage'));
 const FinalLessonPage = lazy(() => import('./pages/FinalLessonPage'));
 const FmpLevelTwoPage = lazy(() => import('./pages/FmpLevelTwoPage'));
@@ -72,7 +71,7 @@ function App() {
           <Suspense fallback={<PageFallback />}>
             <Routes>
               <Route path="/" element={<HomePage />} />
-              <Route path="/videos" element={<VideosPage />} />
+              <Route path="/videos" element={<Navigate to="/" replace />} />
               <Route path="/photos" element={<PhotosPage />} />
               <Route path="/about" element={<AboutPage />} />
               <Route path="/contact" element={<ContactPage />} />

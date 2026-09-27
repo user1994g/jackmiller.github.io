@@ -13,9 +13,6 @@ const ContactPage = () => {
   const pageRef = useRef(null);
 
   usePageSeo({
-    title: 'Contact Jack Miller Media | Creative Media Portfolio',
-    description:
-      'Contact Jack Miller Media for film, photography, videography, and creative media collaborations.',
     url: 'https://jackmillermedia.com/contact/',
   });
 

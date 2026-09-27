@@ -32,9 +32,6 @@ const AboutPage = () => {
   const pageRef = useRef(null);
 
   usePageSeo({
-    title: 'About Jack Miller Media | Film, Photography and Videography',
-    description:
-      'Learn about Jack Miller Media, a creative portfolio focused on film production, photography, videography, and cinematic visual storytelling.',
     url: 'https://jackmillermedia.com/about/',
   });
 
@@ -124,7 +121,7 @@ const AboutPage = () => {
 
             <div className="profile-actions">
               <Link className="studio-link-button" to="/fmp-level-2">
-                View film project <span aria-hidden="true">↗</span>
+                Watch The Dark Echoes of 1939 <span aria-hidden="true">↗</span>
               </Link>
               <Link className="studio-link-button studio-button--ghost" to="/photos">
                 Browse photos <span aria-hidden="true">↗</span>

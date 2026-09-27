@@ -14,9 +14,6 @@ const PhotosPage = () => {
   const pageRef = useRef(null);
 
   usePageSeo({
-    title: 'Photography Portfolio | Jack Miller Media Photos',
-    description:
-      "Browse Jack Miller's original countryside photography, including woodland paths, quiet water, railway lines, wildlife, and spring location studies.",
     url: 'https://jackmillermedia.com/photos/',
   });
 

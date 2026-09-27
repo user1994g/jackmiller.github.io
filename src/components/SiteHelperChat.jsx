@@ -362,10 +362,10 @@ const siteIntents = [
     phrases: ['open fmp 3', 'show fmp 3', 'open final lesson', 'open the final lesson', 'take me to final lesson'],
     responses: [
       'Opening The Final Lesson.',
-      'Taking you to the hidden Final Lesson page.',
+      'Taking you to The Final Lesson film page.',
       'Got it. Jumping to The Final Lesson.',
     ],
-    guidance: 'The Final Lesson is an unlisted page only reachable via lookup or the Site Helper.',
+    guidance: 'The Final Lesson is a finished 2024 student short film by Jack Miller.',
   },
   {
     id: 'contact',

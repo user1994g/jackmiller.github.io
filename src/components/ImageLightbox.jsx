@@ -1,6 +1,36 @@
 import React, { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 
+const makeBackgroundInert = (overlay) => {
+  if (!overlay) return () => {};
+
+  const changedElements = Array.from(document.body.children)
+    .filter((element) => element !== overlay && element instanceof HTMLElement)
+    .map((element) => ({
+      element,
+      hadInert: element.hasAttribute('inert'),
+      ariaHidden: element.getAttribute('aria-hidden'),
+    }));
+
+  changedElements.forEach(({ element }) => {
+    element.setAttribute('inert', '');
+    element.setAttribute('aria-hidden', 'true');
+  });
+
+  return () => {
+    changedElements.forEach(({ element, hadInert, ariaHidden }) => {
+      if (!element.isConnected) return;
+
+      if (!hadInert) element.removeAttribute('inert');
+      if (ariaHidden === null) {
+        element.removeAttribute('aria-hidden');
+      } else {
+        element.setAttribute('aria-hidden', ariaHidden);
+      }
+    });
+  };
+};
+
 const ImageLightbox = ({ image, onClose }) => {
   const dialogRef = useRef(null);
 
@@ -21,6 +51,7 @@ const ImageLightbox = ({ image, onClose }) => {
     document.body.style.overflow = 'hidden';
 
     const dialog = dialogRef.current;
+    const restoreBackground = makeBackgroundInert(dialog?.closest('.image-lightbox'));
     dialog?.querySelector('button')?.focus();
 
     const handleKeyDown = (event) => {
@@ -47,6 +78,7 @@ const ImageLightbox = ({ image, onClose }) => {
     document.addEventListener('keydown', handleKeyDown);
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
+      restoreBackground();
       document.body.classList.remove('dialog-open');
       document.body.style.position = previous.position;
       document.body.style.top = previous.top;

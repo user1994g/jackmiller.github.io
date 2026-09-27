@@ -21,11 +21,7 @@ const FinalLessonPage = () => {
   const pageRef = useRef(null);
 
   usePageSeo({
-    title: 'The Final Lesson (Short Film) | Jack Miller',
-    description:
-      'The Final Lesson is an independently produced 18+ student short film by Jack Miller. Watch the film and explore its production story.',
     url: 'https://jackmillermedia.com/the-final-lesson/',
-    robots: 'noindex, follow',
   });
 
   useLayoutEffect(() => {
@@ -64,7 +60,13 @@ const FinalLessonPage = () => {
         role="main"
       >
         <header className="lesson-hero">
-          <img className="lesson-hero__image" src={FILM_POSTER} alt="Still from The Final Lesson" />
+          <img
+            className="lesson-hero__image"
+            src={FILM_POSTER}
+            alt="Still from The Final Lesson"
+            width="1600"
+            height="900"
+          />
           <div className="lesson-hero__shade" aria-hidden="true" />
           <div className="studio-wrap lesson-hero__content">
             <span className="lesson-label" data-lesson-intro>
@@ -104,7 +106,14 @@ const FinalLessonPage = () => {
         <section className="lesson-about" aria-labelledby="lesson-about-title" data-lesson-reveal>
           <div className="studio-wrap lesson-about__grid">
             <figure className="lesson-about__still">
-              <img src={FILM_POSTER} alt="Production still from The Final Lesson" loading="lazy" decoding="async" />
+              <img
+                src={FILM_POSTER}
+                alt="Production still from The Final Lesson"
+                loading="lazy"
+                decoding="async"
+                width="1600"
+                height="900"
+              />
               <figcaption>Written, directed &amp; produced by Jack Miller</figcaption>
             </figure>
             <div>

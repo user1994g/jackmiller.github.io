@@ -9,19 +9,12 @@ const primaryLinks = [
   { label: 'Write Ups', to: '/write-ups' },
 ];
 
-const finalLessonState = {
-  allowUnlisted: true,
-  unlisted: 'final-lesson',
-  via: 'menu',
-};
-
 const fmpLinks = [
   { label: 'Level 2', note: 'The Dark Echoes of 1939', to: '/fmp-level-2' },
   {
     label: 'Final Lesson',
     note: 'Level 3 · Year 1',
     to: '/the-final-lesson',
-    state: finalLessonState,
   },
 ];
 

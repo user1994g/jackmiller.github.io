@@ -57,8 +57,6 @@ const FmpLevelTwoPage = () => {
   const pageRef = useRef(null);
 
   usePageSeo({
-    title: 'The Dark Echoes of 1939 | Jack Miller',
-    description: 'The Dark Echoes of 1939, an FMP Level 2 film project by Jack Miller.',
     url: 'https://jackmillermedia.com/fmp-level-2/',
   });
 

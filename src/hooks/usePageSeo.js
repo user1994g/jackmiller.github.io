@@ -1,5 +1,7 @@
 import { useEffect } from 'react';
 
+import routes from '../content/routes.json';
+
 const upsertMetaByName = (name, content) => {
   if (typeof document === 'undefined' || !content) return;
 
@@ -29,29 +31,44 @@ const usePageSeo = ({
   description,
   url,
   robots = 'index, follow, max-image-preview:large',
-  image = 'https://jackmillermedia.com/logo512.png',
-  imageAlt = 'Jack Miller Media logo',
+  image,
+  imageAlt,
   type = 'website',
-  jsonLd,
 }) => {
+  const pathname = (() => {
+    try {
+      return new URL(url).pathname.replace(/\/+$/, '') || '/';
+    } catch (error) {
+      return null;
+    }
+  })();
+  const route = routes.find((entry) => entry.path === pathname);
+  const resolvedTitle = route?.title || title;
+  const resolvedDescription = route?.description || description;
+  const resolvedRobots = route?.robots || robots;
+  const resolvedUrl = route
+    ? `https://jackmillermedia.com${route.path === '/' ? '/' : `${route.path}/`}`
+    : url;
+  const resolvedType = route?.video ? 'video.other' : type;
+
   useEffect(() => {
     if (typeof document === 'undefined') return;
 
-    if (title) {
-      document.title = title;
-      upsertMetaByProperty('og:title', title);
-      upsertMetaByName('twitter:title', title);
+    if (resolvedTitle) {
+      document.title = resolvedTitle;
+      upsertMetaByProperty('og:title', resolvedTitle);
+      upsertMetaByName('twitter:title', resolvedTitle);
     }
 
-    if (description) {
-      upsertMetaByName('description', description);
-      upsertMetaByProperty('og:description', description);
-      upsertMetaByName('twitter:description', description);
+    if (resolvedDescription) {
+      upsertMetaByName('description', resolvedDescription);
+      upsertMetaByProperty('og:description', resolvedDescription);
+      upsertMetaByName('twitter:description', resolvedDescription);
     }
 
-    if (url) {
-      upsertMetaByProperty('og:url', url);
-      upsertMetaByName('twitter:url', url);
+    if (resolvedUrl) {
+      upsertMetaByProperty('og:url', resolvedUrl);
+      upsertMetaByName('twitter:url', resolvedUrl);
 
       let canonical = document.head.querySelector('link[rel="canonical"]');
       if (!canonical) {
@@ -59,33 +76,23 @@ const usePageSeo = ({
         canonical.setAttribute('rel', 'canonical');
         document.head.appendChild(canonical);
       }
-      canonical.setAttribute('href', url);
+      canonical.setAttribute('href', resolvedUrl);
     }
 
-    upsertMetaByProperty('og:type', type);
-    upsertMetaByProperty('og:image', image);
-    upsertMetaByProperty('og:image:alt', imageAlt);
-    upsertMetaByName('twitter:image', image);
-    upsertMetaByName('twitter:image:alt', imageAlt);
-
-    upsertMetaByName('robots', robots);
-    upsertMetaByName('googlebot', robots);
-
-    const schemaId = 'route-structured-data';
-    const previousSchema = document.getElementById(schemaId);
-    if (previousSchema) previousSchema.remove();
-    if (jsonLd) {
-      const schema = document.createElement('script');
-      schema.id = schemaId;
-      schema.type = 'application/ld+json';
-      schema.text = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
-      document.head.appendChild(schema);
+    upsertMetaByProperty('og:type', resolvedType);
+    if (image) {
+      upsertMetaByProperty('og:image', image);
+      upsertMetaByProperty('og:image:secure_url', image);
+      upsertMetaByName('twitter:image', image);
+    }
+    if (imageAlt) {
+      upsertMetaByProperty('og:image:alt', imageAlt);
+      upsertMetaByName('twitter:image:alt', imageAlt);
     }
 
-    return () => {
-      document.getElementById(schemaId)?.remove();
-    };
-  }, [description, image, imageAlt, jsonLd, robots, title, type, url]);
+    upsertMetaByName('robots', resolvedRobots);
+    upsertMetaByName('googlebot', resolvedRobots);
+  }, [image, imageAlt, resolvedDescription, resolvedRobots, resolvedTitle, resolvedType, resolvedUrl]);
 };
 
 export default usePageSeo;

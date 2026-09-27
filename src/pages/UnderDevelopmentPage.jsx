@@ -23,10 +23,7 @@ const UnderDevelopmentPage = () => {
   const pageRef = useRef(null);
 
   usePageSeo({
-    title: '3D Art | Under Development | Jack Miller',
-    description: 'The 3D Art section of Jack Miller Media is currently under development.',
     url: 'https://jackmillermedia.com/3d-art/',
-    robots: 'noindex, follow',
   });
 
   useLayoutEffect(() => {

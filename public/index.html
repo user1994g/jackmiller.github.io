@@ -10,6 +10,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta http-equiv="Content-Security-Policy" content="object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests" />
+    <style id="route-shell-style">
+      .route-shell-fallback {
+        box-sizing: border-box;
+        min-height: 100vh;
+        padding: clamp(2rem, 7vw, 6rem);
+        background: #0b0a0f;
+        color: #f7f0e5;
+        font: 500 1rem/1.6 Arial, sans-serif;
+      }
+      .route-shell-fallback > * { max-width: 72rem; margin-inline: auto; }
+      .route-shell-fallback h1 { max-width: 18ch; font-size: clamp(2.5rem, 8vw, 6rem); line-height: 0.98; }
+      .route-shell-fallback img { display: block; max-width: min(100%, 60rem); height: auto; margin-block: 2rem; }
+      .route-shell-fallback a { color: #f0d8ad; }
+    </style>
     <meta name="google-adsense-account" content="ca-pub-8954463256155993" />
     <meta name="googlebot" content="index,follow,max-image-preview:large" />
     <link rel="dns-prefetch" href="https://www.clarity.ms" />
@@ -24,21 +38,17 @@
     <meta name="author" content="Jack Miller" />
     <meta
       name="description"
-      content="Jack Miller Media is a creative media portfolio featuring film, photography, videography, 3D art, write ups, and cinematic visual storytelling by Jack Miller."
-    />
-    <meta
-      name="keywords"
-      content="Jack Miller Media, Jack Miller, creative media portfolio, media portfolio, film portfolio, photography portfolio, videography portfolio, 3D art portfolio, visual storytelling, cinematic videography"
+      content="Explore Jack Miller Media: original short films, countryside photography, production notes, and cinematic visual storytelling by Jack Miller."
     />
     <meta name="robots" content="index, follow, max-image-preview:large" />
     <meta name="format-detection" content="telephone=no" />
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Jack Miller Media" />
-    <meta property="og:title" content="Jack Miller Media | Creative Media Portfolio" />
+    <meta property="og:title" content="Jack Miller Media | Film &amp; Photography Portfolio" />
     <meta
       property="og:description"
-      content="Creative media portfolio featuring film, photography, videography, 3D art, write ups, and cinematic visual storytelling by Jack Miller."
+      content="Explore Jack Miller Media: original short films, countryside photography, production notes, and cinematic visual storytelling by Jack Miller."
     />
     <meta property="og:url" content="https://jackmillermedia.com/" />
     <meta property="og:image" content="https://jackmillermedia.com/logo512.png" />
@@ -50,14 +60,12 @@
     <meta property="og:locale" content="en_GB" />
 
     <meta name="twitter:card" content="summary" />
-    <meta name="twitter:site" content="@jackmillermedia" />
-    <meta name="twitter:creator" content="@jackmillermedia" />
-    <meta name="twitter:title" content="Jack Miller Media | Creative Media Portfolio" />
+    <meta name="twitter:title" content="Jack Miller Media | Film &amp; Photography Portfolio" />
     <meta name="twitter:url" content="https://jackmillermedia.com/" />
     <meta name="twitter:domain" content="jackmillermedia.com" />
     <meta
       name="twitter:description"
-      content="Creative media portfolio featuring film, photography, videography, 3D art, write ups, and cinematic visual storytelling by Jack Miller."
+      content="Explore Jack Miller Media: original short films, countryside photography, production notes, and cinematic visual storytelling by Jack Miller."
     />
     <meta name="twitter:image" content="https://jackmillermedia.com/logo512.png" />
     <meta name="twitter:image:alt" content="Jack Miller Media logo" />
@@ -73,73 +81,6 @@
 
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8954463256155993"
      crossorigin="anonymous"></script>
-
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "Person",
-        "name": "Jack Miller",
-        "url": "https://jackmillermedia.com/",
-        "image": "https://jackmillermedia.com/logo512.png",
-        "jobTitle": "Creative Media Student",
-        "description": "Creative media student working across film, photography, videography, 3D art, and visual storytelling.",
-        "sameAs": [
-          "https://github.com/user1994g"
-        ]
-      }
-    </script>
-
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "Organization",
-        "name": "Jack Miller Media",
-        "alternateName": "Jack Miller",
-        "url": "https://jackmillermedia.com/",
-        "logo": "https://jackmillermedia.com/logo512.png",
-        "sameAs": [
-          "https://github.com/user1994g"
-        ]
-      }
-    </script>
-
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "WebSite",
-        "name": "Jack Miller Media | Creative Media Portfolio",
-        "url": "https://jackmillermedia.com/",
-        "description": "Creative media portfolio featuring film, photography, videography, 3D art, write ups, and cinematic visual storytelling by Jack Miller.",
-        "publisher": {
-          "@type": "Organization",
-          "name": "Jack Miller Media"
-        }
-      }
-    </script>
-
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "WebPage",
-        "name": "Jack Miller Media | Creative Media Portfolio",
-        "url": "https://jackmillermedia.com/",
-        "description": "Creative media portfolio featuring film, photography, videography, 3D art, write ups, and cinematic visual storytelling by Jack Miller.",
-        "isPartOf": {
-          "@type": "WebSite",
-          "name": "Jack Miller Media",
-          "url": "https://jackmillermedia.com/"
-        },
-        "about": {
-          "@type": "Person",
-          "name": "Jack Miller"
-        },
-        "primaryImageOfPage": {
-          "@type": "ImageObject",
-          "url": "https://jackmillermedia.com/logo512.png"
-        },
-        "inLanguage": "en-GB"
-      }
-    </script>
 
     <script type="text/javascript">
       (function () {
@@ -191,7 +132,12 @@
 
         function rootHasContent() {
           var root = document.getElementById('root');
-          return !!(root && root.children && root.children.length > 0);
+          return !!(
+            root &&
+            root.children &&
+            root.children.length > 0 &&
+            !root.querySelector('[data-static-route-shell]')
+          );
         }
 
         function findBuildAsset(doc, selector, attribute, fragment) {
@@ -384,7 +330,7 @@
       })();
     </script>
 
-    <title>Jack Miller Media | Creative Media Portfolio</title>
+    <title>Jack Miller Media | Film &amp; Photography Portfolio</title>
   </head>
   <body>
     <noscript>
@@ -399,6 +345,7 @@
           <li><a href="https://jackmillermedia.com/about/" style="color:#f0d8ad;">About</a></li>
           <li><a href="https://jackmillermedia.com/photos/" style="color:#f0d8ad;">Photos</a></li>
           <li><a href="https://jackmillermedia.com/fmp-level-2/" style="color:#f0d8ad;">The Dark Echoes of 1939</a></li>
+          <li><a href="https://jackmillermedia.com/the-final-lesson/" style="color:#f0d8ad;">The Final Lesson</a></li>
           <li><a href="https://jackmillermedia.com/3d-art/" style="color:#f0d8ad;">3D Art</a></li>
           <li><a href="https://jackmillermedia.com/write-ups/" style="color:#f0d8ad;">Write Ups</a></li>
           <li><a href="https://jackmillermedia.com/contact/" style="color:#f0d8ad;">Contact</a></li>

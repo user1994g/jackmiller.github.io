@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 
 import App from './App';
@@ -68,7 +68,7 @@ test('renders the redesigned portfolio home page', () => {
 
   expect(screen.getByRole('main')).toBeInTheDocument();
   expect(screen.getByRole('heading', { level: 1, name: /stories that stick to the frame/i })).toBeInTheDocument();
-  expect(screen.getByRole('link', { name: /watch a film/i })).toHaveAttribute('href', '/fmp-level-2');
+  expect(screen.getByRole('link', { name: /watch the dark echoes of 1939/i })).toHaveAttribute('href', '/fmp-level-2');
 });
 
 test.each([
@@ -86,6 +86,24 @@ test.each([
 
   expect(await screen.findByRole('heading', { level: 1, name: heading })).toBeInTheDocument();
   expect(screen.getByRole('main')).toHaveAttribute('id', 'main-content');
+
+  const ids = [...document.querySelectorAll('[id]')].map((element) => element.id);
+  expect(new Set(ids).size).toBe(ids.length);
+});
+
+test('keeps the page behind the image lightbox out of the accessibility tree', async () => {
+  const { container } = renderRoute();
+
+  fireEvent.click(screen.getByRole('button', { name: /open portrait of jack miller/i }));
+
+  expect(screen.getByRole('dialog', { name: /expanded view/i })).toBeInTheDocument();
+  await waitFor(() => expect(container).toHaveAttribute('inert'));
+  expect(container).toHaveAttribute('aria-hidden', 'true');
+
+  fireEvent.click(screen.getByRole('button', { name: /close/i }));
+
+  await waitFor(() => expect(container).not.toHaveAttribute('inert'));
+  expect(container).not.toHaveAttribute('aria-hidden');
 });
 
 test('redirects the legacy Final Lesson path to the canonical route', async () => {
@@ -102,4 +120,34 @@ test('redirects the removed Videos path to home', async () => {
   renderRoute('/videos');
 
   expect(await screen.findByRole('heading', { level: 1, name: /stories that stick to the frame/i })).toBeInTheDocument();
+});
+
+test('publishes indexable video metadata for The Final Lesson', async () => {
+  renderRoute('/the-final-lesson');
+
+  await screen.findByRole('heading', { level: 1, name: /the final lesson/i });
+  await waitFor(() => expect(document.title).toBe('The Final Lesson (2024 Short Film) | Jack Miller'));
+
+  expect(document.querySelector('link[rel="canonical"]')).toHaveAttribute(
+    'href',
+    'https://jackmillermedia.com/the-final-lesson/',
+  );
+  expect(document.querySelector('meta[name="robots"]')).toHaveAttribute(
+    'content',
+    'index, follow, max-image-preview:large, max-video-preview:-1',
+  );
+
+  const schemas = document.querySelectorAll('script[type="application/ld+json"]');
+  expect(schemas).toHaveLength(1);
+  const graph = JSON.parse(schemas[0].textContent)['@graph'];
+  expect(graph.some((entry) => Array.isArray(entry['@type']) && entry['@type'].includes('VideoObject'))).toBe(true);
+});
+
+test('keeps the unfinished 3D placeholder out of search results', async () => {
+  renderRoute('/3d-art');
+
+  await screen.findByRole('heading', { level: 1, name: /page under development/i });
+  await waitFor(() => {
+    expect(document.querySelector('meta[name="robots"]')).toHaveAttribute('content', 'noindex, follow');
+  });
 });

@@ -11,9 +11,6 @@ import Stats from '../sections/Stats';
 
 const HomePage = () => {
   usePageSeo({
-    title: 'Jack Miller Media | Creative Media Portfolio',
-    description:
-      'Creative media portfolio by Jack Miller featuring film, photography, videography, 3D art, write ups, and cinematic visual storytelling.',
     url: 'https://jackmillermedia.com/',
   });
 

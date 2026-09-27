@@ -88,8 +88,6 @@ const PolicyPage = ({ variant = 'privacy' }) => {
   const canonicalPath = variant === 'terms' ? '/terms/' : '/privacy/';
 
   usePageSeo({
-    title: `${page.title} | Jack Miller Media`,
-    description: page.description,
     url: `https://jackmillermedia.com${canonicalPath}`,
   });
 

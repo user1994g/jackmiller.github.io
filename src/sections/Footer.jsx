@@ -14,6 +14,8 @@ const Footer = () => (
       <nav className="site-footer__links" aria-label="Footer navigation">
         <Link to="/contact">Start a project ↗</Link>
         <Link to="/photos">Photos</Link>
+        <Link to="/fmp-level-2">The Dark Echoes of 1939</Link>
+        <Link to="/the-final-lesson">The Final Lesson</Link>
         <Link to="/about">About</Link>
         <Link to="/write-ups">Write Ups</Link>
       </nav>

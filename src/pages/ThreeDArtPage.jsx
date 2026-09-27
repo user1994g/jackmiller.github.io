@@ -248,9 +248,6 @@ const EmbedOverlay = styled.div`
 
 const ThreeDArtPage = () => {
   usePageSeo({
-    title: '3D Art and CGI Work | Jack Miller Media',
-    description:
-      'Explore 3D art, CGI experiments, and digital visual work from Jack Miller Media, including rendered imagery and motion-led creative studies.',
     url: 'https://jackmillermedia.com/3d-art/',
   });
 

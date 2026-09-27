@@ -47,9 +47,6 @@ const WriteUpsPage = () => {
   const pageRef = useRef(null);
 
   usePageSeo({
-    title: 'Write Ups | Jack Miller Media Production Notes',
-    description:
-      'Original production notes and creative media write ups from Jack Miller covering film, editing, photography, 3D art, and visual storytelling decisions.',
     url: 'https://jackmillermedia.com/write-ups/',
   });
 

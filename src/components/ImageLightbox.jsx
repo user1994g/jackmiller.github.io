@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 const makeBackgroundInert = (overlay) => {
@@ -31,8 +31,26 @@ const makeBackgroundInert = (overlay) => {
   };
 };
 
-const ImageLightbox = ({ image, onClose }) => {
+const ImageLightbox = ({ image, images, initialIndex = 0, onClose }) => {
   const dialogRef = useRef(null);
+  const touchStartRef = useRef(null);
+  const gallery = useMemo(() => {
+    if (Array.isArray(images) && images.length) return images;
+    return image ? [image] : [];
+  }, [image, images]);
+  const [currentIndex, setCurrentIndex] = useState(() => (
+    Math.min(Math.max(initialIndex, 0), Math.max(gallery.length - 1, 0))
+  ));
+  const hasMultipleImages = gallery.length > 1;
+  const currentImage = gallery[currentIndex];
+
+  const showPrevious = useCallback(() => {
+    setCurrentIndex((index) => (index - 1 + gallery.length) % gallery.length);
+  }, [gallery.length]);
+
+  const showNext = useCallback(() => {
+    setCurrentIndex((index) => (index + 1) % gallery.length);
+  }, [gallery.length]);
 
   useEffect(() => {
     const opener = document.activeElement;
@@ -58,6 +76,30 @@ const ImageLightbox = ({ image, onClose }) => {
       if (event.key === 'Escape') {
         event.preventDefault();
         onClose();
+        return;
+      }
+
+      if (hasMultipleImages && event.key === 'ArrowLeft') {
+        event.preventDefault();
+        showPrevious();
+        return;
+      }
+
+      if (hasMultipleImages && event.key === 'ArrowRight') {
+        event.preventDefault();
+        showNext();
+        return;
+      }
+
+      if (hasMultipleImages && event.key === 'Home') {
+        event.preventDefault();
+        setCurrentIndex(0);
+        return;
+      }
+
+      if (hasMultipleImages && event.key === 'End') {
+        event.preventDefault();
+        setCurrentIndex(gallery.length - 1);
         return;
       }
 
@@ -87,9 +129,29 @@ const ImageLightbox = ({ image, onClose }) => {
       window.scrollTo(0, scrollY);
       if (opener instanceof HTMLElement) opener.focus();
     };
-  }, [onClose]);
+  }, [gallery.length, hasMultipleImages, onClose, showNext, showPrevious]);
 
-  if (!image || typeof document === 'undefined') return null;
+  const handleTouchStart = (event) => {
+    if (!hasMultipleImages || event.touches.length !== 1) return;
+    const touch = event.touches[0];
+    touchStartRef.current = { x: touch.clientX, y: touch.clientY };
+  };
+
+  const handleTouchEnd = (event) => {
+    const start = touchStartRef.current;
+    touchStartRef.current = null;
+    if (!start || !hasMultipleImages || !event.changedTouches.length) return;
+
+    const touch = event.changedTouches[0];
+    const deltaX = touch.clientX - start.x;
+    const deltaY = touch.clientY - start.y;
+
+    if (Math.abs(deltaX) < 48 || Math.abs(deltaX) <= Math.abs(deltaY)) return;
+    if (deltaX < 0) showNext();
+    else showPrevious();
+  };
+
+  if (!currentImage || typeof document === 'undefined') return null;
 
   return createPortal(
     <div className="image-lightbox" role="presentation" onMouseDown={onClose}>
@@ -98,14 +160,52 @@ const ImageLightbox = ({ image, onClose }) => {
         ref={dialogRef}
         role="dialog"
         aria-modal="true"
-        aria-label={`Expanded view: ${image.alt}`}
+        aria-label={`Expanded view: ${currentImage.alt}`}
         onMouseDown={(event) => event.stopPropagation()}
       >
         <div className="image-lightbox__bar">
-          <span>Contact print / enlarged</span>
+          <span>
+            Contact print / {String(currentIndex + 1).padStart(2, '0')} of {String(gallery.length).padStart(2, '0')}
+          </span>
           <button type="button" onClick={onClose}>Close <span aria-hidden="true">×</span></button>
         </div>
-        <img src={image.src} alt={image.alt} loading="eager" decoding="async" />
+        <div
+          className="image-lightbox__stage"
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+        >
+          {hasMultipleImages ? (
+            <button
+              className="image-lightbox__nav image-lightbox__nav--previous"
+              type="button"
+              aria-label="Previous photo"
+              onClick={showPrevious}
+            >
+              <span aria-hidden="true">←</span>
+            </button>
+          ) : null}
+          <img
+            key={currentImage.src}
+            src={currentImage.src}
+            alt={currentImage.alt}
+            loading="eager"
+            decoding="async"
+          />
+          {hasMultipleImages ? (
+            <button
+              className="image-lightbox__nav image-lightbox__nav--next"
+              type="button"
+              aria-label="Next photo"
+              onClick={showNext}
+            >
+              <span aria-hidden="true">→</span>
+            </button>
+          ) : null}
+        </div>
+        <div className="image-lightbox__caption" aria-live="polite">
+          <strong>{currentImage.title || currentImage.alt}</strong>
+          <span>{currentImage.note || (hasMultipleImages ? 'Swipe or use arrow keys' : 'Enlarged view')}</span>
+        </div>
       </div>
     </div>,
     document.body,

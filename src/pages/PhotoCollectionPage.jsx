@@ -11,7 +11,7 @@ import usePageSeo from '../hooks/usePageSeo';
 gsap.registerPlugin(ScrollTrigger);
 
 const PhotoCollectionPage = ({ collectionKey }) => {
-  const [activeImage, setActiveImage] = useState(null);
+  const [activeIndex, setActiveIndex] = useState(null);
   const pageRef = useRef(null);
   const collection = photoCollections[collectionKey];
 
@@ -137,7 +137,7 @@ const PhotoCollectionPage = ({ collectionKey }) => {
                     <button
                       type="button"
                       aria-label={`Open ${photo.title}`}
-                      onClick={() => setActiveImage({ src: photo.src, alt: photo.alt })}
+                      onClick={() => setActiveIndex(index)}
                     >
                       <figure>
                         <img
@@ -163,7 +163,13 @@ const PhotoCollectionPage = ({ collectionKey }) => {
         )}
       </main>
 
-      {activeImage ? <ImageLightbox image={activeImage} onClose={() => setActiveImage(null)} /> : null}
+      {activeIndex !== null ? (
+        <ImageLightbox
+          images={collection.photos}
+          initialIndex={activeIndex}
+          onClose={() => setActiveIndex(null)}
+        />
+      ) : null}
     </>
   );
 };

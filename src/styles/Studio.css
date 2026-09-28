@@ -783,7 +783,7 @@
   width: min(92rem, 100%);
   height: min(94dvh, 70rem);
   display: grid;
-  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr) auto;
   color: var(--paper);
   background: #000;
   border: 1px solid rgba(245, 240, 230, 0.35);
@@ -810,11 +810,81 @@
   cursor: pointer;
 }
 
-.image-lightbox__dialog > img {
+.image-lightbox__stage {
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+  touch-action: pan-y;
+}
+
+.image-lightbox__stage > img {
+  display: block;
   width: 100%;
   height: 100%;
   min-height: 0;
   object-fit: contain;
+  user-select: none;
+  animation: image-lightbox-frame-in 0.24s ease both;
+}
+
+@keyframes image-lightbox-frame-in {
+  from { opacity: 0.25; transform: scale(0.992); }
+}
+
+.image-lightbox__nav {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  width: clamp(3.25rem, 5vw, 4.5rem);
+  height: clamp(3.25rem, 5vw, 4.5rem);
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(245, 240, 230, 0.65);
+  border-radius: 50%;
+  color: var(--paper);
+  background: rgba(11, 10, 15, 0.82);
+  backdrop-filter: blur(8px);
+  cursor: pointer;
+  font-size: 1.35rem;
+  transform: translateY(-50%);
+  transition: color 0.18s ease, background 0.18s ease, transform 0.18s ease;
+}
+
+.image-lightbox__nav--previous { left: clamp(0.55rem, 2vw, 1.5rem); }
+.image-lightbox__nav--next { right: clamp(0.55rem, 2vw, 1.5rem); }
+
+.image-lightbox__nav:hover,
+.image-lightbox__nav:focus-visible {
+  color: var(--ink);
+  background: var(--acid);
+  transform: translateY(-50%) scale(1.06);
+}
+
+.image-lightbox__caption {
+  min-height: 3.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.8rem 1rem;
+  border-top: 1px solid rgba(245, 240, 230, 0.35);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.image-lightbox__caption strong { font-family: var(--font-display); }
+.image-lightbox__caption span { color: var(--stone); text-align: right; }
+
+@media (max-width: 42rem) {
+  .image-lightbox { padding: 0; }
+  .image-lightbox__dialog {
+    width: 100%;
+    height: 100dvh;
+    border: 0;
+  }
+  .image-lightbox__caption { align-items: flex-start; flex-direction: column; gap: 0.25rem; }
+  .image-lightbox__caption span { text-align: left; }
 }
 
 @media (max-width: 70rem) {

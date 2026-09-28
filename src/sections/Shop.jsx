@@ -6,7 +6,7 @@ import galleryPhotos from '../content/gallery';
 import useStudioMotion from '../hooks/useStudioMotion';
 
 const Shop = ({ fullPage = false }) => {
-  const [activeImage, setActiveImage] = useState(null);
+  const [activeIndex, setActiveIndex] = useState(null);
   const sectionRef = useRef(null);
   useStudioMotion(sectionRef);
 
@@ -31,7 +31,7 @@ const Shop = ({ fullPage = false }) => {
               key={photo.title}
               style={{ '--tilt': photo.tilt }}
             >
-              <button type="button" aria-label={`Open ${photo.title}`} onClick={() => setActiveImage({ src: photo.src, alt: photo.alt })}>
+              <button type="button" aria-label={`Open ${photo.title}`} onClick={() => setActiveIndex(index)}>
                 <figure>
                   <img src={photo.src} alt={photo.alt} width={photo.width} height={photo.height} loading="lazy" decoding="async" />
                   <figcaption><span>{String(index + 1).padStart(2, '0')} · {photo.title}</span><span>{photo.note}</span></figcaption>
@@ -41,7 +41,13 @@ const Shop = ({ fullPage = false }) => {
           ))}
         </div>
       </div>
-      {activeImage ? <ImageLightbox image={activeImage} onClose={() => setActiveImage(null)} /> : null}
+      {activeIndex !== null ? (
+        <ImageLightbox
+          images={galleryPhotos}
+          initialIndex={activeIndex}
+          onClose={() => setActiveIndex(null)}
+        />
+      ) : null}
     </section>
   );
 };

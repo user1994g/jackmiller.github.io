@@ -12,7 +12,7 @@ import usePageSeo from '../hooks/usePageSeo';
 gsap.registerPlugin(ScrollTrigger);
 
 const PhotosPage = () => {
-  const [activeImage, setActiveImage] = useState(null);
+  const [activeIndex, setActiveIndex] = useState(null);
   const pageRef = useRef(null);
 
   usePageSeo({
@@ -134,7 +134,7 @@ const PhotosPage = () => {
                   <button
                     type="button"
                     aria-label={`Open ${photo.title}`}
-                    onClick={() => setActiveImage({ src: photo.src, alt: photo.alt })}
+                    onClick={() => setActiveIndex(index)}
                   >
                     <figure>
                       <img
@@ -159,7 +159,13 @@ const PhotosPage = () => {
         </section>
       </main>
 
-      {activeImage ? <ImageLightbox image={activeImage} onClose={() => setActiveImage(null)} /> : null}
+      {activeIndex !== null ? (
+        <ImageLightbox
+          images={photos}
+          initialIndex={activeIndex}
+          onClose={() => setActiveIndex(null)}
+        />
+      ) : null}
     </>
   );
 };

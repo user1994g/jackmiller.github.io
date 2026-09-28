@@ -143,6 +143,33 @@ test('keeps the page behind the image lightbox out of the accessibility tree', a
   expect(container).not.toHaveAttribute('aria-hidden');
 });
 
+test('moves through every photo in an open gallery', async () => {
+  renderRoute('/photos/countryside');
+
+  fireEvent.click(await screen.findByRole('button', { name: /open gate in the green/i }));
+
+  expect(screen.getByRole('dialog', { name: /expanded view/i })).toBeInTheDocument();
+  expect(screen.getByText(/01 of 10/i)).toBeInTheDocument();
+  expect(screen.getByRole('img', { name: /woodland path bordered/i })).toBeInTheDocument();
+
+  fireEvent.click(screen.getByRole('button', { name: /next photo/i }));
+  expect(screen.getByText(/02 of 10/i)).toBeInTheDocument();
+  expect(screen.getByRole('img', { name: /narrow grass trail/i })).toBeInTheDocument();
+
+  fireEvent.keyDown(document, { key: 'ArrowLeft' });
+  expect(screen.getByText(/01 of 10/i)).toBeInTheDocument();
+
+  fireEvent.click(screen.getByRole('button', { name: /previous photo/i }));
+  expect(screen.getByText(/10 of 10/i)).toBeInTheDocument();
+  expect(screen.getByRole('img', { name: /quiet country road bending/i })).toBeInTheDocument();
+
+  const stage = document.querySelector('.image-lightbox__stage');
+  fireEvent.touchStart(stage, { touches: [{ clientX: 300, clientY: 180 }] });
+  fireEvent.touchEnd(stage, { changedTouches: [{ clientX: 100, clientY: 188 }] });
+  expect(screen.getByText(/01 of 10/i)).toBeInTheDocument();
+  expect(screen.getByRole('img', { name: /woodland path bordered/i })).toBeInTheDocument();
+});
+
 test('redirects the legacy Final Lesson path to the canonical route', async () => {
   render(
     <MemoryRouter initialEntries={['/final-lesson']} future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>

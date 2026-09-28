@@ -100,15 +100,32 @@ test('opens the creative Photos collection dropdown from the main navigation', a
 
   fireEvent.click(screen.getByRole('button', { name: /^photos/i }));
 
-  expect(screen.getByRole('menu', { name: /choose a photo collection/i })).toBeInTheDocument();
-  expect(screen.getByRole('menuitem', { name: /countryside/i })).toHaveAttribute(
+  expect(screen.getByRole('region', { name: /photo collection selector/i })).toBeInTheDocument();
+  expect(screen.getByRole('link', { name: /countryside/i })).toHaveAttribute(
     'href',
     '/photos/countryside',
   );
-  expect(screen.getByRole('menuitem', { name: /animals/i })).toHaveAttribute(
+  expect(screen.getByRole('link', { name: /animals/i })).toHaveAttribute(
     'href',
     '/photos/animals',
   );
+});
+
+test('keeps the Movies collection blank without reusing portfolio photographs', async () => {
+  const { container } = renderRoute('/photos/movies');
+
+  expect(await screen.findByRole('heading', { level: 1, name: /movies/i })).toBeInTheDocument();
+  expect(screen.getByRole('heading', { level: 2, name: /no movie photographs selected/i })).toBeInTheDocument();
+  expect(screen.queryByRole('img')).not.toBeInTheDocument();
+  expect(container.querySelector('.photo-print')).not.toBeInTheDocument();
+});
+
+test('does not show the old photo collage on FMP Level 2', async () => {
+  renderRoute('/fmp-level-2');
+
+  expect(await screen.findByRole('heading', { level: 1, name: /the dark echoes of 1939/i })).toBeInTheDocument();
+  expect(screen.queryByLabelText(/film mood stills/i)).not.toBeInTheDocument();
+  expect(screen.queryByRole('img')).not.toBeInTheDocument();
 });
 
 test('keeps the page behind the image lightbox out of the accessibility tree', async () => {

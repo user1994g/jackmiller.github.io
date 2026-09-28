@@ -2,9 +2,6 @@ import gsap from 'gsap';
 import ScrollTrigger from 'gsap/ScrollTrigger';
 import React, { useLayoutEffect, useRef } from 'react';
 
-import portraitImage from '../assets/Images/1-about-refresh.webp';
-import memoryImage from '../assets/Images/9.webp';
-import objectImage from '../assets/Images/5.webp';
 import Navbar from '../components/Navbar';
 import usePageSeo from '../hooks/usePageSeo';
 
@@ -15,30 +12,6 @@ const facts = [
   ['Format', 'Short film'],
   ['Setting', '1939'],
   ['Status', 'Available to watch'],
-];
-
-const memories = [
-  {
-    src: portraitImage,
-    alt: 'A portrait in soft, reflective light',
-    caption: 'Remembering',
-    width: 1920,
-    height: 2880,
-  },
-  {
-    src: memoryImage,
-    alt: 'A close detail suggesting a treasured memory',
-    caption: 'Memory',
-    width: 1280,
-    height: 1920,
-  },
-  {
-    src: objectImage,
-    alt: 'A personal object held in a quiet moment',
-    caption: 'What remains',
-    width: 1920,
-    height: 2880,
-  },
 ];
 
 const PressedFlower = () => (
@@ -128,7 +101,7 @@ const FmpLevelTwoPage = () => {
             </dl>
           </section>
 
-          <section className="archive-story" aria-labelledby="archive-story-title" data-archive-reveal>
+          <section className="archive-story archive-story--text-only" aria-labelledby="archive-story-title" data-archive-reveal>
             <div className="archive-story__copy">
               <span className="archive-label">A story about loss</span>
               <h2 id="archive-story-title">Some absences never leave.</h2>
@@ -140,25 +113,6 @@ const FmpLevelTwoPage = () => {
               <div className="archive-story__flower">
                 <PressedFlower />
               </div>
-            </div>
-
-            <div className="archive-prints" aria-label="Film mood stills">
-              {memories.map((memory, index) => (
-                <figure className="archive-print" key={memory.caption}>
-                  <img
-                    src={memory.src}
-                    alt={memory.alt}
-                    loading="lazy"
-                    decoding="async"
-                    width={memory.width}
-                    height={memory.height}
-                  />
-                  <figcaption>
-                    <span>{memory.caption}</span>
-                    <span>Frame {String(index + 1).padStart(2, '0')}</span>
-                  </figcaption>
-                </figure>
-              ))}
             </div>
           </section>
         </div>

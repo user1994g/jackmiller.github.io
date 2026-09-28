@@ -1,6 +1,3 @@
-import filmPortrait from '../assets/Images/1-about-refresh.webp';
-import filmWindow from '../assets/Images/9.webp';
-import filmDetail from '../assets/Images/5.webp';
 import countrysidePhotos from './gallery';
 
 const publicAsset = (path) => `${process.env.PUBLIC_URL || ''}${path}`;
@@ -24,7 +21,7 @@ export const photoCategories = [
     slug: 'movies',
     label: 'Movies',
     kicker: 'Film moods',
-    count: '3 frames',
+    count: 'Blank for now',
     mark: 'SCENE / 03',
   },
   {
@@ -75,36 +72,6 @@ const animalPhotos = [
   },
 ];
 
-const moviePhotos = [
-  {
-    src: filmPortrait,
-    title: 'The Empty Chair',
-    note: 'Character study',
-    alt: 'Cinematic portrait from a Jack Miller film project',
-    tilt: '-0.8deg',
-    width: 1920,
-    height: 2880,
-  },
-  {
-    src: filmWindow,
-    title: 'Window Light',
-    note: 'Scene texture',
-    alt: 'Moody window-lit frame from a Jack Miller film project',
-    tilt: '0.7deg',
-    width: 1280,
-    height: 1920,
-  },
-  {
-    src: filmDetail,
-    title: 'What Remains',
-    note: 'Prop detail',
-    alt: 'Cinematic production detail photographed for a Jack Miller film project',
-    tilt: '-0.4deg',
-    width: 1920,
-    height: 2880,
-  },
-];
-
 export const photoCollections = {
   countryside: {
     slug: 'countryside',
@@ -127,18 +94,18 @@ export const photoCollections = {
     detail: 'Fast shutter. Big energy. No filler.',
     accent: 'poppy',
     photos: [],
-    comingSoon: true,
+    emptyState: 'sports',
   },
   movies: {
     slug: 'movies',
     label: 'Movies',
     eyebrow: 'Film moods · Collection 03',
-    title: 'Still frames. Whole stories.',
-    intro:
-      'Portraits, props, and fragments from film work—photographs made to hold a mood before and after the camera rolls.',
-    detail: 'Production imagery and cinematic mood studies.',
+    title: 'This roll is blank.',
+    intro: 'No photographs are being used in this collection right now.',
+    detail: 'A new movie photo set will be added later.',
     accent: 'violet',
-    photos: moviePhotos,
+    photos: [],
+    emptyState: 'blank',
   },
   animals: {
     slug: 'animals',
@@ -152,4 +119,3 @@ export const photoCollections = {
     photos: animalPhotos,
   },
 };
-

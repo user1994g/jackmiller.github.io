@@ -91,7 +91,7 @@ const PhotoCollectionPage = ({ collectionKey }) => {
           </div>
         </nav>
 
-        {collection.comingSoon ? (
+        {collection.emptyState === 'sports' ? (
           <section className="photo-collection-empty" aria-labelledby="sports-edit-title">
             <div className="studio-wrap photo-collection-empty__board">
               <div className="photo-collection-empty__court" aria-hidden="true">
@@ -110,6 +110,14 @@ const PhotoCollectionPage = ({ collectionKey }) => {
                   Talk about a shoot <span aria-hidden="true">↗</span>
                 </Link>
               </div>
+            </div>
+          </section>
+        ) : collection.emptyState === 'blank' ? (
+          <section className="photo-collection-blank" aria-labelledby="movies-empty-title">
+            <div className="studio-wrap photo-collection-blank__frame">
+              <span className="frame-number">ROLL 03 / EMPTY</span>
+              <h2 id="movies-empty-title">No movie photographs selected.</h2>
+              <p>This collection is intentionally blank for now.</p>
             </div>
           </section>
         ) : (

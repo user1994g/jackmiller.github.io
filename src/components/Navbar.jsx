@@ -1,6 +1,9 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 
+import leafyPath from '../assets/ArchivePhotos/leafy-path.jpg';
+import swanReflection from '../assets/ArchivePhotos/swan-reflection.jpg';
+
 const primaryLinks = [
   { label: 'Home', to: '/', end: true },
   { label: 'About', to: '/about' },
@@ -9,11 +12,50 @@ const primaryLinks = [
 ];
 
 const photoLinks = [
-  { label: 'Countryside', note: 'Field notes · 10 frames', to: '/photos/countryside', number: '01' },
-  { label: 'Sports', note: 'Motion studies · In the edit', to: '/photos/sports', number: '02' },
-  { label: 'Movies', note: 'Film moods · 3 frames', to: '/photos/movies', number: '03' },
-  { label: 'Animals', note: 'Wildlife encounters · 4 frames', to: '/photos/animals', number: '04' },
+  {
+    label: 'Countryside',
+    note: 'Field notes · 10 frames',
+    to: '/photos/countryside',
+    number: '01',
+    tone: 'acid',
+    image: leafyPath,
+  },
+  {
+    label: 'Sports',
+    note: 'Motion studies · In the edit',
+    to: '/photos/sports',
+    number: '02',
+    tone: 'poppy',
+  },
+  {
+    label: 'Movies',
+    note: 'Film moods · Blank for now',
+    to: '/photos/movies',
+    number: '03',
+    tone: 'violet',
+  },
+  {
+    label: 'Animals',
+    note: 'Wildlife encounters · 4 frames',
+    to: '/photos/animals',
+    number: '04',
+    tone: 'sky',
+    image: swanReflection,
+  },
 ];
+
+const PhotoMenuArtwork = ({ item }) => (
+  <span className="photo-menu-art" aria-hidden="true">
+    {item.image ? <img src={item.image} alt="" loading="lazy" decoding="async" /> : null}
+    {item.tone === 'poppy' ? (
+      <span className="photo-menu-art__sport">
+        <i />
+        <b>00</b>
+      </span>
+    ) : null}
+    <span className="photo-menu-art__crosshair">+</span>
+  </span>
+);
 
 const fmpLinks = [
   { label: 'Level 2', note: 'The Dark Echoes of 1939', to: '/fmp-level-2' },
@@ -106,7 +148,12 @@ const Navbar = () => {
   useEffect(() => {
     const desktopQuery = window.matchMedia('(min-width: 68rem)');
     const handleBreakpointChange = (event) => {
-      if (event.matches) closeMenu();
+      if (event.matches) {
+        closeMenu();
+      } else {
+        setDesktopPhotosOpen(false);
+        setDesktopFmpOpen(false);
+      }
     };
 
     if (desktopQuery.addEventListener) {
@@ -123,6 +170,7 @@ const Navbar = () => {
 
     previousFocusRef.current = document.activeElement;
     const savedScrollY = window.scrollY;
+    const openedPathname = window.location.pathname;
     const previousBodyPosition = document.body.style.position;
     const previousBodyTop = document.body.style.top;
     const previousBodyWidth = document.body.style.width;
@@ -187,9 +235,10 @@ const Navbar = () => {
       document.body.style.top = previousBodyTop;
       document.body.style.width = previousBodyWidth;
       document.body.style.overflow = previousBodyOverflow;
-      window.scrollTo(0, savedScrollY);
+      const routeChanged = window.location.pathname !== openedPathname;
+      window.scrollTo(0, routeChanged ? 0 : savedScrollY);
 
-      if (previousFocusRef.current?.isConnected) {
+      if (!routeChanged && previousFocusRef.current?.isConnected) {
         previousFocusRef.current.focus({ preventScroll: true });
       }
     };
@@ -267,14 +316,21 @@ const Navbar = () => {
               </NavLink>
             ))}
 
-            <div className="cut-nav__photos" ref={desktopPhotosRef}>
+            <div
+              className="cut-nav__photos"
+              ref={desktopPhotosRef}
+              onBlur={(event) => {
+                if (!event.currentTarget.contains(event.relatedTarget)) {
+                  setDesktopPhotosOpen(false);
+                }
+              }}
+            >
               <button
                 ref={desktopPhotosButtonRef}
                 className={`cut-nav__link cut-nav__photos-toggle${photosActive ? ' cut-nav__link--active' : ''}`}
                 type="button"
                 aria-expanded={desktopPhotosOpen}
                 aria-controls="desktop-photos-menu"
-                aria-haspopup="menu"
                 onClick={() => {
                   setDesktopFmpOpen(false);
                   setDesktopPhotosOpen((current) => !current);
@@ -295,29 +351,41 @@ const Navbar = () => {
                 <div
                   id="desktop-photos-menu"
                   className="cut-nav__photo-menu"
-                  role="menu"
-                  aria-label="Choose a photo collection"
+                  role="region"
+                  aria-label="Photo collection selector"
                 >
                   <div className="cut-nav__photo-menu-head">
-                    <span>Pick a photo set</span>
-                    <Link to="/photos" onClick={() => setDesktopPhotosOpen(false)}>View all ↗</Link>
+                    <span>
+                      <b>Photo selector</b>
+                      <small>Pull a strip / choose a world</small>
+                    </span>
+                    <Link to="/photos" onClick={() => setDesktopPhotosOpen(false)}>View all 04 ↗</Link>
                   </div>
                   <div className="cut-nav__photo-menu-grid">
                     {photoLinks.map((item, index) => (
                       <NavLink
                         key={item.to}
                         ref={index === 0 ? desktopPhotosFirstLinkRef : undefined}
-                        className="cut-nav__photo-item"
-                        role="menuitem"
+                        className={({ isActive }) =>
+                          `cut-nav__photo-item cut-nav__photo-item--${item.tone}${isActive ? ' is-active' : ''}`
+                        }
                         to={item.to}
                         onClick={() => setDesktopPhotosOpen(false)}
                       >
-                        <span className="cut-nav__photo-number">{item.number}</span>
-                        <strong>{item.label}</strong>
-                        <small>{item.note}</small>
+                        <PhotoMenuArtwork item={item} />
+                        <span className="cut-nav__photo-item-copy">
+                          <span className="cut-nav__photo-number">{item.number}</span>
+                          <strong>{item.label}</strong>
+                          <small>{item.note}</small>
+                        </span>
+                        <span className="cut-nav__photo-arrow" aria-hidden="true">↗</span>
                       </NavLink>
                     ))}
                   </div>
+                  <p className="cut-nav__photo-menu-foot">
+                    <span>Jack Miller archive</span>
+                    <span>Still / moving / wild</span>
+                  </p>
                 </div>
               ) : null}
             </div>
@@ -452,13 +520,19 @@ const Navbar = () => {
                   {photoLinks.map((item) => (
                     <NavLink
                       key={item.to}
-                      className="cut-menu__photo-choice"
+                      className={({ isActive }) =>
+                        `cut-menu__photo-choice cut-menu__photo-choice--${item.tone}${isActive ? ' is-active' : ''}`
+                      }
                       to={item.to}
                       onClick={closeMenu}
                     >
-                      <span>{item.number}</span>
-                      <strong>{item.label}</strong>
-                      <small>{item.note}</small>
+                      <PhotoMenuArtwork item={item} />
+                      <span className="cut-menu__photo-choice-copy">
+                        <span>{item.number}</span>
+                        <strong>{item.label}</strong>
+                        <small>{item.note}</small>
+                      </span>
+                      <span className="cut-menu__photo-choice-arrow" aria-hidden="true">↗</span>
                     </NavLink>
                   ))}
                 </div>

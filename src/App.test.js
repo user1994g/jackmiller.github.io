@@ -72,7 +72,11 @@ test('renders the redesigned portfolio home page', () => {
 });
 
 test.each([
-  ['/photos', /photo portfolio/i],
+  ['/photos', /choose your frame/i],
+  ['/photos/countryside', /countryside/i],
+  ['/photos/sports', /sports/i],
+  ['/photos/movies', /movies/i],
+  ['/photos/animals', /animals/i],
   ['/about', /made with intent/i],
   ['/contact', /get in touch/i],
   ['/write-ups', /write ups/i],
@@ -89,6 +93,22 @@ test.each([
 
   const ids = [...document.querySelectorAll('[id]')].map((element) => element.id);
   expect(new Set(ids).size).toBe(ids.length);
+});
+
+test('opens the creative Photos collection dropdown from the main navigation', async () => {
+  renderRoute();
+
+  fireEvent.click(screen.getByRole('button', { name: /^photos/i }));
+
+  expect(screen.getByRole('menu', { name: /choose a photo collection/i })).toBeInTheDocument();
+  expect(screen.getByRole('menuitem', { name: /countryside/i })).toHaveAttribute(
+    'href',
+    '/photos/countryside',
+  );
+  expect(screen.getByRole('menuitem', { name: /animals/i })).toHaveAttribute(
+    'href',
+    '/photos/animals',
+  );
 });
 
 test('keeps the page behind the image lightbox out of the accessibility tree', async () => {

@@ -3,10 +3,16 @@ import { Link, NavLink, useLocation } from 'react-router-dom';
 
 const primaryLinks = [
   { label: 'Home', to: '/', end: true },
-  { label: 'Photos', to: '/photos' },
   { label: 'About', to: '/about' },
   { label: '3D Art', to: '/3d-art' },
   { label: 'Write Ups', to: '/write-ups' },
+];
+
+const photoLinks = [
+  { label: 'Countryside', note: 'Field notes · 10 frames', to: '/photos/countryside', number: '01' },
+  { label: 'Sports', note: 'Motion studies · In the edit', to: '/photos/sports', number: '02' },
+  { label: 'Movies', note: 'Film moods · 3 frames', to: '/photos/movies', number: '03' },
+  { label: 'Animals', note: 'Wildlife encounters · 4 frames', to: '/photos/animals', number: '04' },
 ];
 
 const fmpLinks = [
@@ -74,11 +80,16 @@ const mobileLinkClass = ({ isActive }) =>
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [mobilePhotosOpen, setMobilePhotosOpen] = useState(false);
+  const [desktopPhotosOpen, setDesktopPhotosOpen] = useState(false);
   const [desktopFmpOpen, setDesktopFmpOpen] = useState(false);
   const location = useLocation();
   const menuRef = useRef(null);
   const menuCloseRef = useRef(null);
   const previousFocusRef = useRef(null);
+  const desktopPhotosRef = useRef(null);
+  const desktopPhotosButtonRef = useRef(null);
+  const desktopPhotosFirstLinkRef = useRef(null);
   const desktopFmpRef = useRef(null);
   const desktopFmpButtonRef = useRef(null);
   const desktopFmpFirstLinkRef = useRef(null);
@@ -87,6 +98,8 @@ const Navbar = () => {
 
   useEffect(() => {
     closeMenu();
+    setMobilePhotosOpen(false);
+    setDesktopPhotosOpen(false);
     setDesktopFmpOpen(false);
   }, [closeMenu, location.pathname]);
 
@@ -183,6 +196,30 @@ const Navbar = () => {
   }, [closeMenu, menuOpen]);
 
   useEffect(() => {
+    if (!desktopPhotosOpen) return undefined;
+
+    const handlePointerDown = (event) => {
+      if (!desktopPhotosRef.current?.contains(event.target)) {
+        setDesktopPhotosOpen(false);
+      }
+    };
+
+    const handleKeydown = (event) => {
+      if (event.key === 'Escape') {
+        setDesktopPhotosOpen(false);
+        desktopPhotosButtonRef.current?.focus();
+      }
+    };
+
+    document.addEventListener('pointerdown', handlePointerDown);
+    document.addEventListener('keydown', handleKeydown);
+    return () => {
+      document.removeEventListener('pointerdown', handlePointerDown);
+      document.removeEventListener('keydown', handleKeydown);
+    };
+  }, [desktopPhotosOpen]);
+
+  useEffect(() => {
     if (!desktopFmpOpen) return undefined;
 
     const handlePointerDown = (event) => {
@@ -207,6 +244,7 @@ const Navbar = () => {
   }, [desktopFmpOpen]);
 
   const fmpActive = fmpLinks.some(({ to }) => location.pathname === to);
+  const photosActive = location.pathname === '/photos' || location.pathname.startsWith('/photos/');
 
   return (
     <header className="cut-nav" data-menu-open={menuOpen ? 'true' : 'false'}>
@@ -223,7 +261,68 @@ const Navbar = () => {
 
         <div className="cut-nav__desktop">
           <div className="cut-nav__links">
-            {primaryLinks.map((item) => (
+            {primaryLinks.slice(0, 1).map((item) => (
+              <NavLink key={item.to} className={activeLinkClass} end={item.end} to={item.to}>
+                {item.label}
+              </NavLink>
+            ))}
+
+            <div className="cut-nav__photos" ref={desktopPhotosRef}>
+              <button
+                ref={desktopPhotosButtonRef}
+                className={`cut-nav__link cut-nav__photos-toggle${photosActive ? ' cut-nav__link--active' : ''}`}
+                type="button"
+                aria-expanded={desktopPhotosOpen}
+                aria-controls="desktop-photos-menu"
+                aria-haspopup="menu"
+                onClick={() => {
+                  setDesktopFmpOpen(false);
+                  setDesktopPhotosOpen((current) => !current);
+                }}
+                onKeyDown={(event) => {
+                  if (event.key === 'ArrowDown') {
+                    event.preventDefault();
+                    setDesktopPhotosOpen(true);
+                    window.requestAnimationFrame(() => desktopPhotosFirstLinkRef.current?.focus());
+                  }
+                }}
+              >
+                Photos
+                <span aria-hidden="true">{desktopPhotosOpen ? '−' : '+'}</span>
+              </button>
+
+              {desktopPhotosOpen ? (
+                <div
+                  id="desktop-photos-menu"
+                  className="cut-nav__photo-menu"
+                  role="menu"
+                  aria-label="Choose a photo collection"
+                >
+                  <div className="cut-nav__photo-menu-head">
+                    <span>Pick a photo set</span>
+                    <Link to="/photos" onClick={() => setDesktopPhotosOpen(false)}>View all ↗</Link>
+                  </div>
+                  <div className="cut-nav__photo-menu-grid">
+                    {photoLinks.map((item, index) => (
+                      <NavLink
+                        key={item.to}
+                        ref={index === 0 ? desktopPhotosFirstLinkRef : undefined}
+                        className="cut-nav__photo-item"
+                        role="menuitem"
+                        to={item.to}
+                        onClick={() => setDesktopPhotosOpen(false)}
+                      >
+                        <span className="cut-nav__photo-number">{item.number}</span>
+                        <strong>{item.label}</strong>
+                        <small>{item.note}</small>
+                      </NavLink>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+            </div>
+
+            {primaryLinks.slice(1).map((item) => (
               <NavLink key={item.to} className={activeLinkClass} end={item.end} to={item.to}>
                 {item.label}
               </NavLink>
@@ -237,7 +336,10 @@ const Navbar = () => {
                 aria-expanded={desktopFmpOpen}
                 aria-controls="desktop-fmp-menu"
                 aria-haspopup="menu"
-                onClick={() => setDesktopFmpOpen((current) => !current)}
+                onClick={() => {
+                  setDesktopPhotosOpen(false);
+                  setDesktopFmpOpen((current) => !current);
+                }}
                 onKeyDown={(event) => {
                   if (event.key === 'ArrowDown') {
                     event.preventDefault();
@@ -314,7 +416,7 @@ const Navbar = () => {
 
           <div className="cut-menu__body studio-wrap">
             <nav className="cut-menu__primary" aria-label="Mobile navigation">
-              {primaryLinks.map((item, index) => (
+              {primaryLinks.slice(0, 1).map((item) => (
                 <NavLink
                   key={item.to}
                   className={mobileLinkClass}
@@ -323,7 +425,55 @@ const Navbar = () => {
                   onClick={closeMenu}
                 >
                   <span className="cut-menu__number" aria-hidden="true">
-                    {String(index + 1).padStart(2, '0')}
+                    01
+                  </span>
+                  <span>{item.label}</span>
+                  <span className="cut-menu__arrow" aria-hidden="true">↗</span>
+                </NavLink>
+              ))}
+
+              <button
+                className={`cut-menu__link cut-menu__photo-toggle${photosActive ? ' cut-menu__link--active' : ''}`}
+                type="button"
+                aria-expanded={mobilePhotosOpen}
+                aria-controls="mobile-photo-choices"
+                onClick={() => setMobilePhotosOpen((current) => !current)}
+              >
+                <span className="cut-menu__number" aria-hidden="true">02</span>
+                <span>Photos</span>
+                <span className="cut-menu__arrow" aria-hidden="true">{mobilePhotosOpen ? '−' : '+'}</span>
+              </button>
+
+              {mobilePhotosOpen ? (
+                <div id="mobile-photo-choices" className="cut-menu__photo-panel">
+                  <Link className="cut-menu__photo-home" to="/photos" onClick={closeMenu}>
+                    Photo home <span aria-hidden="true">→</span>
+                  </Link>
+                  {photoLinks.map((item) => (
+                    <NavLink
+                      key={item.to}
+                      className="cut-menu__photo-choice"
+                      to={item.to}
+                      onClick={closeMenu}
+                    >
+                      <span>{item.number}</span>
+                      <strong>{item.label}</strong>
+                      <small>{item.note}</small>
+                    </NavLink>
+                  ))}
+                </div>
+              ) : null}
+
+              {primaryLinks.slice(1).map((item, index) => (
+                <NavLink
+                  key={item.to}
+                  className={mobileLinkClass}
+                  end={item.end}
+                  to={item.to}
+                  onClick={closeMenu}
+                >
+                  <span className="cut-menu__number" aria-hidden="true">
+                    {String(index + 3).padStart(2, '0')}
                   </span>
                   <span>{item.label}</span>
                   <span className="cut-menu__arrow" aria-hidden="true">↗</span>

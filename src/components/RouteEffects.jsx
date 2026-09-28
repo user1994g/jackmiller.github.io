@@ -13,6 +13,9 @@ import meadowFootbridge from '../assets/ArchivePhotos/meadow-footbridge.jpg';
 import meadowTrail from '../assets/ArchivePhotos/fenced-trail.jpg';
 import meadowTrees from '../assets/ArchivePhotos/meadow-trees.jpg';
 import railwayCurve from '../assets/ArchivePhotos/railway-curve.jpg';
+import filmPortrait from '../assets/Images/1-about-refresh.webp';
+import filmDetail from '../assets/Images/5.webp';
+import filmWindow from '../assets/Images/9.webp';
 import routes from '../content/routes.json';
 
 const baseUrl = 'https://jackmillermedia.com';
@@ -21,6 +24,8 @@ const imageUrls = {
   logo: `${baseUrl}/logo512.png`,
   home: `${baseUrl}${homeImage}`,
   photos: `${baseUrl}${leafyPath}`,
+  animals: `${baseUrl}/photo-collections/animals/swan-arrival.jpg`,
+  movieMood: `${baseUrl}${filmPortrait}`,
   about: `${baseUrl}${aboutImage}`,
   darkEchoes:
     'https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/b1a98a9e-5388-48c8-9f0a-cc41b0629c9a/id-preview-f00ed6c4--1b03e5be-bf52-4353-ac5f-a9644330d088.lovable.app-1783284438803.png',
@@ -38,6 +43,24 @@ const galleryImages = [
   [lichenBranches, 'Yellow lichen tracing low branches over still water and green reeds', 1600, 900],
   [meadowTrees, 'Mature spreading trees standing across a vivid green meadow', 1600, 900],
   [countryRoad, 'Quiet country road bending over a stone bridge between leafy trees', 1600, 900],
+].map(([url, alt, width, height]) => ({ url: `${baseUrl}${url}`, alt, width, height }));
+
+const animalImages = [
+  ['swan-arrival.jpg', 'White swan arriving across calm water beside green reeds'],
+  ['swan-through-reeds.jpg', 'White swan moving through reflected reeds on a country pond'],
+  ['swan-reflection-close.jpg', 'Close wildlife portrait of a swan and its reflection in the water'],
+  ['swan-drift.jpg', 'A swan drifting across dark water at the edge of a reed bed'],
+].map(([filename, alt]) => ({
+  url: `${baseUrl}/photo-collections/animals/${filename}`,
+  alt,
+  width: 4032,
+  height: 2268,
+}));
+
+const movieImages = [
+  [filmPortrait, 'Cinematic portrait from a Jack Miller film project', 1920, 2880],
+  [filmWindow, 'Moody window-lit frame from a Jack Miller film project', 1280, 1920],
+  [filmDetail, 'Cinematic production detail photographed for a Jack Miller film project', 1920, 2880],
 ].map(([url, alt, width, height]) => ({ url: `${baseUrl}${url}`, alt, width, height }));
 
 const upsertMeta = (attribute, key, content) => {
@@ -84,8 +107,16 @@ const buildSchema = (route, canonical, image) => {
     };
   }
   if (route.path === '/about') pageNode.mainEntity = { '@id': personId };
-  if (route.path === '/photos') {
-    pageNode.associatedMedia = galleryImages.map((galleryImage) => ({
+  const associatedImages = route.path === '/photos' || route.path === '/photos/countryside'
+    ? galleryImages
+    : route.path === '/photos/animals'
+      ? animalImages
+      : route.path === '/photos/movies'
+        ? movieImages
+        : null;
+
+  if (associatedImages) {
+    pageNode.associatedMedia = associatedImages.map((galleryImage) => ({
       '@type': 'ImageObject',
       contentUrl: galleryImage.url,
       caption: galleryImage.alt,

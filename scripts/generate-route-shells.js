@@ -22,6 +22,8 @@ const imageUrls = {
   logo: `${baseUrl}/logo512.png`,
   home: assetUrl('static/media/swan-reflection.jpg'),
   photos: assetUrl('static/media/leafy-path.jpg'),
+  animals: `${baseUrl}/photo-collections/animals/swan-arrival.jpg`,
+  movieMood: assetUrl('static/media/1-about-refresh.webp'),
   about: assetUrl('static/media/pfp-display.jpg'),
   darkEchoes: 'https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/b1a98a9e-5388-48c8-9f0a-cc41b0629c9a/id-preview-f00ed6c4--1b03e5be-bf52-4353-ac5f-a9644330d088.lovable.app-1783284438803.png',
   finalLesson: `${baseUrl}/new-home/img/44.jpg`,
@@ -45,10 +47,37 @@ const galleryImages = [
   height,
 }));
 
+const animalImages = [
+  ['swan-arrival.jpg', 'White swan arriving across calm water beside green reeds'],
+  ['swan-through-reeds.jpg', 'White swan moving through reflected reeds on a country pond'],
+  ['swan-reflection-close.jpg', 'Close wildlife portrait of a swan and its reflection in the water'],
+  ['swan-drift.jpg', 'A swan drifting across dark water at the edge of a reed bed'],
+].map(([filename, alt]) => ({
+  url: `${baseUrl}/photo-collections/animals/${filename}`,
+  alt,
+  width: 4032,
+  height: 2268,
+}));
+
+const movieImages = [
+  ['static/media/1-about-refresh.webp', 'Cinematic portrait from a Jack Miller film project', 1920, 2880],
+  ['static/media/9.webp', 'Moody window-lit frame from a Jack Miller film project', 1280, 1920],
+  ['static/media/5.webp', 'Cinematic production detail photographed for a Jack Miller film project', 1920, 2880],
+].map(([key, alt, width, height]) => ({
+  url: assetUrl(key),
+  alt,
+  width,
+  height,
+}));
+
 const primaryNav = [
   ['/', 'Jack Miller Media home'],
   ['/about/', 'About Jack Miller'],
   ['/photos/', 'Jack Miller photography portfolio'],
+  ['/photos/countryside/', 'Countryside photography by Jack Miller'],
+  ['/photos/sports/', 'Sports photography by Jack Miller'],
+  ['/photos/movies/', 'Movie and film photography by Jack Miller'],
+  ['/photos/animals/', 'Animal and wildlife photography by Jack Miller'],
   ['/fmp-level-2/', 'The Dark Echoes of 1939 — FMP Level 2 film'],
   ['/the-final-lesson/', 'The Final Lesson — 2024 short film'],
   ['/write-ups/', 'Film and photography production notes'],
@@ -119,8 +148,13 @@ const buildSchema = (route, canonical, image) => {
   }
 
   if (route.path === '/about') pageNode.mainEntity = { '@id': personId };
-  if (route.path === '/photos') {
-    pageNode.associatedMedia = galleryImages.map((galleryImage) => ({
+  let associatedImages = null;
+  if (route.path === '/photos' || route.path === '/photos/countryside') associatedImages = galleryImages;
+  if (route.path === '/photos/animals') associatedImages = animalImages;
+  if (route.path === '/photos/movies') associatedImages = movieImages;
+
+  if (associatedImages) {
+    pageNode.associatedMedia = associatedImages.map((galleryImage) => ({
       '@type': 'ImageObject',
       contentUrl: galleryImage.url,
       caption: galleryImage.alt,
@@ -219,10 +253,15 @@ const renderFallback = (route, image) => {
     `  <img src="${escapeHtml(image)}" alt="${escapeHtml(route.imageAlt)}"${route.imageWidth ? ` width="${route.imageWidth}"` : ''}${route.imageHeight ? ` height="${route.imageHeight}"` : ''} />`,
     '</figure>',
   ].join('\n');
-  const gallery = route.path === '/photos' ? [
+  let routeImages = null;
+  if (route.path === '/photos' || route.path === '/photos/countryside') routeImages = galleryImages;
+  if (route.path === '/photos/animals') routeImages = animalImages;
+  if (route.path === '/photos/movies') routeImages = movieImages;
+
+  const gallery = routeImages ? [
     '<section aria-labelledby="static-gallery-title">',
-    '  <h2 id="static-gallery-title">Selected countryside photographs</h2>',
-    ...galleryImages.map((galleryImage) => [
+    '  <h2 id="static-gallery-title">Selected original photographs</h2>',
+    ...routeImages.map((galleryImage) => [
       '  <figure>',
       `    <img src="${escapeHtml(galleryImage.url)}" alt="${escapeHtml(galleryImage.alt)}" width="${galleryImage.width}" height="${galleryImage.height}" loading="lazy" />`,
       `    <figcaption>${escapeHtml(galleryImage.alt)}</figcaption>`,

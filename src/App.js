@@ -23,6 +23,7 @@ const FinalLessonPage = lazy(() => import('./pages/FinalLessonPage'));
 const FmpLevelTwoPage = lazy(() => import('./pages/FmpLevelTwoPage'));
 const AboutPage = lazy(() => import('./pages/AboutPage'));
 const PhotosPage = lazy(() => import('./pages/PhotosPage'));
+const PhotoCollectionPage = lazy(() => import('./pages/PhotoCollectionPage'));
 const ContactPage = lazy(() => import('./pages/ContactPage'));
 
 const PageFallback = () => (
@@ -73,6 +74,10 @@ function App() {
               <Route path="/" element={<HomePage />} />
               <Route path="/videos" element={<Navigate to="/" replace />} />
               <Route path="/photos" element={<PhotosPage />} />
+              <Route path="/photos/countryside" element={<PhotoCollectionPage collectionKey="countryside" />} />
+              <Route path="/photos/sports" element={<PhotoCollectionPage collectionKey="sports" />} />
+              <Route path="/photos/movies" element={<PhotoCollectionPage collectionKey="movies" />} />
+              <Route path="/photos/animals" element={<PhotoCollectionPage collectionKey="animals" />} />
               <Route path="/about" element={<AboutPage />} />
               <Route path="/contact" element={<ContactPage />} />
               <Route path="/write-ups" element={<WriteUpsPage />} />

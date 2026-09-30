@@ -3147,7 +3147,7 @@ body.intro-open {
 
 .photo-collection-hero h1 {
   margin-top: clamp(1.2rem, 3vw, 2rem);
-  font-size: clamp(4.2rem, 13vw, 12rem);
+  font-size: clamp(4.2rem, 8.25vw, 9rem);
   letter-spacing: -0.085em;
   line-height: 0.72;
   text-transform: uppercase;
@@ -3339,7 +3339,7 @@ body.intro-open {
   color: var(--paper-soft);
 }
 
-@media (max-width: 78rem) {
+@media (max-width: 90rem) {
   .photo-collection-hero__grid {
     grid-template-columns: minmax(0, 1fr);
     gap: clamp(2.5rem, 6vw, 4rem);

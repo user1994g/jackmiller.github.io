@@ -10,7 +10,7 @@ const policyCopy = {
       'Privacy policy for Jack Miller Media, including analytics, advertising, cookies, and contact information.',
     intro:
       'This privacy policy explains how Jack Miller Media handles basic visitor information, analytics, advertising services, and contact messages. The site is a personal creative media portfolio run by Jack Miller.',
-    updated: '31 July 2026',
+    updated: '30 September 2026',
     sections: [
       {
         heading: 'Information this site may collect',
@@ -25,7 +25,7 @@ const policyCopy = {
       {
         heading: 'Location availability checks',
         body:
-          'To check whether the site is available in a visitor’s region, the browser may request approximate location information from ipwho.is, ipapi.co, or ipinfo.io. Those providers receive the visitor’s IP address as part of the request. The resulting allow or block decision may be stored temporarily in the visitor’s browser.',
+          'Cloudflare provides an approximate country code from the visitor’s network connection so the site can apply its regional availability policy before a page is served. Jack Miller Media does not request precise location data, contact external IP-location providers from the browser, or store a location decision on the visitor’s device.',
       },
       {
         heading: 'Cookies',

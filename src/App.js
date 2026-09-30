@@ -4,7 +4,6 @@ import { ThemeProvider } from 'styled-components';
 
 import BackToTop from './components/BackToTop';
 import ClarityTracker from './components/ClarityTracker';
-import GeoBlockGate from './components/GeoBlockGate';
 import GrainLayer from './components/GrainLayer';
 import IntroSplash from './components/IntroSplash';
 import ScrollProgress from './components/ScrollProgress';
@@ -63,41 +62,39 @@ function App() {
       <GlobalStyles />
       <a className="skip-link" href="#main-content">Skip to main content</a>
       <ThemeProvider theme={dark}>
-        <GeoBlockGate>
-          <GrainLayer />
-          <IntroSplash />
-          <ScrollProgress />
-          <ClarityTracker />
-          <RouteEffects />
-          <Suspense fallback={<PageFallback />}>
-            <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/videos" element={<Navigate to="/" replace />} />
-              <Route path="/photos" element={<PhotosPage />} />
-              <Route path="/photos/countryside" element={<PhotoCollectionPage collectionKey="countryside" />} />
-              <Route path="/photos/sports" element={<PhotoCollectionPage collectionKey="sports" />} />
-              <Route path="/photos/movies" element={<PhotoCollectionPage collectionKey="movies" />} />
-              <Route path="/photos/animals" element={<PhotoCollectionPage collectionKey="animals" />} />
-              <Route path="/about" element={<AboutPage />} />
-              <Route path="/contact" element={<ContactPage />} />
-              <Route path="/write-ups" element={<WriteUpsPage />} />
-              <Route path="/privacy" element={<PolicyPage variant="privacy" />} />
-              <Route path="/terms" element={<PolicyPage variant="terms" />} />
-              <Route path="/the-final-lesson" element={<FinalLessonPage />} />
-              <Route path="/final-lesson" element={<Navigate to="/the-final-lesson" replace />} />
-              <Route path="/fmp-level-2" element={<FmpLevelTwoPage />} />
-              <Route path="/3d-art" element={<UnderDevelopmentPage />} />
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-          </Suspense>
-          <Footer />
-          <BackToTop />
+        <GrainLayer />
+        <IntroSplash />
+        <ScrollProgress />
+        <ClarityTracker />
+        <RouteEffects />
+        <Suspense fallback={<PageFallback />}>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/videos" element={<Navigate to="/" replace />} />
+            <Route path="/photos" element={<PhotosPage />} />
+            <Route path="/photos/countryside" element={<PhotoCollectionPage collectionKey="countryside" />} />
+            <Route path="/photos/sports" element={<PhotoCollectionPage collectionKey="sports" />} />
+            <Route path="/photos/movies" element={<PhotoCollectionPage collectionKey="movies" />} />
+            <Route path="/photos/animals" element={<PhotoCollectionPage collectionKey="animals" />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/write-ups" element={<WriteUpsPage />} />
+            <Route path="/privacy" element={<PolicyPage variant="privacy" />} />
+            <Route path="/terms" element={<PolicyPage variant="terms" />} />
+            <Route path="/the-final-lesson" element={<FinalLessonPage />} />
+            <Route path="/final-lesson" element={<Navigate to="/the-final-lesson" replace />} />
+            <Route path="/fmp-level-2" element={<FmpLevelTwoPage />} />
+            <Route path="/3d-art" element={<UnderDevelopmentPage />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </Suspense>
+        <Footer />
+        <BackToTop />
 
-          <Suspense fallback={null}>
-            {deferredUiReady ? <SiteHelperChat /> : null}
-            {deferredUiReady && enableDesktopAura ? <CustomCursor /> : null}
-          </Suspense>
-        </GeoBlockGate>
+        <Suspense fallback={null}>
+          {deferredUiReady ? <SiteHelperChat /> : null}
+          {deferredUiReady && enableDesktopAura ? <CustomCursor /> : null}
+        </Suspense>
       </ThemeProvider>
     </>
   );

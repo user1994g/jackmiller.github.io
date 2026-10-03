@@ -165,6 +165,15 @@
   background-size: min(7.5vw, 7rem) min(7.5vw, 7rem);
 }
 
+body.season-halloween .cut-hero {
+  background:
+    radial-gradient(circle at 88% 19%, rgba(255, 106, 31, 0.2) 0 5.6rem, transparent 5.75rem),
+    linear-gradient(rgba(11, 10, 15, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(11, 10, 15, 0.08) 1px, transparent 1px),
+    var(--paper);
+  background-size: auto, min(7.5vw, 7rem) min(7.5vw, 7rem), min(7.5vw, 7rem) min(7.5vw, 7rem), auto;
+}
+
 .cut-hero__layout {
   position: relative;
   display: grid;
@@ -247,6 +256,29 @@
 .cut-hero__art {
   position: relative;
   min-height: min(64vw, 45rem);
+}
+
+body.season-halloween .cut-hero__art::before {
+  position: absolute;
+  z-index: 6;
+  top: 0;
+  right: 0;
+  padding: 0.55rem 0.72rem 0.48rem;
+  border: 1px solid var(--ink);
+  color: var(--paper-bright);
+  background: var(--ink);
+  box-shadow: 4px 4px 0 var(--poppy);
+  content: 'October cut · ☾';
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  line-height: 1;
+  text-transform: uppercase;
+  transform: rotate(2deg);
+}
+
+body.season-halloween .cut-hero__photo img {
+  filter: saturate(0.92) contrast(1.03) sepia(0.05);
 }
 
 .cut-hero__photo {
@@ -1609,6 +1641,10 @@ body.intro-open {
   background: rgba(245, 240, 230, 0.94);
   backdrop-filter: blur(14px) saturate(1.08);
   content: '';
+}
+
+body.season-halloween .cut-nav::before {
+  background: rgba(243, 234, 220, 0.95);
 }
 
 .cut-nav__bar {

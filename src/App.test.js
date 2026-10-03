@@ -2,6 +2,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 
 import App from './App';
+import { isHalloweenSeason } from './components/SeasonalTheme';
 
 jest.mock('gsap', () => ({
   __esModule: true,
@@ -62,6 +63,11 @@ const renderRoute = (path = '/') => render(
     <App />
   </MemoryRouter>,
 );
+
+test('only enables the Halloween theme during October', () => {
+  expect(isHalloweenSeason(new Date(2026, 9, 3))).toBe(true);
+  expect(isHalloweenSeason(new Date(2026, 10, 1))).toBe(false);
+});
 
 test('renders the redesigned portfolio home page', () => {
   renderRoute();

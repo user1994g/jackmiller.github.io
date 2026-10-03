@@ -27,6 +27,17 @@ const GlobalStyles = createGlobalStyle`
     --font-serif: 'Fraunces', Georgia, serif;
   }
 
+  body.season-halloween {
+    --paper: #f3eadc;
+    --paper-soft: #ded2c2;
+    --paper-bright: #fff7e9;
+    --violet: #5a2fba;
+    --violet-dark: #3b1b86;
+    --poppy: #ff6a1f;
+    --acid: #ccf36a;
+    --stone: #c1b2a3;
+  }
+
   *,
   *::before,
   *::after {

@@ -8,6 +8,7 @@ import GrainLayer from './components/GrainLayer';
 import IntroSplash from './components/IntroSplash';
 import ScrollProgress from './components/ScrollProgress';
 import RouteEffects from './components/RouteEffects';
+import SeasonalTheme from './components/SeasonalTheme';
 import Footer from './sections/Footer';
 import HomePage from './pages/HomePage';
 import GlobalStyles from './styles/GlobalStyles';
@@ -60,6 +61,7 @@ function App() {
   return (
     <>
       <GlobalStyles />
+      <SeasonalTheme />
       <a className="skip-link" href="#main-content">Skip to main content</a>
       <ThemeProvider theme={dark}>
         <GrainLayer />

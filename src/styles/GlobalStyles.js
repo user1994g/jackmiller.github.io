@@ -49,6 +49,20 @@ const GlobalStyles = createGlobalStyle`
     --stone: #c9c8ad;
   }
 
+  body.season-birthday {
+    --ink: #322c36;
+    --ink-soft: #403741;
+    --ink-muted: #605363;
+    --paper: #fff2dc;
+    --paper-soft: #e6dccb;
+    --paper-bright: #fffaf0;
+    --violet: #67529c;
+    --violet-dark: #4f3d7d;
+    --poppy: #ad503a;
+    --acid: #f5d88c;
+    --stone: #cbbfae;
+  }
+
   *,
   *::before,
   *::after {

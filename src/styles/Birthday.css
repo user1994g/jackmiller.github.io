@@ -1,0 +1,137 @@
+/* Birthday scrapbook — visible only on 4 March, never changes the photos. */
+.birthday-scene,
+.birthday-hero-cake,
+.birthday-nav-sun { display: none; }
+
+body.season-birthday .cut-hero {
+  background:
+    radial-gradient(ellipse at 88% 28%, rgba(196, 179, 220, 0.38), transparent 48%),
+    radial-gradient(ellipse at 15% 80%, rgba(240, 205, 181, 0.4), transparent 55%),
+    radial-gradient(circle, rgba(81, 65, 55, 0.11) 0.75px, transparent 1px),
+    var(--paper);
+  background-size: auto, auto, 20px 20px, auto;
+}
+
+body.season-birthday .birthday-scene {
+  display: block;
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.birthday-bunting {
+  position: absolute;
+  top: 4.85rem;
+  left: -1%;
+  width: 102%;
+  display: flex;
+  justify-content: space-around;
+  border-top: 1px solid #b9a58f;
+}
+.birthday-bunting span {
+  width: 1.5rem;
+  height: 1.9rem;
+  background: #c4b3dc;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  transform: rotate(-7deg);
+}
+.birthday-bunting span:nth-child(3n) { background: #b9cfb5; transform: rotate(8deg); }
+.birthday-bunting span:nth-child(3n + 1) { background: #f0cdb5; }
+
+.birthday-paper-halo {
+  position: absolute;
+  top: 8rem;
+  right: 6%;
+  width: clamp(10rem, 24vw, 22rem);
+  aspect-ratio: 1;
+  border: 1px dashed #a491b7;
+  border-radius: 46% 54% 61% 39%;
+  background: rgba(255, 250, 240, 0.45);
+  transform: rotate(-12deg);
+}
+.birthday-sun { position: absolute; top: 6rem; right: 9%; width: clamp(4rem, 6vw, 6rem); transform: rotate(9deg); }
+.birthday-doodles { position: absolute; top: 10rem; right: 23%; width: clamp(7rem, 19vw, 16rem); }
+.birthday-edition {
+  position: absolute;
+  bottom: 1rem;
+  left: var(--gutter);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  color: var(--violet);
+  font: 800 0.6rem/1.5 var(--font-body);
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+.birthday-edition span { color: var(--ink-muted); }
+
+body.season-birthday .birthday-hero-cake {
+  display: block;
+  position: absolute;
+  z-index: 5;
+  left: -5%;
+  bottom: -0.5rem;
+  width: clamp(6rem, 15vw, 12rem);
+  pointer-events: none;
+  transform: rotate(-7deg);
+  filter: drop-shadow(0 7px 9px rgba(81, 65, 55, 0.18));
+}
+body.season-birthday .birthday-nav-sun { display: block; width: 2rem; flex: 0 0 auto; }
+body.season-birthday .cut-nav::before { background: rgba(255, 242, 220, 0.96); border-color: rgba(103, 82, 156, 0.3); }
+body.season-birthday .cut-nav__brand-copy small { color: var(--ink-muted); }
+body.season-birthday .cut-hero__title span:nth-child(2) { color: var(--violet); text-shadow: 3px 3px 0 #dcc9b2; }
+body.season-birthday .tape-label { background: var(--acid); color: var(--ink); }
+body.season-birthday .cut-hero__photo { box-shadow: 0 0 0 2px var(--ink), 12px 12px 0 #c4b3dc; }
+body.season-birthday .cut-hero__arrow { color: var(--poppy); }
+
+body.season-birthday .cut-hero .studio-link-button {
+  border-radius: 0.8rem;
+  clip-path: none;
+  background: var(--violet);
+  color: var(--paper-bright);
+  box-shadow: 4px 4px 0 #d8c7ab;
+}
+body.season-birthday .cut-hero .studio-button--ghost { color: var(--ink); background: rgba(255, 250, 240, 0.6); box-shadow: none; }
+body.season-birthday .cut-hero .studio-link-button:hover { color: var(--paper-bright); background: var(--violet-dark); }
+
+body.season-birthday .cut-hero__art::before {
+  position: absolute;
+  z-index: 6;
+  top: 0;
+  right: 0;
+  padding: 0.65rem 0.9rem;
+  border: 1px dashed var(--violet);
+  border-radius: 0.45rem;
+  color: var(--violet-dark);
+  background: var(--paper-bright);
+  box-shadow: 4px 4px 0 #f0cdb5;
+  content: 'Birthday cut · 04 March';
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  text-transform: uppercase;
+  transform: rotate(2deg);
+}
+body.season-birthday .page-hero { background: radial-gradient(ellipse at 100% 0, rgba(196, 179, 220, 0.17), transparent 65%); }
+body.season-birthday .site-footer { background: radial-gradient(ellipse at 90% 100%, #594866, transparent 70%), var(--ink); }
+body.season-birthday .slate-stat:nth-child(2) strong,
+body.season-birthday .slate-stat:nth-child(4) strong,
+body.season-birthday .about-scene__copy h2 em,
+body.season-birthday .site-footer__availability em { color: #f0cdb5; }
+
+@media (max-width: 56rem) {
+  body.season-birthday .cut-hero { padding-bottom: 4rem; }
+  .birthday-bunting span:nth-child(even) { visibility: hidden; }
+  .birthday-bunting span { width: 1.1rem; height: 1.4rem; }
+  .birthday-paper-halo { top: 7rem; right: -2rem; width: 10rem; opacity: 0.4; }
+  .birthday-sun { top: 10rem; right: 5%; width: 3rem; opacity: 0.65; }
+  .birthday-doodles { display: none; }
+  .birthday-edition { max-width: 44%; flex-direction: column; gap: 0.1rem; bottom: 0.6rem; }
+  body.season-birthday .birthday-hero-cake { left: 0; width: 7rem; }
+}
+
+@media (max-width: 360px) {
+  body.season-birthday .birthday-nav-sun { display: none; }
+}

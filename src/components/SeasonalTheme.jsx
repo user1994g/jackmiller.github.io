@@ -7,9 +7,13 @@ export const isHalloweenSeason = (date = new Date()) => (
   date.getTime() >= HALLOWEEN_START && date.getTime() < HALLOWEEN_END
 );
 
-// December is GMT in the UK, so UTC boundaries also match London midnight.
+// December and 4 March are GMT in the UK: UTC matches London midnight.
 export const isChristmasSeason = (date = new Date()) => (
   date.getUTCMonth() === 11 && date.getUTCDate() >= 20
+);
+
+export const isBirthdaySeason = (date = new Date()) => (
+  date.getUTCMonth() === 2 && date.getUTCDate() === 4
 );
 
 const nextSeasonBoundary = (date) => {
@@ -17,6 +21,10 @@ const nextSeasonBoundary = (date) => {
   return [
     HALLOWEEN_START,
     HALLOWEEN_END,
+    Date.UTC(year, 2, 4),
+    Date.UTC(year, 2, 5),
+    Date.UTC(year + 1, 2, 4),
+    Date.UTC(year + 1, 2, 5),
     Date.UTC(year, 11, 20),
     Date.UTC(year + 1, 0, 1),
     Date.UTC(year + 1, 11, 20),
@@ -31,6 +39,7 @@ const SeasonalTheme = () => {
       const now = new Date();
       document.body.classList.toggle('season-halloween', isHalloweenSeason(now));
       document.body.classList.toggle('season-christmas', isChristmasSeason(now));
+      document.body.classList.toggle('season-birthday', isBirthdaySeason(now));
       // Recheck even outside a season so a tab left open can enter the next one.
       timer = window.setTimeout(updateTheme, Math.min(86400000, nextSeasonBoundary(now) - now.getTime()));
     };
@@ -38,7 +47,7 @@ const SeasonalTheme = () => {
     document.addEventListener('visibilitychange', updateTheme);
 
     return () => {
-      document.body.classList.remove('season-halloween', 'season-christmas');
+      document.body.classList.remove('season-halloween', 'season-christmas', 'season-birthday');
       window.clearTimeout(timer);
       document.removeEventListener('visibilitychange', updateTheme);
     };

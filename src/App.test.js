@@ -2,7 +2,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 
 import App from './App';
-import SeasonalTheme, { isChristmasSeason, isHalloweenSeason } from './components/SeasonalTheme';
+import SeasonalTheme, { isBirthdaySeason, isChristmasSeason, isHalloweenSeason } from './components/SeasonalTheme';
 
 jest.mock('gsap', () => ({
   __esModule: true,
@@ -125,6 +125,54 @@ test('refreshes the holiday theme when returning to a sleeping tab', () => {
     jest.setSystemTime(new Date('2027-01-01T12:00:00Z'));
     fireEvent(document, new Event('visibilitychange'));
     expect(document.body).not.toHaveClass('season-christmas');
+    unmount();
+  } finally {
+    jest.useRealTimers();
+  }
+});
+
+test('only enables the birthday edition on 4 March each year using UK midnight', () => {
+  expect(isBirthdaySeason(new Date('2027-03-03T23:59:59Z'))).toBe(false);
+  expect(isBirthdaySeason(new Date('2027-03-04T00:00:00Z'))).toBe(true);
+  expect(isBirthdaySeason(new Date('2027-03-04T23:59:59Z'))).toBe(true);
+  expect(isBirthdaySeason(new Date('2027-03-05T00:00:00Z'))).toBe(false);
+  expect(isBirthdaySeason(new Date('2028-03-04T12:00:00Z'))).toBe(true);
+  expect(isBirthdaySeason(new Date('2027-03-04T00:00:00+09:00'))).toBe(false);
+  expect(isBirthdaySeason(new Date('2026-10-03T12:00:00Z'))).toBe(false);
+  expect(isBirthdaySeason(new Date('2026-12-25T12:00:00Z'))).toBe(false);
+});
+
+test.each([
+  ['2027-03-03T23:59:59Z', false, true],
+  ['2027-03-04T23:59:59Z', true, false],
+  ['2028-03-03T23:59:59Z', false, true],
+])('switches the birthday theme automatically on an open page at %s', (time, before, after) => {
+  jest.useFakeTimers('modern');
+  try {
+    jest.setSystemTime(new Date(time));
+    const { unmount } = render(<SeasonalTheme />);
+    expect(document.body.classList.contains('season-birthday')).toBe(before);
+    expect(document.body).not.toHaveClass('season-halloween');
+    expect(document.body).not.toHaveClass('season-christmas');
+    jest.advanceTimersByTime(1000);
+    expect(document.body.classList.contains('season-birthday')).toBe(after);
+    unmount();
+    expect(document.body).not.toHaveClass('season-birthday');
+    expect(jest.getTimerCount()).toBe(0);
+  } finally {
+    jest.useRealTimers();
+  }
+});
+
+test('restores the original theme after a birthday tab wakes on 5 March', () => {
+  jest.useFakeTimers('modern');
+  try {
+    jest.setSystemTime(new Date('2027-03-04T12:00:00Z'));
+    const { unmount } = render(<SeasonalTheme />);
+    expect(document.body).toHaveClass('season-birthday');
+    jest.setSystemTime(new Date('2027-03-05T12:00:00Z'));
+    fireEvent(document, new Event('visibilitychange'));
+    expect(document.body).not.toHaveClass('season-birthday');
     unmount();
   } finally {
     jest.useRealTimers();

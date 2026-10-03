@@ -5,6 +5,7 @@ import leafyPath from '../assets/ArchivePhotos/leafy-path.jpg';
 import swanReflection from '../assets/ArchivePhotos/swan-reflection.jpg';
 import { PumpkinMark } from '../art/HalloweenArt';
 import { HollyMark } from '../art/ChristmasArt';
+import { BirthdaySun } from '../art/BirthdayArt';
 
 const primaryLinks = [
   { label: 'Home', to: '/', end: true },
@@ -310,6 +311,7 @@ const Navbar = () => {
           </span>
           <PumpkinMark className="halloween-nav-pumpkin" />
           <HollyMark className="christmas-nav-holly" />
+          <BirthdaySun className="birthday-nav-sun" />
         </Link>
 
         <div className="cut-nav__desktop">

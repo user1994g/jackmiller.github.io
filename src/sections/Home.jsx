@@ -6,6 +6,7 @@ import heroMini from '../assets/ArchivePhotos/swan-reflection.jpg';
 import { CutArrow } from '../art/Marks';
 import HalloweenArt, { PumpkinMark } from '../art/HalloweenArt';
 import ChristmasArt, { ChristmasTree } from '../art/ChristmasArt';
+import BirthdayArt, { BirthdayCake } from '../art/BirthdayArt';
 import useStudioMotion from '../hooks/useStudioMotion';
 
 const Home = () => {
@@ -16,6 +17,7 @@ const Home = () => {
     <section className="cut-hero" id="home" ref={sectionRef} aria-labelledby="home-title">
       <HalloweenArt />
       <ChristmasArt />
+      <BirthdayArt />
       <div className="studio-wrap cut-hero__layout">
         <div className="cut-hero__copy">
           <div className="cut-hero__eyebrow" data-hero>
@@ -64,6 +66,7 @@ const Home = () => {
           <CutArrow className="cut-hero__arrow" />
           <PumpkinMark className="halloween-hero-pumpkin" />
           <ChristmasTree className="christmas-hero-tree" />
+          <BirthdayCake className="birthday-hero-cake" />
           <span className="cut-hero__timecode" aria-hidden="true">TC 00:26:14:08</span>
         </div>
       </div>

@@ -5,6 +5,7 @@ import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import './styles/Studio.css';
 import './styles/Christmas.css';
+import './styles/Birthday.css';
 
 ReactDOM.render(
   <React.StrictMode>

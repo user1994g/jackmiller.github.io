@@ -2,7 +2,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 
 import App from './App';
-import { isHalloweenSeason } from './components/SeasonalTheme';
+import SeasonalTheme, { isHalloweenSeason } from './components/SeasonalTheme';
 
 jest.mock('gsap', () => ({
   __esModule: true,
@@ -64,9 +64,26 @@ const renderRoute = (path = '/') => render(
   </MemoryRouter>,
 );
 
-test('only enables the Halloween theme during October', () => {
-  expect(isHalloweenSeason(new Date(2026, 9, 3))).toBe(true);
-  expect(isHalloweenSeason(new Date(2026, 10, 1))).toBe(false);
+test('only enables the Halloween theme in October 2026 using UK boundaries', () => {
+  expect(isHalloweenSeason(new Date('2026-09-30T22:59:59Z'))).toBe(false);
+  expect(isHalloweenSeason(new Date('2026-09-30T23:00:00Z'))).toBe(true);
+  expect(isHalloweenSeason(new Date('2026-10-31T23:59:59Z'))).toBe(true);
+  expect(isHalloweenSeason(new Date('2026-11-01T00:00:00Z'))).toBe(false);
+  expect(isHalloweenSeason(new Date('2027-10-03T12:00:00Z'))).toBe(false);
+});
+
+test('restores the original theme at the end of October on an open page', () => {
+  jest.useFakeTimers('modern');
+  try {
+    jest.setSystemTime(new Date('2026-10-31T23:59:59Z'));
+    const { unmount } = render(<SeasonalTheme />);
+    expect(document.body).toHaveClass('season-halloween');
+    jest.advanceTimersByTime(1000);
+    expect(document.body).not.toHaveClass('season-halloween');
+    unmount();
+  } finally {
+    jest.useRealTimers();
+  }
 });
 
 test('renders the redesigned portfolio home page', () => {

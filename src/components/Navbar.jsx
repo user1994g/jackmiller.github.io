@@ -3,6 +3,7 @@ import { Link, NavLink, useLocation } from 'react-router-dom';
 
 import leafyPath from '../assets/ArchivePhotos/leafy-path.jpg';
 import swanReflection from '../assets/ArchivePhotos/swan-reflection.jpg';
+import { PumpkinMark } from '../art/HalloweenArt';
 
 const primaryLinks = [
   { label: 'Home', to: '/', end: true },
@@ -306,6 +307,7 @@ const Navbar = () => {
             <strong>Jack Miller</strong>
             <small>Film · Photo · Visuals</small>
           </span>
+          <PumpkinMark className="halloween-nav-pumpkin" />
         </Link>
 
         <div className="cut-nav__desktop">

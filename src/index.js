@@ -6,6 +6,7 @@ import App from './App';
 import './styles/Studio.css';
 import './styles/Christmas.css';
 import './styles/Birthday.css';
+import './styles/VisitorPreferences.css';
 
 ReactDOM.render(
   <React.StrictMode>

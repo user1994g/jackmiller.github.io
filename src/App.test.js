@@ -3,6 +3,7 @@ import { MemoryRouter } from 'react-router-dom';
 
 import App from './App';
 import SeasonalTheme, { isBirthdaySeason, isChristmasSeason, isHalloweenSeason } from './components/SeasonalTheme';
+import { buildTranslationUrl, TRANSLATION_LANGUAGES } from './content/translationLanguages';
 
 jest.mock('gsap', () => ({
   __esModule: true,
@@ -37,6 +38,7 @@ beforeAll(() => {
 });
 
 beforeEach(() => {
+  window.sessionStorage.clear();
   const gsap = require('gsap').default;
   gsap.context.mockImplementation((fn) => {
     if (typeof fn === 'function') fn();
@@ -185,6 +187,110 @@ test('renders the redesigned portfolio home page', () => {
   expect(screen.getByRole('main')).toBeInTheDocument();
   expect(screen.getByRole('heading', { level: 1, name: /stories that stick to the frame/i })).toBeInTheDocument();
   expect(screen.getByRole('link', { name: /watch the dark echoes of 1939/i })).toHaveAttribute('href', '/fmp-level-2');
+});
+
+test('previews each theme and returns to the automatic calendar without mixing styles', async () => {
+  const { container } = renderRoute();
+  const trigger = screen.getByRole('button', { name: /choose website theme/i });
+  trigger.focus();
+  fireEvent.click(trigger);
+  await screen.findByRole('dialog', { name: /pick your mood/i });
+  expect(container).toHaveAttribute('inert');
+
+  for (const [name, choice] of [
+    [/birthday/i, 'birthday'], [/christmas/i, 'christmas'], [/halloween/i, 'halloween'], [/the original/i, 'original'],
+  ]) {
+    fireEvent.click(screen.getByRole('radio', { name }));
+    for (const theme of ['birthday', 'christmas', 'halloween']) {
+      expect(document.body.classList.contains(`season-${theme}`)).toBe(theme === choice);
+    }
+    expect(window.sessionStorage.getItem('jmm-visitor-theme')).toBe(choice);
+  }
+  fireEvent.click(screen.getByRole('radio', { name: /automatic/i }));
+  expect(document.body.classList.contains('season-halloween')).toBe(isHalloweenSeason());
+  expect(document.body.classList.contains('season-christmas')).toBe(isChristmasSeason());
+  expect(document.body.classList.contains('season-birthday')).toBe(isBirthdaySeason());
+  fireEvent.click(screen.getByRole('button', { name: /enjoy this vibe/i }));
+  expect(container).not.toHaveAttribute('inert');
+  expect(trigger).toHaveFocus();
+  expect(document.body).not.toHaveClass('preferences-open');
+});
+
+test('remembers a valid theme across page loads in the same tab', () => {
+  window.sessionStorage.setItem('jmm-visitor-theme', 'birthday');
+  renderRoute('/photos/animals');
+  expect(document.body).toHaveClass('season-birthday');
+  expect(document.body).not.toHaveClass('season-halloween');
+});
+
+test('ignores unrecognised stored themes', () => {
+  window.sessionStorage.setItem('jmm-visitor-theme', 'not-a-theme');
+  renderRoute();
+  expect(document.body.classList.contains('season-birthday')).toBe(isBirthdaySeason());
+  expect(document.body.classList.contains('season-christmas')).toBe(isChristmasSeason());
+  expect(document.body.classList.contains('season-halloween')).toBe(isHalloweenSeason());
+});
+
+test('theme changes still work when session storage cannot be written', async () => {
+  const storage = jest.spyOn(Storage.prototype, 'setItem').mockImplementation(() => { throw new Error('Storage disabled'); });
+  try {
+    renderRoute();
+    fireEvent.click(screen.getByRole('button', { name: /choose website theme/i }));
+    await screen.findByRole('dialog', { name: /pick your mood/i });
+    fireEvent.click(screen.getByRole('radio', { name: /birthday/i }));
+    expect(document.body).toHaveClass('season-birthday');
+  } finally { storage.mockRestore(); }
+});
+
+test('opens translation for the current public page without injecting Google scripts', async () => {
+  renderRoute('/photos/animals');
+  fireEvent.click(screen.getByRole('button', { name: /translate this page/i }));
+  await screen.findByRole('dialog', { name: /a world of words/i });
+  fireEvent.change(screen.getByLabelText(/your language/i), { target: { value: 'es' } });
+  const link = screen.getByRole('link', { name: /open translated page/i });
+  const url = new URL(link.href);
+  expect(url.origin).toBe('https://translate.google.com');
+  expect(url.searchParams.get('tl')).toBe('es');
+  expect(url.searchParams.get('u')).toBe('https://jackmillermedia.com/photos/animals');
+  expect(link).toHaveAttribute('target', '_blank');
+  expect(link).toHaveAttribute('rel', 'noopener noreferrer');
+  expect(document.querySelector('script[src*="translate.google"]')).toBeNull();
+  for (const code of ['ru', 'ar', 'fa', 'bn', 'ur', 'id', 'ms', 'si']) {
+    expect(TRANSLATION_LANGUAGES.some((language) => language.code === code)).toBe(false);
+  }
+});
+
+test('translation links only accept curated languages and the site’s public routes', () => {
+  expect(buildTranslationUrl('ru', '/')).toBeNull();
+  expect(buildTranslationUrl('invalid', '/')).toBeNull();
+  const url = new URL(buildTranslationUrl('fr', '/photos/?email=private@example.test#message'));
+  expect(url.searchParams.get('u')).toBe('https://jackmillermedia.com/photos');
+  const externalPath = new URL(buildTranslationUrl('de', 'https://evil.example/photos'));
+  expect(externalPath.searchParams.get('u')).toBe('https://jackmillermedia.com/');
+});
+
+test('switches between preference panels and closes with Escape', async () => {
+  const { container } = renderRoute();
+  fireEvent.click(screen.getByRole('button', { name: /choose website theme/i }));
+  await screen.findByRole('dialog', { name: /pick your mood/i });
+  fireEvent.click(screen.getByRole('button', { name: /^language$/i }));
+  expect(screen.getByRole('dialog', { name: /a world of words/i })).toBeInTheDocument();
+  expect(container).toHaveAttribute('inert');
+  fireEvent.keyDown(document, { key: 'Escape' });
+  expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  expect(container).not.toHaveAttribute('inert');
+});
+
+test('opens preferences from the mobile menu without leaving the page locked', async () => {
+  renderRoute();
+  fireEvent.click(screen.getByRole('button', { name: /open navigation menu/i }));
+  fireEvent.click(screen.getByRole('button', { name: /choose website theme/i }));
+  await screen.findByRole('dialog', { name: /pick your mood/i });
+  expect(screen.queryByRole('dialog', { name: /the cut room/i })).not.toBeInTheDocument();
+  expect(document.body).not.toHaveClass('menu-open');
+  fireEvent.click(screen.getByRole('button', { name: /close preferences/i }));
+  expect(document.body).not.toHaveClass('dialog-open');
+  expect(document.body.style.position).not.toBe('fixed');
 });
 
 test.each([

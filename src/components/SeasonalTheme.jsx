@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { useVisitorPreferences } from '../context/VisitorPreferences';
 
 const HALLOWEEN_START = Date.parse('2026-10-01T00:00:00+01:00');
 const HALLOWEEN_END = Date.parse('2026-11-01T00:00:00Z');
@@ -32,14 +33,16 @@ const nextSeasonBoundary = (date) => {
 };
 
 const SeasonalTheme = () => {
+  const { theme } = useVisitorPreferences();
   useEffect(() => {
     let timer;
     const updateTheme = () => {
       window.clearTimeout(timer);
       const now = new Date();
-      document.body.classList.toggle('season-halloween', isHalloweenSeason(now));
-      document.body.classList.toggle('season-christmas', isChristmasSeason(now));
-      document.body.classList.toggle('season-birthday', isBirthdaySeason(now));
+      const automatic = theme === 'auto';
+      document.body.classList.toggle('season-halloween', automatic ? isHalloweenSeason(now) : theme === 'halloween');
+      document.body.classList.toggle('season-christmas', automatic ? isChristmasSeason(now) : theme === 'christmas');
+      document.body.classList.toggle('season-birthday', automatic ? isBirthdaySeason(now) : theme === 'birthday');
       // Recheck even outside a season so a tab left open can enter the next one.
       timer = window.setTimeout(updateTheme, Math.min(86400000, nextSeasonBoundary(now) - now.getTime()));
     };
@@ -51,7 +54,7 @@ const SeasonalTheme = () => {
       window.clearTimeout(timer);
       document.removeEventListener('visibilitychange', updateTheme);
     };
-  }, []);
+  }, [theme]);
 
   return null;
 };

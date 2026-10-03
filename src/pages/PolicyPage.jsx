@@ -10,7 +10,7 @@ const policyCopy = {
       'Privacy policy for Jack Miller Media, including analytics, advertising, cookies, and contact information.',
     intro:
       'This privacy policy explains how Jack Miller Media handles basic visitor information, analytics, advertising services, and contact messages. The site is a personal creative media portfolio run by Jack Miller.',
-    updated: '30 September 2026',
+    updated: '3 October 2026',
     sections: [
       {
         heading: 'Information this site may collect',
@@ -26,6 +26,16 @@ const policyCopy = {
         heading: 'Location availability checks',
         body:
           'Cloudflare provides an approximate country code from the visitor’s network connection so the site can apply its regional availability policy before a page is served. Jack Miller Media does not request precise location data, contact external IP-location providers from the browser, or store a location decision on the visitor’s device.',
+      },
+      {
+        heading: 'Appearance preferences',
+        body:
+          'If you choose a theme, the preference is saved in session storage for the current browser tab only. It is not sent to Jack Miller Media or used for tracking. Choose Automatic to follow the seasonal calendar again, or close the tab to end the stored preference.',
+      },
+      {
+        heading: 'Optional translation',
+        body:
+          'The Translate button can open the current public page in Google Translate in a new tab. Google receives that public page address and processes the translated view under its own privacy practices. No translation script is loaded on this site. Country availability restrictions apply to jackmillermedia.com, not to copies or translated views operated by other services.',
       },
       {
         heading: 'Cookies',

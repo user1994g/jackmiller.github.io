@@ -6,6 +6,8 @@ import swanReflection from '../assets/ArchivePhotos/swan-reflection.jpg';
 import { PumpkinMark } from '../art/HalloweenArt';
 import { HollyMark } from '../art/ChristmasArt';
 import { BirthdaySun } from '../art/BirthdayArt';
+import { PreferenceTriggers } from './VisitorPreferences';
+import { focusableSelector, makeOutsideContentInert } from '../utils/dialogAccessibility';
 
 const primaryLinks = [
   { label: 'Home', to: '/', end: true },
@@ -68,54 +70,6 @@ const fmpLinks = [
     to: '/the-final-lesson',
   },
 ];
-
-const focusableSelector = [
-  'a[href]',
-  'button:not([disabled])',
-  'input:not([disabled])',
-  'select:not([disabled])',
-  'textarea:not([disabled])',
-  '[tabindex]:not([tabindex="-1"])',
-].join(',');
-
-const makeOutsideContentInert = (dialog) => {
-  if (!dialog) return () => {};
-
-  const changedElements = [];
-  let activeBranch = dialog;
-
-  while (activeBranch && activeBranch !== document.body) {
-    const parent = activeBranch.parentElement;
-    if (!parent) break;
-
-    for (const sibling of Array.from(parent.children)) {
-      if (sibling === activeBranch || !(sibling instanceof HTMLElement)) continue;
-
-      changedElements.push({
-        element: sibling,
-        hadInert: sibling.hasAttribute('inert'),
-        ariaHidden: sibling.getAttribute('aria-hidden'),
-      });
-      sibling.setAttribute('inert', '');
-      sibling.setAttribute('aria-hidden', 'true');
-    }
-
-    activeBranch = parent;
-  }
-
-  return () => {
-    changedElements.reverse().forEach(({ element, hadInert, ariaHidden }) => {
-      if (!element.isConnected) return;
-
-      if (!hadInert) element.removeAttribute('inert');
-      if (ariaHidden === null) {
-        element.removeAttribute('aria-hidden');
-      } else {
-        element.setAttribute('aria-hidden', ariaHidden);
-      }
-    });
-  };
-};
 
 const activeLinkClass = ({ isActive }) =>
   `cut-nav__link${isActive ? ' cut-nav__link--active' : ''}`;
@@ -451,6 +405,7 @@ const Navbar = () => {
             </div>
           </div>
 
+          <PreferenceTriggers beforeOpen={() => { setDesktopPhotosOpen(false); setDesktopFmpOpen(false); }} />
           <NavLink className="cut-nav__contact" to="/contact">
             Start a project <span aria-hidden="true">↗</span>
           </NavLink>
@@ -489,6 +444,7 @@ const Navbar = () => {
           </div>
 
           <div className="cut-menu__body studio-wrap">
+            <PreferenceTriggers className="visitor-preference-triggers--mobile" beforeOpen={closeMenu} />
             <nav className="cut-menu__primary" aria-label="Mobile navigation">
               {primaryLinks.slice(0, 1).map((item) => (
                 <NavLink

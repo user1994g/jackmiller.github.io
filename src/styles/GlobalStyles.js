@@ -38,6 +38,17 @@ const GlobalStyles = createGlobalStyle`
     --stone: #c1b2a3;
   }
 
+  body.season-christmas {
+    --paper: #f5efe0;
+    --paper-soft: #e4d7bb;
+    --paper-bright: #fffbef;
+    --violet: #9f2638;
+    --violet-dark: #742033;
+    --poppy: #c83b48;
+    --acid: #f2cd83;
+    --stone: #c9c8ad;
+  }
+
   *,
   *::before,
   *::after {

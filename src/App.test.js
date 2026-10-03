@@ -2,7 +2,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 
 import App from './App';
-import SeasonalTheme, { isHalloweenSeason } from './components/SeasonalTheme';
+import SeasonalTheme, { isChristmasSeason, isHalloweenSeason } from './components/SeasonalTheme';
 
 jest.mock('gsap', () => ({
   __esModule: true,
@@ -80,6 +80,51 @@ test('restores the original theme at the end of October on an open page', () => 
     expect(document.body).toHaveClass('season-halloween');
     jest.advanceTimersByTime(1000);
     expect(document.body).not.toHaveClass('season-halloween');
+    unmount();
+  } finally {
+    jest.useRealTimers();
+  }
+});
+
+test('only enables Christmas from 20 to 31 December every year at UK midnight', () => {
+  expect(isChristmasSeason(new Date('2026-12-19T23:59:59Z'))).toBe(false);
+  expect(isChristmasSeason(new Date('2026-12-20T00:00:00Z'))).toBe(true);
+  expect(isChristmasSeason(new Date('2026-12-31T23:59:59Z'))).toBe(true);
+  expect(isChristmasSeason(new Date('2027-01-01T00:00:00Z'))).toBe(false);
+  expect(isChristmasSeason(new Date('2027-12-25T12:00:00Z'))).toBe(true);
+  expect(isChristmasSeason(new Date('2026-10-03T12:00:00Z'))).toBe(false);
+});
+
+test.each([
+  ['2026-12-19T23:59:59Z', false, true],
+  ['2026-12-31T23:59:59Z', true, false],
+  ['2027-12-19T23:59:59Z', false, true],
+])('switches Christmas automatically on an open page at %s', (time, before, after) => {
+  jest.useFakeTimers('modern');
+  try {
+    jest.setSystemTime(new Date(time));
+    const { unmount } = render(<SeasonalTheme />);
+    expect(document.body.classList.contains('season-christmas')).toBe(before);
+    expect(document.body).not.toHaveClass('season-halloween');
+    jest.advanceTimersByTime(1000);
+    expect(document.body.classList.contains('season-christmas')).toBe(after);
+    unmount();
+    expect(document.body).not.toHaveClass('season-christmas');
+    expect(jest.getTimerCount()).toBe(0);
+  } finally {
+    jest.useRealTimers();
+  }
+});
+
+test('refreshes the holiday theme when returning to a sleeping tab', () => {
+  jest.useFakeTimers('modern');
+  try {
+    jest.setSystemTime(new Date('2026-12-25T12:00:00Z'));
+    const { unmount } = render(<SeasonalTheme />);
+    expect(document.body).toHaveClass('season-christmas');
+    jest.setSystemTime(new Date('2027-01-01T12:00:00Z'));
+    fireEvent(document, new Event('visibilitychange'));
+    expect(document.body).not.toHaveClass('season-christmas');
     unmount();
   } finally {
     jest.useRealTimers();

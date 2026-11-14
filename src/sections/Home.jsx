@@ -32,14 +32,14 @@ const Home = () => {
             </p>
           </div>
           <h1 className="cut-hero__tagline" id="home-title" data-hero>
-            Stories that <strong>stick</strong> to the frame.
+            Film &amp; <strong>photography.</strong>
           </h1>
           <p className="cut-hero__intro" data-hero>
-            Perspective-driven visual stories. Film, photography, and 3D — made to feel, not just look finished.
+            I&apos;m Jack, a creative media student. These are my short films, photographs, and work in progress.
           </p>
           <div className="cut-hero__actions" data-hero>
             <Link className="studio-link-button" to="/fmp-level-2">Watch The Dark Echoes of 1939 <span aria-hidden="true">↗</span></Link>
-            <Link className="studio-link-button studio-button--ghost" to="/photos">Skip to stills <span aria-hidden="true">→</span></Link>
+            <Link className="studio-link-button studio-button--ghost" to="/photos">View my photographs <span aria-hidden="true">→</span></Link>
           </div>
         </div>
 

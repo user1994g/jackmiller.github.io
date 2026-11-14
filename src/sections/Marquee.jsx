@@ -1,6 +1,6 @@
 import React from 'react';
 
-const lines = ['Built for dramatic visual impact.', 'Designed to read cleanly on wide monitors.', 'Optimized spacing, rhythm, and mobile flow.'];
+const lines = ['Short films.', 'Photographs.', 'Work in progress.'];
 
 const Marquee = () => {
   const items = [...lines, ...lines];

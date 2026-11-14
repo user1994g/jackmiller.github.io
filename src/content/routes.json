@@ -17,16 +17,16 @@
   {
     "path": "/photos",
     "title": "Photography Portfolio | Jack Miller Media",
-    "description": "Explore Jack Miller's original countryside, wildlife, movie, and sports photography collections.",
+    "description": "Original countryside and wildlife photography by Jack Miller. View selected photographs and browse the full collections.",
     "heading": "Photography portfolio by Jack Miller",
-    "summary": "Choose from four original photo collections built around countryside, animals, movie moods, and movement.",
+    "summary": "Selected countryside and wildlife photographs by Jack Miller, with full collections to browse and individual images to view in detail.",
     "schemaType": "ImageGallery",
     "imageKey": "photos",
     "imageAlt": "A woodland path leading to a metal field gate",
     "imageWidth": 1600,
     "imageHeight": 900,
     "imageType": "image/jpeg",
-    "lastmod": "2026-09-28",
+    "lastmod": "2026-11-13",
     "robots": "index, follow, max-image-preview:large"
   },
   {

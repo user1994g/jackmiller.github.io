@@ -7,7 +7,7 @@ const Footer = () => (
       <div>
         <span className="tape-label">Open for selected work</span>
         <p className="site-footer__availability">
-          Have a story worth <em>cutting?</em>
+          Want to work <em>together?</em>
         </p>
       </div>
 

@@ -23,11 +23,10 @@ const About = () => {
         <div className="about-scene__copy" data-reveal>
           <span className="tape-label">Behind the frame</span>
           <h2 id="about-title">Made by <em>Jack.</em></h2>
-          <p className="about-scene__lead">Mood, tension, and cinematic composition lead every frame.</p>
+          <p className="about-scene__lead">I&apos;m a creative media student working in film and photography.</p>
           <div className="about-scene__body">
-            <p>I build visual stories through film and photography, focusing on controlled light, shadow, and framing that guide emotion before dialogue begins.</p>
-            <p>Every project here—from concept to final edit—has been produced by me. I blend camera technique, colour grading, and sound-led pacing to make each piece immersive and intentional.</p>
-            <p>This portfolio reflects my development as a creative media student and my goal to make distinctive visuals that stay memorable across screens of every size.</p>
+            <p>This site brings together my short films, photographs and notes on how I made them.</p>
+            <p>There are finished projects here, as well as things I&apos;m still working on. The write ups cover the choices I made along the way.</p>
           </div>
           <Link className="studio-link-button studio-button--paper" to="/about">Read the full story <span aria-hidden="true">↗</span></Link>
         </div>

@@ -185,7 +185,7 @@ test('renders the redesigned portfolio home page', () => {
   renderRoute();
 
   expect(screen.getByRole('main')).toBeInTheDocument();
-  expect(screen.getByRole('heading', { level: 1, name: /stories that stick to the frame/i })).toBeInTheDocument();
+  expect(screen.getByRole('heading', { level: 1, name: /film & photography/i })).toBeInTheDocument();
   expect(screen.getByRole('link', { name: /watch the dark echoes of 1939/i })).toHaveAttribute('href', '/fmp-level-2');
 });
 
@@ -294,7 +294,7 @@ test('opens preferences from the mobile menu without leaving the page locked', a
 });
 
 test.each([
-  ['/photos', /choose your frame/i],
+  ['/photos', /photographs/i],
   ['/photos/countryside', /countryside/i],
   ['/photos/sports', /sports/i],
   ['/photos/movies', /movies/i],
@@ -405,7 +405,7 @@ test('redirects the legacy Final Lesson path to the canonical route', async () =
 test('redirects the removed Videos path to home', async () => {
   renderRoute('/videos');
 
-  expect(await screen.findByRole('heading', { level: 1, name: /stories that stick to the frame/i })).toBeInTheDocument();
+  expect(await screen.findByRole('heading', { level: 1, name: /film & photography/i })).toBeInTheDocument();
 });
 
 test('publishes indexable video metadata for The Final Lesson', async () => {
@@ -436,4 +436,73 @@ test('keeps the unfinished 3D placeholder out of search results', async () => {
   await waitFor(() => {
     expect(document.querySelector('meta[name="robots"]')).toHaveAttribute('content', 'noindex, follow');
   });
+});
+
+test('loads the Photos exhibition lead eagerly and keeps every collection reachable', async () => {
+  renderRoute('/photos');
+
+  expect(await screen.findByRole('heading', { level: 1, name: /photographs/i })).toBeInTheDocument();
+  const lead = screen.getByRole('img', { name: /woodland path bordered by a timber fence/i });
+  expect(lead).toHaveAttribute('loading', 'eager');
+  expect(lead).toHaveAttribute('fetchpriority', 'high');
+  expect(lead).toHaveAttribute('width', '1600');
+  expect(lead).toHaveAttribute('height', '900');
+  expect(screen.getByRole('img', { name: /narrow grass trail crossing a bright meadow/i })).toHaveAttribute('loading', 'lazy');
+
+  const index = screen.getByRole('navigation', { name: /^photo collections$/i });
+  const destinations = Array.from(index.querySelectorAll('a')).map((link) => link.getAttribute('href'));
+  expect(destinations).toEqual([
+    '/photos/countryside', '/photos/sports', '/photos/movies', '/photos/animals',
+  ]);
+});
+
+test('opens a selected countryside print at its collection index and navigates the full set', async () => {
+  const { container } = renderRoute('/photos');
+  const opener = await screen.findByRole('button', { name: /^open another train coming$/i });
+  opener.focus();
+  fireEvent.click(opener);
+
+  expect(screen.getByRole('dialog', { name: /expanded view/i })).toBeInTheDocument();
+  expect(screen.getByText(/03 of 10/i)).toBeInTheDocument();
+  expect(screen.getByRole('img', { name: /railway tracks curving through green trees/i })).toBeInTheDocument();
+  await waitFor(() => expect(container).toHaveAttribute('inert'));
+  expect(container).toHaveAttribute('aria-hidden', 'true');
+
+  fireEvent.click(screen.getByRole('button', { name: /next photo/i }));
+  expect(screen.getByText(/04 of 10/i)).toBeInTheDocument();
+  expect(screen.getByRole('img', { name: /country pond edged with reeds/i })).toBeInTheDocument();
+  fireEvent.keyDown(document, { key: 'End' });
+  expect(screen.getByText(/10 of 10/i)).toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button', { name: /next photo/i }));
+  expect(screen.getByText(/01 of 10/i)).toBeInTheDocument();
+
+  fireEvent.click(screen.getByRole('button', { name: /^close/i }));
+  await waitFor(() => expect(container).not.toHaveAttribute('inert'));
+  expect(container).not.toHaveAttribute('aria-hidden');
+  expect(screen.queryByRole('dialog', { name: /expanded view/i })).not.toBeInTheDocument();
+  expect(opener).toHaveFocus();
+  expect(document.body.style.position).not.toBe('fixed');
+});
+
+test('opens a selected wildlife print in the four-photo animal collection only', async () => {
+  const { container } = renderRoute('/photos');
+  const opener = await screen.findByRole('button', { name: /^open double take$/i });
+  opener.focus();
+  fireEvent.click(opener);
+
+  expect(screen.getByText(/03 of 04/i)).toBeInTheDocument();
+  expect(screen.getByRole('img', { name: /close wildlife portrait of a swan/i })).toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button', { name: /next photo/i }));
+  expect(screen.getByText(/04 of 04/i)).toBeInTheDocument();
+  expect(screen.getByRole('img', { name: /a swan drifting across dark water/i })).toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button', { name: /next photo/i }));
+  expect(screen.getByText(/01 of 04/i)).toBeInTheDocument();
+  expect(screen.getByRole('img', { name: /white swan arriving across calm water/i })).toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button', { name: /previous photo/i }));
+  expect(screen.getByText(/04 of 04/i)).toBeInTheDocument();
+
+  fireEvent.keyDown(document, { key: 'Escape' });
+  await waitFor(() => expect(container).not.toHaveAttribute('inert'));
+  expect(container).not.toHaveAttribute('aria-hidden');
+  expect(opener).toHaveFocus();
 });

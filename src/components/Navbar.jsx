@@ -316,10 +316,10 @@ const Navbar = () => {
                 >
                   <div className="cut-nav__photo-menu-head">
                     <span>
-                      <b>Photo selector</b>
-                      <small>Pull a strip / choose a world</small>
+                      <b>Photography</b>
+                      <small>Browse all photos or choose a collection</small>
                     </span>
-                    <Link to="/photos" onClick={() => setDesktopPhotosOpen(false)}>View all 04 ↗</Link>
+                    <Link to="/photos" onClick={() => setDesktopPhotosOpen(false)}>Open photo gallery ↗</Link>
                   </div>
                   <div className="cut-nav__photo-menu-grid">
                     {photoLinks.map((item, index) => (

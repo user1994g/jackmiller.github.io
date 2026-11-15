@@ -26,7 +26,7 @@
     "imageWidth": 1600,
     "imageHeight": 900,
     "imageType": "image/jpeg",
-    "lastmod": "2026-11-13",
+    "lastmod": "2026-11-14",
     "robots": "index, follow, max-image-preview:large"
   },
   {
@@ -34,7 +34,7 @@
     "title": "Countryside Photography | Jack Miller Media",
     "description": "View Jack Miller's original countryside photography: woodland paths, still water, railway lines, and spring landscapes.",
     "heading": "Countryside photography by Jack Miller",
-    "summary": "A ten-frame walk through woodland paths, railway lines, still water, and the soft greens of the English countryside.",
+    "summary": "Ten photographs of woodland paths, fields, railway crossings and quiet water, with a gallery viewer and full photo index.",
     "schemaType": "ImageGallery",
     "imageKey": "photos",
     "imageAlt": "A woodland path leading to a metal field gate",
@@ -63,17 +63,17 @@
   {
     "path": "/photos/movies",
     "title": "Movie & Film Photography | Jack Miller Media",
-    "description": "Explore Jack Miller's cinematic portraits, production details, and movie mood photography.",
+    "description": "Jack Miller's movie photography collection is intentionally empty for now. Browse the countryside and wildlife collections instead.",
     "heading": "Movie and film photography by Jack Miller",
-    "summary": "Portraits, props, and fragments from film work, photographed to hold a mood before and after the camera rolls.",
-    "schemaType": "ImageGallery",
-    "imageKey": "movieMood",
-    "imageAlt": "Cinematic portrait from a Jack Miller film project",
-    "imageWidth": 1920,
-    "imageHeight": 2880,
-    "imageType": "image/webp",
-    "lastmod": "2026-09-28",
-    "robots": "index, follow, max-image-preview:large"
+    "summary": "No movie photographs have been added to this collection yet.",
+    "schemaType": "CollectionPage",
+    "imageKey": "logo",
+    "imageAlt": "Jack Miller Media logo",
+    "imageWidth": 512,
+    "imageHeight": 512,
+    "imageType": "image/png",
+    "lastmod": "2026-11-14",
+    "robots": "noindex, follow"
   },
   {
     "path": "/photos/animals",

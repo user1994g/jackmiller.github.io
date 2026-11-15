@@ -368,7 +368,7 @@ test('keeps the page behind the image lightbox out of the accessibility tree', a
 test('moves through every photo in an open gallery', async () => {
   renderRoute('/photos/countryside');
 
-  fireEvent.click(await screen.findByRole('button', { name: /open gate in the green/i }));
+  fireEvent.click(await screen.findByRole('button', { name: /enlarge gate in the green/i }));
 
   expect(screen.getByRole('dialog', { name: /expanded view/i })).toBeInTheDocument();
   expect(screen.getByText(/01 of 10/i)).toBeInTheDocument();
@@ -438,7 +438,7 @@ test('keeps the unfinished 3D placeholder out of search results', async () => {
   });
 });
 
-test('loads the Photos exhibition lead eagerly and keeps every collection reachable', async () => {
+test('loads the photography browser lead eagerly and keeps every collection reachable', async () => {
   renderRoute('/photos');
 
   expect(await screen.findByRole('heading', { level: 1, name: /photographs/i })).toBeInTheDocument();
@@ -447,7 +447,10 @@ test('loads the Photos exhibition lead eagerly and keeps every collection reacha
   expect(lead).toHaveAttribute('fetchpriority', 'high');
   expect(lead).toHaveAttribute('width', '1600');
   expect(lead).toHaveAttribute('height', '900');
-  expect(screen.getByRole('img', { name: /narrow grass trail crossing a bright meadow/i })).toHaveAttribute('loading', 'lazy');
+  expect(screen.getAllByRole('button', { name: /^show /i })).toHaveLength(14);
+  expect(screen.getByRole('button', { name: /^show gate in the green$/i })).toHaveAttribute('aria-pressed', 'true');
+  expect(screen.getByRole('button', { name: /gallery view/i })).toHaveAttribute('aria-pressed', 'true');
+  expect(screen.getByRole('button', { name: /grid view/i })).toHaveAttribute('aria-pressed', 'false');
 
   const index = screen.getByRole('navigation', { name: /^photo collections$/i });
   const destinations = Array.from(index.querySelectorAll('a')).map((link) => link.getAttribute('href'));
@@ -456,25 +459,51 @@ test('loads the Photos exhibition lead eagerly and keeps every collection reacha
   ]);
 });
 
-test('opens a selected countryside print at its collection index and navigates the full set', async () => {
+test('navigates the gallery stage, wraps, selects thumbnails and supports keyboard and swipe', async () => {
+  renderRoute('/photos');
+  await screen.findByRole('button', { name: /^enlarge gate in the green$/i });
+
+  fireEvent.click(screen.getByRole('button', { name: /^previous photograph$/i }));
+  expect(screen.getByRole('button', { name: /^enlarge drift$/i })).toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button', { name: /^next photograph$/i }));
+  expect(screen.getByRole('button', { name: /^enlarge gate in the green$/i })).toBeInTheDocument();
+
+  fireEvent.click(screen.getByRole('button', { name: /^show meadow line$/i }));
+  expect(screen.getByRole('button', { name: /^show meadow line$/i })).toHaveAttribute('aria-pressed', 'true');
+  expect(screen.getByRole('button', { name: /^show gate in the green$/i })).toHaveAttribute('aria-pressed', 'false');
+  expect(screen.getByRole('img', { name: /narrow grass trail/i })).toBeInTheDocument();
+
+  fireEvent.keyDown(screen.getByRole('group', { name: /^photograph viewer$/i }), { key: 'ArrowRight' });
+  expect(screen.getByRole('button', { name: /^enlarge another train coming$/i })).toBeInTheDocument();
+  fireEvent.keyDown(screen.getByRole('group', { name: /^photograph viewer$/i }), { key: 'ArrowLeft' });
+  const stage = screen.getByRole('button', { name: /^enlarge meadow line$/i });
+  fireEvent.touchStart(stage, { touches: [{ clientX: 300, clientY: 180 }] });
+  fireEvent.touchEnd(stage, { changedTouches: [{ clientX: 100, clientY: 185 }] });
+  expect(screen.getByRole('button', { name: /^enlarge another train coming$/i })).toBeInTheDocument();
+  expect(screen.queryByRole('dialog', { name: /expanded view/i })).not.toBeInTheDocument();
+});
+
+test('opens a selected photograph in the complete fourteen-photo archive and restores focus', async () => {
   const { container } = renderRoute('/photos');
-  const opener = await screen.findByRole('button', { name: /^open another train coming$/i });
+  fireEvent.click(await screen.findByRole('button', { name: /^show another train coming$/i }));
+  const opener = screen.getByRole('button', { name: /^enlarge another train coming$/i });
   opener.focus();
   fireEvent.click(opener);
 
   expect(screen.getByRole('dialog', { name: /expanded view/i })).toBeInTheDocument();
-  expect(screen.getByText(/03 of 10/i)).toBeInTheDocument();
+  expect(screen.getByText(/03 of 14/i)).toBeInTheDocument();
   expect(screen.getByRole('img', { name: /railway tracks curving through green trees/i })).toBeInTheDocument();
   await waitFor(() => expect(container).toHaveAttribute('inert'));
   expect(container).toHaveAttribute('aria-hidden', 'true');
 
   fireEvent.click(screen.getByRole('button', { name: /next photo/i }));
-  expect(screen.getByText(/04 of 10/i)).toBeInTheDocument();
+  expect(screen.getByText(/04 of 14/i)).toBeInTheDocument();
   expect(screen.getByRole('img', { name: /country pond edged with reeds/i })).toBeInTheDocument();
   fireEvent.keyDown(document, { key: 'End' });
-  expect(screen.getByText(/10 of 10/i)).toBeInTheDocument();
+  expect(screen.getByText(/14 of 14/i)).toBeInTheDocument();
+  expect(screen.getByRole('img', { name: /a swan drifting across dark water/i })).toBeInTheDocument();
   fireEvent.click(screen.getByRole('button', { name: /next photo/i }));
-  expect(screen.getByText(/01 of 10/i)).toBeInTheDocument();
+  expect(screen.getByText(/01 of 14/i)).toBeInTheDocument();
 
   fireEvent.click(screen.getByRole('button', { name: /^close/i }));
   await waitFor(() => expect(container).not.toHaveAttribute('inert'));
@@ -484,9 +513,32 @@ test('opens a selected countryside print at its collection index and navigates t
   expect(document.body.style.position).not.toBe('fixed');
 });
 
-test('opens a selected wildlife print in the four-photo animal collection only', async () => {
+test('shows all fourteen photographs in grid view and opens the selected photograph', async () => {
   const { container } = renderRoute('/photos');
-  const opener = await screen.findByRole('button', { name: /^open double take$/i });
+  fireEvent.click(await screen.findByRole('button', { name: /^grid view$/i }));
+  expect(screen.getByRole('button', { name: /^grid view$/i })).toHaveAttribute('aria-pressed', 'true');
+  expect(screen.getByRole('button', { name: /^gallery view$/i })).toHaveAttribute('aria-pressed', 'false');
+  expect(container.querySelectorAll('.photo-room__grid-photo')).toHaveLength(14);
+  expect(screen.queryByRole('group', { name: /^photograph viewer$/i })).not.toBeInTheDocument();
+
+  const opener = screen.getByRole('button', { name: /^open double take$/i });
+  opener.focus();
+  fireEvent.click(opener);
+  expect(screen.getByText(/13 of 14/i)).toBeInTheDocument();
+  expect(screen.getByRole('img', { name: /close wildlife portrait of a swan/i })).toBeInTheDocument();
+  fireEvent.keyDown(document, { key: 'Escape' });
+  await waitFor(() => expect(container).not.toHaveAttribute('inert'));
+  expect(opener).toHaveFocus();
+
+  fireEvent.click(screen.getByRole('button', { name: /^gallery view$/i }));
+  expect(screen.getByRole('button', { name: /^gallery view$/i })).toHaveAttribute('aria-pressed', 'true');
+  expect(screen.getByRole('button', { name: /^enlarge gate in the green$/i })).toBeInTheDocument();
+});
+
+test('opens a wildlife photograph in the four-photo animal collection only', async () => {
+  const { container } = renderRoute('/photos/animals');
+  fireEvent.click(await screen.findByRole('button', { name: /^show double take$/i }));
+  const opener = screen.getByRole('button', { name: /^enlarge double take$/i });
   opener.focus();
   fireEvent.click(opener);
 
@@ -505,4 +557,54 @@ test('opens a selected wildlife print in the four-photo animal collection only',
   await waitFor(() => expect(container).not.toHaveAttribute('inert'));
   expect(container).not.toHaveAttribute('aria-hidden');
   expect(opener).toHaveFocus();
+});
+
+test('collection navigation resets the selected photograph and view mode', async () => {
+  const { container } = renderRoute('/photos/countryside');
+  fireEvent.click(await screen.findByRole('button', { name: /^show meadow line$/i }));
+  expect(screen.getByRole('button', { name: /^enlarge meadow line$/i })).toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button', { name: /^grid view$/i }));
+  expect(container.querySelectorAll('.photo-room__grid-photo')).toHaveLength(10);
+
+  const collections = screen.getByRole('navigation', { name: /^photo collections$/i });
+  const animalsLink = Array.from(collections.querySelectorAll('a')).find((link) => link.getAttribute('href') === '/photos/animals');
+  fireEvent.click(animalsLink);
+  expect(await screen.findByRole('heading', { level: 1, name: /^animals\b/i })).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: /^gallery view$/i })).toHaveAttribute('aria-pressed', 'true');
+  expect(screen.getByRole('button', { name: /^enlarge arrival$/i })).toBeInTheDocument();
+  expect(screen.getAllByRole('button', { name: /^show /i })).toHaveLength(4);
+  expect(screen.getByRole('button', { name: /^show arrival$/i })).toHaveAttribute('aria-pressed', 'true');
+  expect(screen.queryByRole('button', { name: /^show meadow line$/i })).not.toBeInTheDocument();
+});
+
+test('keeps the Sports photography collection image-free until photos are added', async () => {
+  const { container } = renderRoute('/photos/sports');
+  expect(await screen.findByRole('heading', { level: 1, name: /^sports\b/i })).toBeInTheDocument();
+  expect(screen.getByRole('heading', { level: 2, name: /no sports photographs added yet/i })).toBeInTheDocument();
+  expect(screen.queryByRole('img')).not.toBeInTheDocument();
+  expect(screen.queryByRole('button', { name: /^gallery view$/i })).not.toBeInTheDocument();
+  expect(container.querySelectorAll('.photo-room__grid-photo')).toHaveLength(0);
+});
+
+test('suppresses the synthetic click after a gallery swipe while allowing a later tap', async () => {
+  renderRoute('/photos');
+  const firstStage = await screen.findByRole('button', { name: /^enlarge gate in the green$/i });
+
+  fireEvent.touchStart(firstStage, { touches: [{ clientX: 170, clientY: 100 }] });
+  fireEvent.touchEnd(firstStage, { changedTouches: [{ clientX: 175, clientY: 300 }] });
+  expect(screen.getByRole('button', { name: /^enlarge gate in the green$/i })).toBeInTheDocument();
+
+  fireEvent.touchStart(firstStage, { touches: [{ clientX: 300, clientY: 180 }] });
+  fireEvent.touchEnd(firstStage, { changedTouches: [{ clientX: 100, clientY: 185 }] });
+  const secondStage = screen.getByRole('button', { name: /^enlarge meadow line$/i });
+  fireEvent.click(secondStage, { detail: 1 });
+  expect(screen.queryByRole('dialog', { name: /expanded view/i })).not.toBeInTheDocument();
+  expect(screen.getByRole('button', { name: /^enlarge meadow line$/i })).toBeInTheDocument();
+
+  fireEvent.touchStart(secondStage, { touches: [{ clientX: 150, clientY: 180 }] });
+  fireEvent.touchEnd(secondStage, { changedTouches: [{ clientX: 152, clientY: 182 }] });
+  fireEvent.click(secondStage, { detail: 1 });
+  expect(screen.getByRole('dialog', { name: /expanded view/i })).toBeInTheDocument();
+  expect(screen.getByRole('img', { name: /narrow grass trail/i })).toBeInTheDocument();
+  expect(screen.getByText(/02 of 14/i)).toBeInTheDocument();
 });
